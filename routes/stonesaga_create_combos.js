@@ -1,5 +1,8 @@
 
 // TODO: Gör endast en bild selekterbar. Runtomden ska visas alla kopplingar som kan göras.
+// TODO:    rotate all items 4 times for each direction
+// TODO:    sålla bort alla som börjar och slutar med 0
+// TODO:    hur hantera dupletter - låta den vara kvar? ...
 // TODO: The list should show crafted (discovered) items and all known recepies.
 // TODO: A switch in settings should enable "read all recepies on cards" and not only discovered.
 // TODO: Grinding should be enabled when the structure is built (setting with only structure code enabled)

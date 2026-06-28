@@ -2050,15 +2050,17 @@ const a = [
         "state": "raw",
         "imgIdx": 32,
         "cat": "other"
-    }, {"id": "other__Pigment__1", "name": "Pigment", "state": "ground", "imgIdx": 32, "cat": "other"}];
+    }
+    //, {"id": "other__Pigment__1", "name": "Pigment", "state": "ground", "imgIdx": 32, "cat": "other"}
+];
 a.forEach(x=>{
     let index = ALL_CARDS_BASE.findIndex(y=>y.id === x.note);
-    console.log('index',index)
-    ALL_CARDS_BASE[index].cols = x.cols
+    // console.log('index',index)
+    ALL_CARDS_BASE[index].cols = [x.w.substring(0,1),x.n.substring(0,1),x.e.substring(0,1),x.s.substring(0,1)]
     // ALL_CARDS_BASE[index].vals = x.vals
 } )
-    console.log(ALL_CARDS_BASE[0])
-    console.table(ALL_CARDS_BASE)
+    // console.log(ALL_CARDS_BASE[0])
+    // console.table(ALL_CARDS_BASE)
     const BUILTIN = {
         "animal__Bone__0:0|animal__Hide__0:0": {
             "craft": "Bone Needle & Thread",
@@ -2248,6 +2250,7 @@ a.forEach(x=>{
     // ── Card data (dynamic with pigment) ──
     function getCards() {
         const cards = [...ALL_CARDS_BASE];
+        // console.log('getCards',cards[0])
         if (settings.pigment) {
             if (!cards.find(c => c.id === 'other__Pigment__0')) {
                 cards.push({id: 'other__Pigment__0', name: 'Pigment', state: 'raw', imgIdx: 32, cat: 'other'});
@@ -2367,19 +2370,33 @@ a.forEach(x=>{
         const wheel = document.getElementById('wheel');
         const sel = selectedId ? cardById(selectedId) : null;
         const cards = getCards();
-
         const zones = {top: [], right: [], bottom: [], left: []};
-        cards.forEach(c => {
-            if (c.id === selectedId) return; // skip self in zone but still show as chip
-            const z = CAT_ZONE[c.cat] || 'top';
-            zones[z].push(c);
+        const zonesIdx = [1,2,3,0]
+        const zonesIdx2Name = ['left', 'top', 'right', 'bottom']
+        // console.log('sel',sel)
+        sel && cards.forEach(c => {
+            // console.log('sel.cols',sel.cols,c.id)
+            sel.cols.forEach((selCol,i)=> {
+                // console.log(x,i,(i+2)%4,c?.cols)
+                const correspondingCol = c.cols[(i+2)%4]
+                const selColStart = sel.cols[(i+2)%4]
+                if (selCol === correspondingCol && selCol !== '' && selCol !== '0'
+                    // && selColStart !== '0'
+                ) {
+                    zones[zonesIdx2Name[i]].push(c)
+                }
+            })
+            // if (c.id === selectedId) return; // skip self in zone but still show as chip
+            // const z = CAT_ZONE[c.cat] || 'top';
+            // zones[z].push(c);
         });
+        // console.table(zones)
         // Include same card again so same-material combos show
         if (sel) cards.filter(c => c.id === selectedId).forEach(c => {
             // Already included via all cards; just don't skip — actually re-add to correct zone
         });
         // Simpler: include all cards including selected for chips (some games allow self-combo)
-        const allForZones = {top: [], right: [], bottom: [], left: []};
+        let allForZones = {top: [], right: [], bottom: [], left: []};
         cards.forEach(c => {
             const z = CAT_ZONE[c.cat] || 'top';
             allForZones[z].push(c);
@@ -2409,6 +2426,8 @@ a.forEach(x=>{
                 `<div class="section-label ${cat}">${catLabels[cat] || cat}</div>` + cs.map(c => chipHTML(c)).join('')
             ).join('');
         }
+
+        allForZones = zones
 
         wheel.innerHTML = `
     <div class="wheel-top">${zoneCatChips('top')}</div>
