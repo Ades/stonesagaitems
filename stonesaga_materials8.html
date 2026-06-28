@@ -1,0 +1,2697 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stonesaga — Materials</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap"
+          rel="stylesheet">
+    <style>
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0
+        }
+
+        :root {
+            --parchment: #f5ede0;
+            --parchment-dark: #e8d9c2;
+            --parchment-deep: #d6c4a4;
+            --ink: #2c1a0e;
+            --ink-mid: #5a3a1a;
+            --ink-light: #8a6040;
+            --gold: #c8952a;
+            --gold-light: #e8c060;
+            --sel: #e8a020;
+            --known: #4a8a28;
+            --unknown: #888;
+        }
+
+        body {
+            background: var(--parchment-dark);
+            background-image: repeating-linear-gradient(0deg, transparent, transparent 40px, rgba(0, 0, 0, 0.012) 40px, rgba(0, 0, 0, 0.012) 41px), repeating-linear-gradient(90deg, transparent, transparent 40px, rgba(0, 0, 0, 0.008) 40px, rgba(0, 0, 0, 0.008) 41px);
+            color: var(--ink);
+            font-family: 'Crimson Text', Georgia, serif;
+            min-height: 100vh;
+            padding: 0 0 4rem
+        }
+
+        /* ── Header ── */
+        header {
+            text-align: center;
+            padding: 2.5rem 2rem 1.75rem;
+            border-bottom: 2px solid var(--parchment-deep);
+            margin-bottom: 2rem;
+            position: relative
+        }
+
+        header::before, header::after {
+            content: '◆';
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.5rem;
+            color: var(--gold)
+        }
+
+        header::before {
+            left: 2rem
+        }
+
+        header::after {
+            right: 2rem
+        }
+
+        h1 {
+            font-family: 'Cinzel', serif;
+            font-size: clamp(1.8rem, 5vw, 3.2rem);
+            font-weight: 700;
+            letter-spacing: 0.2em;
+            color: var(--ink);
+            text-transform: uppercase
+        }
+
+        .subtitle {
+            font-family: 'Cinzel', serif;
+            font-size: 0.82rem;
+            letter-spacing: 0.15em;
+            color: var(--ink-light);
+            margin-top: 0.4rem;
+            text-transform: uppercase
+        }
+
+        .ornament {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 0.8rem;
+            color: var(--gold)
+        }
+
+        .ornament::before, .ornament::after {
+            content: '';
+            height: 1px;
+            width: 60px;
+            background: var(--gold)
+        }
+
+        /* ── Settings cog ── */
+        #settingsBtn {
+            position: fixed;
+            top: 18px;
+            right: 22px;
+            z-index: 200;
+            width: 38px;
+            height: 38px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            opacity: 0.55;
+            transition: opacity 0.2s, transform 0.4s
+        }
+
+        #settingsBtn:hover {
+            opacity: 1
+        }
+
+        #settingsBtn.spinning {
+            animation: spin 0.5s ease
+        }
+
+        @keyframes spin {
+            from {
+                transform: rotate(0deg)
+            }
+            to {
+                transform: rotate(90deg)
+            }
+        }
+
+        #settingsBtn svg {
+            width: 38px;
+            height: 38px
+        }
+
+        /* ── Settings overlay ── */
+        #settingsOverlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(44, 26, 14, 0.55);
+            z-index: 300;
+            align-items: flex-start;
+            justify-content: flex-end;
+            padding: 70px 22px 0
+        }
+
+        #settingsOverlay.open {
+            display: flex
+        }
+
+        #settingsBox {
+            background: var(--parchment);
+            border: 2px solid var(--parchment-deep);
+            border-radius: 10px;
+            padding: 1.5rem 1.75rem;
+            min-width: 260px;
+            max-width: 320px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.22);
+            display: flex;
+            flex-direction: column;
+            gap: 0.9rem
+        }
+
+        #settingsBox h2 {
+            font-family: 'Cinzel', serif;
+            font-size: 0.9rem;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--ink);
+            border-bottom: 1px solid var(--parchment-deep);
+            padding-bottom: 0.6rem;
+            margin-bottom: 0.1rem
+        }
+
+        .setting-row {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            cursor: pointer
+        }
+
+        .setting-row input[type=checkbox] {
+            width: 16px;
+            height: 16px;
+            margin-top: 2px;
+            accent-color: var(--gold);
+            cursor: pointer;
+            flex-shrink: 0
+        }
+
+        .setting-label {
+            font-family: 'Crimson Text', serif;
+            font-size: 1rem;
+            color: var(--ink);
+            line-height: 1.35
+        }
+
+        .setting-desc {
+            font-size: 0.78rem;
+            color: var(--ink-light);
+            font-style: italic;
+            margin-top: 1px
+        }
+
+        /* ── Wheel ── */
+        #wheelWrap {
+            max-width: 1020px;
+            margin: 0 auto 2rem;
+            padding: 0 2rem
+        }
+
+        #wheelWrap h2 {
+            font-family: 'Cinzel', serif;
+            font-size: 0.8rem;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--ink-light);
+            text-align: center;
+            margin-bottom: 1rem
+        }
+
+        #wheel {
+            background: var(--parchment);
+            border: 2px solid var(--parchment-deep);
+            border-radius: 8px;
+            padding: 1.25rem;
+            display: grid;
+            grid-template-columns:1fr auto 1fr;
+            grid-template-rows:auto 1fr auto;
+            gap: 0
+        }
+
+        .wheel-top {
+            grid-column: 1/4;
+            grid-row: 1;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: flex-start;
+            gap: 5px;
+            padding-bottom: 0.9rem;
+            border-bottom: 1px solid var(--parchment-deep);
+            margin-bottom: 0.5rem
+        }
+
+        .wheel-bottom {
+            grid-column: 1/4;
+            grid-row: 3;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: flex-start;
+            gap: 5px;
+            padding-top: 0.9rem;
+            border-top: 1px solid var(--parchment-deep);
+            margin-top: 0.5rem
+        }
+
+        .wheel-left {
+            grid-column: 1;
+            grid-row: 2;
+            display: flex;
+            flex-wrap: wrap;
+            align-content: center;
+            justify-content: flex-end;
+            gap: 5px;
+            padding-right: 0.9rem;
+            border-right: 1px solid var(--parchment-deep)
+        }
+
+        .wheel-right {
+            grid-column: 3;
+            grid-row: 2;
+            display: flex;
+            flex-wrap: wrap;
+            align-content: center;
+            justify-content: flex-start;
+            gap: 5px;
+            padding-left: 0.9rem;
+            border-left: 1px solid var(--parchment-deep)
+        }
+
+        .wheel-center {
+            grid-column: 2;
+            grid-row: 2;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            padding: 0 1.25rem
+        }
+
+        .section-label {
+            font-family: 'Cinzel', serif;
+            font-size: 0.58rem;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            padding: 1px 7px;
+            border-radius: 3px;
+            font-weight: 700;
+            white-space: nowrap;
+            display: block;
+            width: 100%;
+            text-align: center;
+            margin-bottom: 2px
+        }
+
+        .section-label.animal {
+            background: #8B5E3C;
+            color: #f5d9b8
+        }
+
+        .section-label.mineral {
+            background: #6B6B6B;
+            color: #e8e8e8
+        }
+
+        .section-label.plant {
+            background: #4A7A2A;
+            color: #c8e8a8
+        }
+
+        .section-label.rare {
+            background: #2A4A7A;
+            color: #a8c0e8
+        }
+
+        .section-label.other {
+            background: #5A3A6A;
+            color: #e0c8f0
+        }
+
+        .center-card {
+            width: 96px;
+            height: 120px;
+            border-radius: 8px;
+            position: relative;
+            overflow: hidden;
+            border: 3px solid var(--sel);
+            box-shadow: 0 0 0 2px var(--sel), 0 4px 16px rgba(232, 160, 32, 0.25)
+        }
+
+        .center-card img, .center-card-bg {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover
+        }
+
+        .center-card.animal .center-card-bg {
+            background: linear-gradient(145deg, #c49060, #7a4a28)
+        }
+
+        .center-card.mineral .center-card-bg {
+            background: linear-gradient(145deg, #a8a8a8, #585858)
+        }
+
+        .center-card.plant .center-card-bg {
+            background: linear-gradient(145deg, #70a840, #325018)
+        }
+
+        .center-card.rare .center-card-bg {
+            background: linear-gradient(145deg, #6088c0, #1e3870)
+        }
+
+        .center-card.other .center-card-bg {
+            background: linear-gradient(145deg, #9060a0, #4a1a5a)
+        }
+
+        .center-empty {
+            width: 96px;
+            height: 120px;
+            border-radius: 8px;
+            border: 3px dashed var(--parchment-deep);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: var(--ink-light);
+            font-style: italic;
+            font-size: 0.78rem;
+            text-align: center;
+            padding: 0.5rem;
+            gap: 4px
+        }
+
+        .center-name {
+            font-family: 'Cinzel', serif;
+            font-size: 0.78rem;
+            letter-spacing: 0.06em;
+            color: var(--ink);
+            text-align: center
+        }
+
+        .center-state {
+            font-size: 0.7rem;
+            color: var(--ink-light);
+            font-style: italic
+        }
+
+        .combo-chip {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+            cursor: pointer;
+            width: 58px;
+            padding: 4px 3px;
+            border-radius: 5px;
+            border: 1px solid transparent;
+            transition: background 0.12s, border-color 0.12s
+        }
+
+        .combo-chip:hover {
+            background: rgba(200, 149, 42, 0.1);
+            border-color: var(--gold-light)
+        }
+
+        .chip-img {
+            width: 40px;
+            height: 50px;
+            border-radius: 3px;
+            object-fit: cover;
+            border: 1.5px solid var(--parchment-deep);
+            display: block;
+            flex-shrink: 0
+        }
+
+        .chip-name {
+            font-size: 0.52rem;
+            font-family: 'Cinzel', serif;
+            letter-spacing: 0.03em;
+            text-align: center;
+            color: var(--ink-mid);
+            line-height: 1.2
+        }
+
+        .chip-result {
+            font-size: 0.5rem;
+            text-align: center;
+            line-height: 1.25;
+            font-family: 'Cinzel', serif;
+            letter-spacing: 0.02em;
+            margin-top: 1px
+        }
+
+        .chip-result.known {
+            color: var(--known);
+            font-weight: 700
+        }
+
+        .chip-result.unknown {
+            color: var(--unknown);
+            font-style: italic
+        }
+
+        /* ── Hint ── */
+        .hint {
+            text-align: center;
+            font-size: 0.88rem;
+            color: var(--ink-light);
+            font-style: italic;
+            margin-bottom: 1.5rem;
+            padding: 0 2rem
+        }
+
+        /* ── Category sections ── */
+        .section {
+            max-width: 1100px;
+            margin: 0 auto 1.5rem;
+            padding: 0 2rem
+        }
+
+        .category-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            cursor: pointer;
+            user-select: none;
+            padding-bottom: 0.7rem
+        }
+
+        .category-header:hover .cat-toggle-icon {
+            color: var(--gold)
+        }
+
+        .category-label {
+            font-family: 'Cinzel', serif;
+            font-size: 1rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            padding: 0.3rem 1.2rem;
+            border-radius: 3px;
+            font-weight: 700;
+            white-space: nowrap
+        }
+
+        .category-label.animal {
+            background: #8B5E3C;
+            color: #f5d9b8
+        }
+
+        .category-label.mineral {
+            background: #6B6B6B;
+            color: #e8e8e8
+        }
+
+        .category-label.plant {
+            background: #4A7A2A;
+            color: #c8e8a8
+        }
+
+        .category-label.rare {
+            background: #2A4A7A;
+            color: #a8c0e8
+        }
+
+        .category-label.other {
+            background: #5A3A6A;
+            color: #e0c8f0
+        }
+
+        .category-rule {
+            flex: 1;
+            height: 1px;
+            background: var(--parchment-deep)
+        }
+
+        .cat-toggle-icon {
+            font-size: 0.75rem;
+            color: var(--ink-light);
+            transition: transform 0.28s, color 0.15s;
+            flex-shrink: 0;
+            display: inline-block
+        }
+
+        .card-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.25rem;
+            overflow: hidden;
+            transition: height 0.3s ease, opacity 0.3s ease, margin-top 0.3s ease;
+            opacity: 1;
+            margin-top: 0.5rem
+        }
+
+        .card-grid.is-collapsed {
+            opacity: 0;
+            margin-top: 0 !important;
+            pointer-events: none
+        }
+
+        /* ── Cards in grid ── */
+        .material-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.35rem
+        }
+
+        .material-name {
+            font-family: 'Cinzel', serif;
+            font-size: 0.62rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--ink-mid);
+            text-align: center
+        }
+
+        .material-state {
+            font-family: 'Crimson Text', serif;
+            font-size: 0.7rem;
+            color: #4a90c4;
+            font-style: italic;
+            text-align: center;
+            min-height: 1em
+        }
+
+        .cards-pair {
+            display: flex;
+            gap: 0.5rem
+        }
+
+        /* Grinding UI under each card */
+        .grind-wrap {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 3px;
+            margin-top: 2px;
+            width: 72px
+        }
+
+        .grind-check-row {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 0.62rem;
+            color: var(--ink-light);
+            font-family: 'Crimson Text', serif;
+            cursor: pointer;
+            user-select: none
+        }
+
+        .grind-check-row input {
+            accent-color: var(--gold);
+            width: 12px;
+            height: 12px;
+            cursor: pointer;
+            flex-shrink: 0
+        }
+
+        .grind-text {
+            width: 100%;
+            font-size: 0.6rem;
+            font-family: 'Crimson Text', Georgia, serif;
+            color: var(--ink);
+            background: rgba(255, 255, 255, 0.7);
+            border: 1px solid var(--parchment-deep);
+            border-radius: 3px;
+            padding: 2px 4px;
+            resize: none;
+            outline: none;
+            min-height: 36px;
+            line-height: 1.3;
+            display: none;
+            transition: border-color 0.15s
+        }
+
+        .grind-text:focus {
+            border-color: var(--gold)
+        }
+
+        .grind-text.visible {
+            display: block
+        }
+
+        .card {
+            width: 72px;
+            height: 90px;
+            border-radius: 6px;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            border: 2px solid rgba(0, 0, 0, 0.35);
+            transition: border-color 0.15s, transform 0.15s, box-shadow 0.15s;
+            user-select: none;
+            flex-shrink: 0
+        }
+
+        .card:hover {
+            border-color: var(--gold-light);
+            box-shadow: 0 0 0 1px var(--gold-light);
+            transform: translateY(-3px)
+        }
+
+        .card.selected {
+            border-color: var(--sel);
+            box-shadow: 0 0 0 2px var(--sel), 0 2px 12px rgba(232, 160, 32, 0.4);
+            transform: translateY(-4px)
+        }
+
+        .card-bg {
+            position: absolute;
+            inset: 0
+        }
+
+        .card.animal .card-bg {
+            background: linear-gradient(145deg, #c49060, #7a4a28)
+        }
+
+        .card.mineral .card-bg {
+            background: linear-gradient(145deg, #a8a8a8, #585858)
+        }
+
+        .card.plant .card-bg {
+            background: linear-gradient(145deg, #70a840, #325018)
+        }
+
+        .card.rare .card-bg {
+            background: linear-gradient(145deg, #6088c0, #1e3870)
+        }
+
+        .card.other .card-bg {
+            background: linear-gradient(145deg, #9060a0, #4a1a5a)
+        }
+
+        .card-art {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block
+        }
+
+        .card-border-overlay {
+            position: absolute;
+            inset: 0;
+            border-radius: 4px;
+            border: 1px solid rgba(0, 0, 0, 0.3);
+            pointer-events: none
+        }
+
+        /* ── Combos list ── */
+        .combos-section {
+            max-width: 1000px;
+            margin: 2.5rem auto 0;
+            padding: 0 2rem
+        }
+
+        .combos-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            cursor: pointer;
+            user-select: none;
+            padding-bottom: 0.7rem;
+            border-bottom: 2px solid var(--parchment-deep)
+        }
+
+        .combos-header:hover .combos-toggle {
+            color: var(--gold)
+        }
+
+        .combos-header h2 {
+            font-family: 'Cinzel', serif;
+            font-size: 1.1rem;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--ink)
+        }
+
+        .combos-toggle {
+            font-size: 0.75rem;
+            color: var(--ink-light);
+            transition: transform 0.28s, color 0.15s;
+            display: inline-block;
+            flex-shrink: 0
+        }
+
+        .combos-list {
+            overflow: hidden;
+            transition: height 0.3s ease, opacity 0.3s ease;
+            opacity: 1
+        }
+
+        .combos-list.is-collapsed {
+            opacity: 0;
+            pointer-events: none
+        }
+
+        .combo-entry {
+            display: grid;
+            grid-template-columns:70px 1fr 2fr auto;
+            gap: 0.9rem;
+            align-items: start;
+            padding: 0.8rem 1rem;
+            border-bottom: 1px solid var(--parchment-deep)
+        }
+
+        .combo-entry:last-child {
+            border-bottom: none
+        }
+
+        .combo-entry:hover {
+            background: rgba(200, 149, 42, 0.04)
+        }
+
+        .combo-entry-cards {
+            display: flex;
+            align-items: center;
+            gap: 5px
+        }
+
+        .combo-thumb {
+            width: 28px;
+            height: 35px;
+            object-fit: cover;
+            border-radius: 3px;
+            border: 1px solid var(--parchment-deep);
+            display: block
+        }
+
+        .craft-tag {
+            display: inline-block;
+            background: var(--gold);
+            color: #fff;
+            padding: 1px 7px;
+            border-radius: 3px;
+            font-family: 'Cinzel', serif;
+            font-size: 0.6rem;
+            letter-spacing: 0.05em;
+            margin-bottom: 3px
+        }
+
+        .combo-entry-desc {
+            font-size: 0.88rem;
+            color: var(--ink-mid);
+            line-height: 1.5
+        }
+
+        .combo-del-btn {
+            background: none;
+            border: 1px solid var(--parchment-deep);
+            border-radius: 4px;
+            cursor: pointer;
+            color: var(--ink-light);
+            font-size: 0.68rem;
+            padding: 2px 7px
+        }
+
+        .combo-del-btn:hover {
+            background: #f4d0d0;
+            border-color: #c44;
+            color: #c44
+        }
+
+        .combo-builtin-badge {
+            font-size: 0.62rem;
+            color: var(--ink-light);
+            font-style: italic
+        }
+
+        .combos-empty {
+            color: var(--ink-light);
+            font-style: italic;
+            padding: 1.5rem 0;
+            text-align: center
+        }
+
+        /* ── Add combo modal ── */
+        #addComboOverlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(44, 26, 14, 0.5);
+            z-index: 400;
+            align-items: center;
+            justify-content: center
+        }
+
+        #addComboOverlay.open {
+            display: flex
+        }
+
+        #addComboBox {
+            background: var(--parchment);
+            border: 2px solid var(--parchment-deep);
+            border-radius: 10px;
+            padding: 1.6rem 1.9rem;
+            max-width: 460px;
+            width: 90%;
+            display: flex;
+            flex-direction: column;
+            gap: 0.7rem
+        }
+
+        #addComboBox h3 {
+            font-family: 'Cinzel', serif;
+            font-size: 0.95rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--ink)
+        }
+
+        .modal-pair {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 2px 0
+        }
+
+        .modal-thumb {
+            width: 42px;
+            height: 52px;
+            object-fit: cover;
+            border-radius: 5px;
+            border: 1.5px solid var(--parchment-deep)
+        }
+
+        .modal-names {
+            font-family: 'Cinzel', serif;
+            font-size: 0.75rem;
+            color: var(--ink);
+            line-height: 1.6
+        }
+
+        .modal-input {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.7);
+            border: 1.5px dashed var(--parchment-deep);
+            border-radius: 6px;
+            padding: 0.5rem 0.8rem;
+            font-family: 'Crimson Text', Georgia, serif;
+            font-size: 0.98rem;
+            color: var(--ink);
+            outline: none;
+            transition: border-color 0.15s;
+            margin: 0
+        }
+
+        .modal-input:focus {
+            border-color: var(--gold);
+            background: rgba(255, 255, 255, 0.95)
+        }
+
+        textarea.modal-input {
+            min-height: 65px;
+            resize: vertical
+        }
+
+        .modal-btn-row {
+            display: flex;
+            gap: 8px;
+            justify-content: flex-end;
+            margin-top: 2px
+        }
+
+        .modal-save {
+            font-family: 'Cinzel', serif;
+            font-size: 0.68rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            background: var(--gold);
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            padding: 5px 16px;
+            cursor: pointer
+        }
+
+        .modal-save:hover {
+            opacity: 0.85
+        }
+
+        .modal-cancel {
+            font-family: 'Cinzel', serif;
+            font-size: 0.68rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            background: none;
+            color: var(--ink-light);
+            border: 1px solid var(--parchment-deep);
+            border-radius: 4px;
+            padding: 5px 13px;
+            cursor: pointer
+        }
+
+        footer {
+            text-align: center;
+            padding: 2rem;
+            color: var(--ink-light);
+            font-size: 0.82rem;
+            font-style: italic;
+            border-top: 1px solid var(--parchment-deep);
+            margin-top: 2rem
+        }
+    </style>
+</head>
+<body>
+
+<!-- Settings cog button -->
+<button id="settingsBtn" onclick="toggleSettings()" title="Settings" aria-label="Settings">
+    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path fill-rule="evenodd" clip-rule="evenodd"
+              d="M12 1.25a1 1 0 0 1 .97.757l.527 2.107a7.8 7.8 0 0 1 1.74.72l1.91-1.003a1 1 0 0 1 1.22.205l1.6 1.6a1 1 0 0 1 .206 1.22l-1.004 1.91c.29.552.53 1.136.72 1.74l2.107.527A1 1 0 0 1 22.75 12v2.263a1 1 0 0 1-.757.97l-2.107.527a7.8 7.8 0 0 1-.72 1.74l1.003 1.91a1 1 0 0 1-.205 1.22l-1.6 1.6a1 1 0 0 1-1.22.206l-1.91-1.004a7.8 7.8 0 0 1-1.74.72l-.527 2.107A1 1 0 0 1 12 24H9.737a1 1 0 0 1-.97-.757l-.527-2.107a7.8 7.8 0 0 1-1.74-.72l-1.91 1.003a1 1 0 0 1-1.22-.205l-1.6-1.6a1 1 0 0 1-.206-1.22l1.004-1.91a7.8 7.8 0 0 1-.72-1.74L1.757 14.97A1 1 0 0 1 1 14v-2.263a1 1 0 0 1 .757-.97l2.107-.527a7.8 7.8 0 0 1 .72-1.74L3.58 6.59a1 1 0 0 1 .205-1.22l1.6-1.6a1 1 0 0 1 1.22-.206l1.91 1.004a7.8 7.8 0 0 1 1.74-.72l.527-2.107A1 1 0 0 1 11.737 1H12Zm-.868 2.5-.39 1.56a1 1 0 0 1-.68.712 5.8 5.8 0 0 0-2.127.882 1 1 0 0 1-1.013.065L5.517 5.9l-.617.617 1.42 2.405a1 1 0 0 1-.065 1.013 5.8 5.8 0 0 0-.882 2.127 1 1 0 0 1-.712.68L3.5 13.13v.74l1.56.39a1 1 0 0 1 .712.68c.196.75.497 1.464.882 2.127a1 1 0 0 1 .065 1.013l-.744 1.405.617.617 1.405-.744a1 1 0 0 1 1.013.065c.663.385 1.378.686 2.127.882a1 1 0 0 1 .68.712l.39 1.56h.874l.39-1.56a1 1 0 0 1 .68-.712 5.8 5.8 0 0 0 2.127-.882 1 1 0 0 1 1.013-.065l1.405.744.617-.617-.744-1.405a1 1 0 0 1 .065-1.013 5.8 5.8 0 0 0 .882-2.127 1 1 0 0 1 .712-.68l1.56-.39v-.874l-1.56-.39a1 1 0 0 1-.712-.68 5.8 5.8 0 0 0-.882-2.127 1 1 0 0 1-.065-1.013l.744-1.405-.617-.617-1.405.744a1 1 0 0 1-1.013-.065 5.8 5.8 0 0 0-2.127-.882 1 1 0 0 1-.68-.712l-.39-1.56h-.874ZM12 8.75a3.25 3.25 0 1 0 0 6.5 3.25 3.25 0 0 0 0-6.5ZM7.25 12a4.75 4.75 0 1 1 9.5 0 4.75 4.75 0 0 1-9.5 0Z"
+              fill="currentColor"/>
+    </svg>
+</button>
+
+<!-- Settings overlay -->
+<div id="settingsOverlay" onclick="settingsOverlayClick(event)">
+    <div id="settingsBox">
+        <h2>Settings</h2>
+        <label class="setting-row">
+            <input type="checkbox" id="settingGrinding" onchange="applySetting('grinding')">
+            <div>
+                <div class="setting-label">Enable Grinding</div>
+                <div class="setting-desc">Shows a grind checkbox and outcome under each card.</div>
+            </div>
+        </label>
+        <label class="setting-row">
+            <input type="checkbox" id="settingShowAll" onchange="applySetting('showAll')">
+            <div>
+                <div class="setting-label">Show All Card Combos</div>
+                <div class="setting-desc">Reveals all combination outcomes in the wheel, including unrecorded ones.
+                </div>
+            </div>
+        </label>
+        <label class="setting-row">
+            <input type="checkbox" id="settingPigment" onchange="applySetting('pigment')">
+            <div>
+                <div class="setting-label">Add Pigment</div>
+                <div class="setting-desc">Adds a new "Other" category with the Pigment card.</div>
+            </div>
+        </label>
+        <label class="setting-row">
+            <input type="checkbox" id="settingMealList" onchange="applySetting('mealList')">
+            <div>
+                <div class="setting-label">Enable Meal List</div>
+                <div class="setting-desc">Adds a meal planning section at the bottom of the page.</div>
+            </div>
+        </label>
+    </div>
+</div>
+
+<header>
+    <h1>Materials</h1>
+    <div class="subtitle">Stonesaga · Field Reference</div>
+    <div class="ornament">◈</div>
+</header>
+
+<div id="wheelWrap">
+    <h2>Combinations — select a card below</h2>
+    <div id="wheel"></div>
+</div>
+
+<p class="hint">Click a card to see all combinations · Click any chip in the wheel to add or edit its description</p>
+
+<div id="gridSections"></div>
+
+<div class="combos-section" id="combosSection">
+    <div class="combos-header" onclick="toggleCombos()">
+        <h2>Recorded Combinations</h2>
+        <div style="flex:1;height:1px;background:var(--parchment-deep)"></div>
+        <span class="combos-toggle">▲</span>
+    </div>
+    <div class="combos-list" id="combosList"></div>
+</div>
+
+<div id="mealSection" style="display:none;max-width:1000px;margin:2rem auto 0;padding:0 2rem">
+    <div style="display:flex;align-items:center;gap:1rem;border-bottom:2px solid var(--parchment-deep);padding-bottom:0.7rem;margin-bottom:1rem">
+        <h2 style="font-family:'Cinzel',serif;font-size:1.1rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--ink)">
+            Meal List</h2>
+        <div style="flex:1;height:1px;background:var(--parchment-deep)"></div>
+    </div>
+    <div id="mealListItems" style="display:flex;flex-direction:column;gap:0.5rem;margin-bottom:1rem"></div>
+    <div style="display:flex;gap:8px">
+        <input id="mealInput"
+               style="flex:1;background:rgba(255,255,255,0.7);border:1.5px dashed var(--parchment-deep);border-radius:6px;padding:0.5rem 0.85rem;font-family:'Crimson Text',Georgia,serif;font-size:1rem;color:var(--ink);outline:none;"
+               placeholder="Add a meal or recipe note…" onkeydown="if(event.key==='Enter')addMeal()">
+        <button onclick="addMeal()"
+                style="font-family:'Cinzel',serif;font-size:0.68rem;letter-spacing:0.1em;text-transform:uppercase;background:var(--gold);color:#fff;border:none;border-radius:4px;padding:5px 16px;cursor:pointer">
+            Add
+        </button>
+    </div>
+</div>
+
+<!-- Modal -->
+<div id="addComboOverlay">
+    <div id="addComboBox">
+        <h3>Combination</h3>
+        <div class="modal-pair" id="modalPair"></div>
+        <input id="modalCraft" class="modal-input" placeholder="Result name (e.g. Sunstone Spear)…">
+        <textarea id="modalDesc" class="modal-input" placeholder="Describe what this combination produces…"
+                  rows="3"></textarea>
+        <div class="modal-btn-row">
+            <button class="modal-cancel" onclick="closeModal()">Cancel</button>
+            <button class="modal-save" onclick="saveFromModal()">Save</button>
+        </div>
+    </div>
+</div>
+
+<footer>Stonesaga Materials Reference · Interactive Edition</footer>
+
+<script>
+    // ── Image data ──
+    const IMG = {
+        0: `public/images/0.png`,
+        1: `public/images/1.png`,
+        2: `public/images/2.png`,
+        3: `public/images/3.png`,
+        4: `public/images/4.png`,
+        5: `public/images/5.png`,
+        6: `public/images/6.png`,
+        7: `public/images/7.png`,
+        8: `public/images/8.png`,
+        9: `public/images/9.png`,
+        10: `public/images/10.png`,
+        11: `public/images/11.png`,
+        12: `public/images/12.png`,
+        13: `public/images/13.png`,
+        14: `public/images/14.png`,
+        15: `public/images/15.png`,
+        16: `public/images/16.png`,
+        17: `public/images/17.png`,
+        18: `public/images/18.png`,
+        19: `public/images/19.png`,
+        20: `public/images/20.png`,
+        21: `public/images/21.png`,
+        22: `public/images/22.png`,
+        23: `public/images/23.png`,
+        24: `public/images/24.png`,
+        25: `public/images/25.png`,
+        26: `public/images/26.png`,
+        27: `public/images/27.png`,
+        28: `public/images/28.png`,
+        29: `public/images/29.png`,
+        30: `public/images/30.png`,
+        31: `public/images/31.png`,
+        32: `public/images/32.png`
+    };
+const a = [
+    {
+        "item": "bone",
+        "type": "animal",
+        "note": "animal__Bone__0",
+        "tool": "",
+        "process_1": "drill",
+        "process_2": "cut",
+        "w": "B2",
+        "n": "Y3",
+        "e": "Y2",
+        "s": "R2",
+        "cols": [
+            "B",
+            "Y",
+            "Y",
+            "R"
+        ],
+        "vals": [
+            "2",
+            "3",
+            "2",
+            "2"
+        ],
+        "codes": [
+            "B2Y2",
+            "Y3R2",
+            "Y2B2",
+            "R2Y3"
+        ]
+    },
+    {
+        "item": "bone, carved",
+        "type": "animal",
+        "note": "animal__Bone__1",
+        "tool": "drill",
+        "process_1": "",
+        "process_2": "",
+        "w": "R1",
+        "n": "R4",
+        "e": "Y3",
+        "s": "Y4",
+        "cols": [
+            "R",
+            "R",
+            "Y",
+            "Y"
+        ],
+        "vals": [
+            "1",
+            "4",
+            "3",
+            "4"
+        ],
+        "codes": [
+            "R1Y3",
+            "R4Y4",
+            "Y3R1",
+            "Y4R4"
+        ]
+    },
+    {
+        "item": "hide",
+        "type": "animal",
+        "note": "animal__Hide__0",
+        "tool": "",
+        "process_1": "drill",
+        "process_2": "cut",
+        "w": "",
+        "n": "",
+        "e": "",
+        "s": "",
+        "cols": [],
+        "vals": [],
+        "codes": []
+    },
+    {
+        "item": "hide, cured",
+        "type": "animal",
+        "note": "animal__Hide__1",
+        "tool": "",
+        "process_1": "",
+        "process_2": "",
+        "w": "B3",
+        "n": "",
+        "e": "R5",
+        "s": "",
+        "cols": [
+            "B",
+            "R"
+        ],
+        "vals": [
+            "3",
+            "5"
+        ],
+        "codes": [
+            "B3R5",
+            "R5B3"
+        ]
+    },
+    {
+        "item": "shell",
+        "type": "animal",
+        "note": "animal__Shell__0",
+        "tool": "",
+        "process_1": "drill",
+        "process_2": "grind",
+        "w": "",
+        "n": "",
+        "e": "",
+        "s": "",
+        "cols": [],
+        "vals": [],
+        "codes": []
+    },
+    {
+        "item": "shell, sharpened",
+        "type": "animal",
+        "note": "animal__Shell__1",
+        "tool": "cut",
+        "process_1": "",
+        "process_2": "",
+        "w": "B6",
+        "n": "Y5",
+        "e": "R3",
+        "s": "R1",
+        "cols": [
+            "B",
+            "Y",
+            "R",
+            "R"
+        ],
+        "vals": [
+            "6",
+            "5",
+            "3",
+            "1"
+        ],
+        "codes": [
+            "B6R3",
+            "Y5R1",
+            "R3B6",
+            "R1Y5"
+        ]
+    },
+    {
+        "item": "guts",
+        "type": "animal",
+        "note": "animal__Guts__0",
+        "tool": "",
+        "process_1": "heat",
+        "process_2": "cut",
+        "w": "",
+        "n": "",
+        "e": "",
+        "s": "",
+        "cols": [],
+        "vals": [],
+        "codes": []
+    },
+    {
+        "item": "guts, cured",
+        "type": "animal",
+        "note": "animal__Guts__1",
+        "tool": "",
+        "process_1": "",
+        "process_2": "",
+        "w": "Y1",
+        "n": "0",
+        "e": "B1",
+        "s": "R3",
+        "cols": [
+            "Y",
+            "0",
+            "B",
+            "R"
+        ],
+        "vals": [
+            "1",
+            "0",
+            "1",
+            "3"
+        ],
+        "codes": [
+            "Y1B1",
+            "00R3",
+            "B1Y1",
+            "R300"
+        ]
+    },
+    {
+        "item": "feather",
+        "type": "animal",
+        "note": "animal__Feather__0",
+        "tool": "",
+        "process_1": "cut",
+        "process_2": "",
+        "w": "0",
+        "n": "",
+        "e": "B1",
+        "s": "",
+        "cols": [
+            "0",
+            "B"
+        ],
+        "vals": [
+            "0",
+            "1"
+        ],
+        "codes": [
+            "00B1",
+            "B100"
+        ]
+    },
+    {
+        "item": "feather, cut",
+        "type": "animal",
+        "note": "animal__Feather__1",
+        "tool": "",
+        "process_1": "",
+        "process_2": "",
+        "w": "Y1",
+        "n": "",
+        "e": "0",
+        "s": "",
+        "cols": [
+            "Y",
+            "0"
+        ],
+        "vals": [
+            "1",
+            "0"
+        ],
+        "codes": [
+            "Y100",
+            "00Y1"
+        ]
+    },
+    {
+        "item": "tooth",
+        "type": "animal",
+        "note": "animal__Tooth__0",
+        "tool": "drill",
+        "process_1": "drill",
+        "process_2": "",
+        "w": "",
+        "n": "",
+        "e": "",
+        "s": "",
+        "cols": [],
+        "vals": [],
+        "codes": []
+    },
+    {
+        "item": "tooth, drilled",
+        "type": "animal",
+        "note": "animal__Tooth__1",
+        "tool": "drill",
+        "process_1": "",
+        "process_2": "",
+        "w": "B2",
+        "n": "Y2",
+        "e": "0",
+        "s": "0",
+        "cols": [
+            "B",
+            "Y",
+            "0",
+            "0"
+        ],
+        "vals": [
+            "2",
+            "2",
+            "0",
+            "0"
+        ],
+        "codes": [
+            "B200",
+            "Y200",
+            "00B2",
+            "00Y2"
+        ]
+    },
+    {
+        "item": "clay",
+        "type": "mineral",
+        "note": "mineral__Clay__0",
+        "tool": "",
+        "process_1": "heat",
+        "process_2": "",
+        "w": "",
+        "n": "",
+        "e": "",
+        "s": "",
+        "cols": [],
+        "vals": [],
+        "codes": []
+    },
+    {
+        "item": "clay, fired",
+        "type": "mineral",
+        "note": "mineral__Clay__1",
+        "tool": "",
+        "process_1": "",
+        "process_2": "",
+        "w": "R6",
+        "n": "",
+        "e": "R6",
+        "s": "",
+        "cols": [
+            "R",
+            "R"
+        ],
+        "vals": [
+            "6",
+            "6"
+        ],
+        "codes": [
+            "R6R6",
+            "R6R6"
+        ]
+    },
+    {
+        "item": "cloudstone",
+        "type": "mineral",
+        "note": "mineral__Cloudstone__0",
+        "tool": "",
+        "process_1": "grind",
+        "process_2": "",
+        "w": "",
+        "n": "",
+        "e": "",
+        "s": "",
+        "cols": [],
+        "vals": [],
+        "codes": []
+    },
+    {
+        "item": "cloudstone, shaped",
+        "type": "mineral",
+        "note": "mineral__Cloudstone__1",
+        "tool": "strike",
+        "process_1": "",
+        "process_2": "",
+        "w": "B5",
+        "n": "R4",
+        "e": "Y4",
+        "s": "B2",
+        "cols": [
+            "B",
+            "R",
+            "Y",
+            "B"
+        ],
+        "vals": [
+            "5",
+            "4",
+            "4",
+            "2"
+        ],
+        "codes": [
+            "B5Y4",
+            "R4B2",
+            "Y4B5",
+            "B2R4"
+        ]
+    },
+    {
+        "item": "riverstone",
+        "type": "mineral",
+        "note": "mineral__Riverstone__0",
+        "tool": "",
+        "process_1": "strike",
+        "process_2": "",
+        "w": "",
+        "n": "",
+        "e": "",
+        "s": "",
+        "cols": [],
+        "vals": [],
+        "codes": []
+    },
+    {
+        "item": "riverstone, flaked",
+        "type": "mineral",
+        "note": "mineral__Riverstone__1",
+        "tool": "cut",
+        "process_1": "",
+        "process_2": "",
+        "w": "R1",
+        "n": "Y4",
+        "e": "Y4",
+        "s": "R3",
+        "cols": [
+            "R",
+            "Y",
+            "Y",
+            "R"
+        ],
+        "vals": [
+            "1",
+            "4",
+            "4",
+            "3"
+        ],
+        "codes": [
+            "R1Y4",
+            "Y4R3",
+            "Y4R1",
+            "R3Y4"
+        ]
+    },
+    {
+        "item": "sunstone",
+        "type": "mineral",
+        "note": "mineral__Sunstone__0",
+        "tool": "grind",
+        "process_1": "grind",
+        "process_2": "",
+        "w": "",
+        "n": "",
+        "e": "",
+        "s": "",
+        "cols": [],
+        "vals": [],
+        "codes": []
+    },
+    {
+        "item": "sunstone, shaped",
+        "type": "mineral",
+        "note": "mineral__Sunstone__1",
+        "tool": "grind",
+        "process_1": "",
+        "process_2": "",
+        "w": "R5",
+        "n": "",
+        "e": "Y6",
+        "s": "",
+        "cols": [
+            "R",
+            "Y"
+        ],
+        "vals": [
+            "5",
+            "6"
+        ],
+        "codes": [
+            "R5Y6",
+            "Y6R5"
+        ]
+    },
+    {
+        "item": "wood",
+        "type": "plant",
+        "note": "plant__Wood__0",
+        "tool": "",
+        "process_1": "heat",
+        "process_2": "cut",
+        "w": "B2",
+        "n": "R2",
+        "e": "Y2",
+        "s": "Y3",
+        "cols": [
+            "B",
+            "R",
+            "Y",
+            "Y"
+        ],
+        "vals": [
+            "2",
+            "2",
+            "2",
+            "3"
+        ],
+        "codes": [
+            "B2Y2",
+            "R2Y3",
+            "Y2B2",
+            "Y3R2"
+        ]
+    },
+    {
+        "item": "wood, hardened",
+        "type": "plant",
+        "note": "plant__Wood__1",
+        "tool": "drill",
+        "process_1": "",
+        "process_2": "",
+        "w": "R1",
+        "n": "R3",
+        "e": "Y2",
+        "s": "Y3",
+        "cols": [
+            "R",
+            "R",
+            "Y",
+            "Y"
+        ],
+        "vals": [
+            "1",
+            "3",
+            "2",
+            "3"
+        ],
+        "codes": [
+            "R1Y2",
+            "R3Y3",
+            "Y2R1",
+            "Y3R3"
+        ]
+    },
+    {
+        "item": "fiber",
+        "type": "plant",
+        "note": "plant__Fiber__0",
+        "tool": "",
+        "process_1": "cut",
+        "process_2": "",
+        "w": "",
+        "n": "",
+        "e": "",
+        "s": "",
+        "cols": [],
+        "vals": [],
+        "codes": []
+    },
+    {
+        "item": "fiber, woven",
+        "type": "plant",
+        "note": "plant__Fiber__1",
+        "tool": "",
+        "process_1": "",
+        "process_2": "",
+        "w": "Y1",
+        "n": "Y5",
+        "e": "B1",
+        "s": "R5",
+        "cols": [
+            "Y",
+            "Y",
+            "B",
+            "R"
+        ],
+        "vals": [
+            "1",
+            "5",
+            "1",
+            "5"
+        ],
+        "codes": [
+            "Y1B1",
+            "Y5R5",
+            "B1Y1",
+            "R5Y5"
+        ]
+    },
+    {
+        "item": "pitch",
+        "type": "plant",
+        "note": "plant__Pitch__0",
+        "tool": "",
+        "process_1": "heat",
+        "process_2": "",
+        "w": "",
+        "n": "",
+        "e": "",
+        "s": "",
+        "cols": [],
+        "vals": [],
+        "codes": []
+    },
+    {
+        "item": "pitch, treated",
+        "type": "plant",
+        "note": "plant__Pitch__1",
+        "tool": "",
+        "process_1": "",
+        "process_2": "",
+        "w": "R5",
+        "n": "",
+        "e": "0",
+        "s": "",
+        "cols": [
+            "R",
+            "0"
+        ],
+        "vals": [
+            "5",
+            "0"
+        ],
+        "codes": [
+            "R500",
+            "00R5"
+        ]
+    },
+    {
+        "item": "moonblood",
+        "type": "rare",
+        "note": "rare__Moonblood__0",
+        "tool": "",
+        "process_1": "moon",
+        "process_2": "",
+        "w": "",
+        "n": "",
+        "e": "",
+        "s": "",
+        "cols": [],
+        "vals": [],
+        "codes": []
+    },
+    {
+        "item": "moonblood, solid",
+        "type": "rare",
+        "note": "rare__Moonblood__1",
+        "tool": "",
+        "process_1": "",
+        "process_2": "",
+        "w": "R1",
+        "n": "R2",
+        "e": "Y6",
+        "s": "S6",
+        "cols": [
+            "R",
+            "R",
+            "Y",
+            "S"
+        ],
+        "vals": [
+            "1",
+            "2",
+            "6",
+            "6"
+        ],
+        "codes": [
+            "R1Y6",
+            "R2S6",
+            "Y6R1",
+            "S6R2"
+        ]
+    },
+    {
+        "item": "coral, dead",
+        "type": "rare",
+        "note": "rare__Coral__0",
+        "tool": "",
+        "process_1": "comet",
+        "process_2": "",
+        "w": "",
+        "n": "",
+        "e": "",
+        "s": "",
+        "cols": [],
+        "vals": [],
+        "codes": []
+    },
+    {
+        "item": "coral, living",
+        "type": "rare",
+        "note": "rare__Coral__1",
+        "tool": "",
+        "process_1": "",
+        "process_2": "",
+        "w": "P6",
+        "n": "P6",
+        "e": "R4",
+        "s": "Y4",
+        "cols": [
+            "P",
+            "P",
+            "R",
+            "Y"
+        ],
+        "vals": [
+            "6",
+            "6",
+            "4",
+            "4"
+        ],
+        "codes": [
+            "P6R4",
+            "P6Y4",
+            "R4P6",
+            "Y4P6"
+        ]
+    },
+    {
+        "item": "silk",
+        "type": "rare",
+        "note": "rare__Silk__0",
+        "tool": "",
+        "process_1": "energy",
+        "process_2": "",
+        "w": "B1",
+        "n": "R3",
+        "e": "Y1",
+        "s": "0",
+        "cols": [
+            "B",
+            "R",
+            "Y",
+            "0"
+        ],
+        "vals": [
+            "1",
+            "3",
+            "1",
+            "0"
+        ],
+        "codes": [
+            "B1Y1",
+            "R300",
+            "Y1B1",
+            "00R3"
+        ]
+    },
+    {
+        "item": "silk, woven",
+        "type": "rare",
+        "note": "rare__Silk__1",
+        "tool": "",
+        "process_1": "",
+        "process_2": "",
+        "w": "B2",
+        "n": "",
+        "e": "R5",
+        "s": "",
+        "cols": [
+            "B",
+            "R"
+        ],
+        "vals": [
+            "2",
+            "5"
+        ],
+        "codes": [
+            "B2R5",
+            "R5B2"
+        ]
+    },
+    {
+        "item": "pigment",
+        "type": "other",
+        "note": "other__Pigment__0",
+        "tool": "",
+        "process_1": "",
+        "process_2": "",
+        "w": "R4",
+        "n": "",
+        "e": "0",
+        "s": "",
+        "cols": [
+            "R",
+            "0"
+        ],
+        "vals": [
+            "4",
+            "0"
+        ],
+        "codes": [
+            "R400",
+            "00R4"
+        ]
+    }
+]
+    const ALL_CARDS_BASE = [{
+        "id": "animal__Bone__0",
+        "name": "Bone",
+        "state": "raw",
+        "imgIdx": 12,
+        "cat": "animal"
+    }, {
+        "id": "animal__Bone__1",
+        "name": "Bone",
+        "state": "carved",
+        "imgIdx": 23,
+        "cat": "animal"
+    }, {
+        "id": "animal__Hide__0",
+        "name": "Hide",
+        "state": "raw",
+        "imgIdx": 0,
+        "cat": "animal"
+    }, {
+        "id": "animal__Hide__1",
+        "name": "Hide",
+        "state": "cured",
+        "imgIdx": 1,
+        "cat": "animal"
+    }, {
+        "id": "animal__Shell__0",
+        "name": "Shell",
+        "state": "raw",
+        "imgIdx": 26,
+        "cat": "animal"
+    }, {
+        "id": "animal__Shell__1",
+        "name": "Shell",
+        "state": "sharpened",
+        "imgIdx": 27,
+        "cat": "animal"
+    }, {
+        "id": "animal__Guts__0",
+        "name": "Guts",
+        "state": "raw",
+        "imgIdx": 30,
+        "cat": "animal"
+    }, {
+        "id": "animal__Guts__1",
+        "name": "Guts",
+        "state": "cured",
+        "imgIdx": 31,
+        "cat": "animal"
+    }, {
+        "id": "animal__Feather__0",
+        "name": "Feather",
+        "state": "raw",
+        "imgIdx": 28,
+        "cat": "animal"
+    }, {
+        "id": "animal__Feather__1",
+        "name": "Feather",
+        "state": "cut",
+        "imgIdx": 29,
+        "cat": "animal"
+    }, {
+        "id": "animal__Tooth__0",
+        "name": "Tooth",
+        "state": "raw",
+        "imgIdx": 2,
+        "cat": "animal"
+    }, {
+        "id": "animal__Tooth__1",
+        "name": "Tooth",
+        "state": "drilled",
+        "imgIdx": 3,
+        "cat": "animal"
+    }, {
+        "id": "mineral__Clay__0",
+        "name": "Clay",
+        "state": "raw",
+        "imgIdx": 6,
+        "cat": "mineral"
+    }, {
+        "id": "mineral__Clay__1",
+        "name": "Clay",
+        "state": "fired",
+        "imgIdx": 7,
+        "cat": "mineral"
+    }, {
+        "id": "mineral__Cloudstone__0",
+        "name": "Cloudstone",
+        "state": "raw",
+        "imgIdx": 4,
+        "cat": "mineral"
+    }, {
+        "id": "mineral__Cloudstone__1",
+        "name": "Cloudstone",
+        "state": "shaped",
+        "imgIdx": 5,
+        "cat": "mineral"
+    }, {
+        "id": "mineral__Riverstone__0",
+        "name": "Riverstone",
+        "state": "raw",
+        "imgIdx": 8,
+        "cat": "mineral"
+    }, {
+        "id": "mineral__Riverstone__1",
+        "name": "Riverstone",
+        "state": "flaked",
+        "imgIdx": 9,
+        "cat": "mineral"
+    }, {
+        "id": "mineral__Sunstone__0",
+        "name": "Sunstone",
+        "state": "raw",
+        "imgIdx": 10,
+        "cat": "mineral"
+    }, {
+        "id": "mineral__Sunstone__1",
+        "name": "Sunstone",
+        "state": "shaped",
+        "imgIdx": 11,
+        "cat": "mineral"
+    }, {"id": "plant__Wood__0", "name": "Wood", "state": "raw", "imgIdx": 13, "cat": "plant"}, {
+        "id": "plant__Wood__1",
+        "name": "Wood",
+        "state": "hardened",
+        "imgIdx": 14,
+        "cat": "plant"
+    }, {
+        "id": "plant__Fiber__0",
+        "name": "Fiber",
+        "state": "raw",
+        "imgIdx": 17,
+        "cat": "plant"
+    }, {
+        "id": "plant__Fiber__1",
+        "name": "Fiber",
+        "state": "woven",
+        "imgIdx": 18,
+        "cat": "plant"
+    }, {
+        "id": "plant__Pitch__0",
+        "name": "Pitch",
+        "state": "raw",
+        "imgIdx": 19,
+        "cat": "plant"
+    }, {
+        "id": "plant__Pitch__1",
+        "name": "Pitch",
+        "state": "treated",
+        "imgIdx": 20,
+        "cat": "plant"
+    }, {
+        "id": "rare__Moonblood__0",
+        "name": "Moonblood",
+        "state": "raw",
+        "imgIdx": 15,
+        "cat": "rare"
+    }, {
+        "id": "rare__Moonblood__1",
+        "name": "Moonblood",
+        "state": "solid",
+        "imgIdx": 16,
+        "cat": "rare"
+    }, {"id": "rare__Coral__0", "name": "Coral", "state": "raw", "imgIdx": 21, "cat": "rare"}, {
+        "id": "rare__Coral__1",
+        "name": "Coral",
+        "state": "dead/living",
+        "imgIdx": 22,
+        "cat": "rare"
+    }, {"id": "rare__Silk__0", "name": "Silk", "state": "raw", "imgIdx": 24, "cat": "rare"}, {
+        "id": "rare__Silk__1",
+        "name": "Silk",
+        "state": "woven",
+        "imgIdx": 25,
+        "cat": "rare"
+    }, {
+        "id": "other__Pigment__0",
+        "name": "Pigment",
+        "state": "raw",
+        "imgIdx": 32,
+        "cat": "other"
+    }, {"id": "other__Pigment__1", "name": "Pigment", "state": "ground", "imgIdx": 32, "cat": "other"}];
+a.forEach(x=>{
+    let index = ALL_CARDS_BASE.findIndex(y=>y.id === x.note);
+    console.log('index',index)
+    ALL_CARDS_BASE[index].cols = x.cols
+    // ALL_CARDS_BASE[index].vals = x.vals
+} )
+    console.log(ALL_CARDS_BASE[0])
+    console.table(ALL_CARDS_BASE)
+    const BUILTIN = {
+        "animal__Bone__0:0|animal__Hide__0:0": {
+            "craft": "Bone Needle & Thread",
+            "desc": "The long bone split into a needle; raw sinew threads through the eye."
+        },
+        "animal__Bone__1:0|animal__Hide__1:0": {
+            "craft": "Stitched Leather Wraps",
+            "desc": "Carved bone needles pierce the cured hide \u2014 tight leather bindings."
+        },
+        "animal__Hide__1:0|plant__Wood__1:0": {
+            "craft": "Drum",
+            "desc": "Cured hide stretched taut over a hardened wooden frame."
+        },
+        "animal__Shell__1:0|animal__Tooth__1:0": {
+            "craft": "Ornamental Clasp",
+            "desc": "A sharpened shell edge slots into a drilled tooth hole."
+        },
+        "animal__Guts__1:0|plant__Wood__1:0": {
+            "craft": "Bowstring & Stave",
+            "desc": "Cured gut wrapped and dried on the hardened stave."
+        },
+        "animal__Feather__1:0|plant__Wood__0:0": {
+            "craft": "Arrow Shaft",
+            "desc": "A cut flight feather fletched onto a straight twig."
+        },
+        "mineral__Riverstone__1:0|plant__Wood__1:0": {
+            "craft": "Flint Knife",
+            "desc": "A flaked riverstone blade hafted into a hardened-wood handle."
+        },
+        "mineral__Clay__1:0|plant__Pitch__1:0": {
+            "craft": "Sealed Vessel",
+            "desc": "Fired clay walls waterproofed with treated pitch."
+        },
+        "mineral__Cloudstone__1:0|rare__Moonblood__1:0": {
+            "craft": "Spirit Focus",
+            "desc": "A shaped cloudstone set in hardened moonblood resin."
+        },
+        "mineral__Sunstone__1:0|rare__Silk__1:0": {
+            "craft": "Sunstone Pendant",
+            "desc": "A shaped sunstone wrapped in woven silk cord."
+        },
+        "rare__Coral__0:0|rare__Moonblood__0:0": {
+            "craft": "Tide Offering",
+            "desc": "Dead coral placed in a bowl of moonblood liquid."
+        },
+        "animal__Hide__1:0|plant__Fiber__1:0": {
+            "craft": "Padded Vest",
+            "desc": "Woven fiber sandwiched between cured hide."
+        },
+        "mineral__Riverstone__1:0|plant__Pitch__1:0": {
+            "craft": "Hafted Spearhead",
+            "desc": "A flaked stone point locked into a split shaft with pitch."
+        },
+        "animal__Bone__0:0|plant__Wood__0:0": {
+            "craft": "Simple Splint",
+            "desc": "A straight bone bound alongside a twig to reinforce a weak shaft."
+        },
+        "mineral__Sunstone__0:0|mineral__Riverstone__0:0": {
+            "craft": "Grinding Kit",
+            "desc": "The rough riverstone grinds against the flat sunstone \u2014 used to crush seeds or sharpen soft edges."
+        },
+        "animal__Feather__0:0|rare__Silk__1:0": {
+            "craft": "Ceremonial Fan",
+            "desc": "Loose feathers woven into silk thread, fanned out and tied at the spine."
+        },
+        "animal__Tooth__0:0|plant__Pitch__1:0": {
+            "craft": "Pitch-Dipped Fang",
+            "desc": "A raw tooth dipped in treated pitch \u2014 worn as a slow-release applicator."
+        },
+        "animal__Guts__0:0|plant__Fiber__1:0": {
+            "craft": "Braided Cord",
+            "desc": "Raw gut twisted together with woven fiber \u2014 stronger than either alone."
+        },
+        "rare__Coral__1:0|rare__Silk__1:0": {
+            "craft": "Living Silk Veil",
+            "desc": "Living coral polyps woven into silk \u2014 the silk slowly takes on bioluminescent properties."
+        },
+        "rare__Moonblood__1:0|plant__Pitch__1:0": {
+            "craft": "Moonpitch Seal",
+            "desc": "Solid moonblood dissolved in treated pitch \u2014 sets into a jet-black waterproof resin."
+        },
+        "other__Pigment__0:0|mineral__Clay__0:0": {
+            "craft": "Cave Paint Base",
+            "desc": "Raw pigment mixed with wet clay \u2014 applied to stone surfaces with a fingertip or twig brush."
+        },
+        "other__Pigment__0:0|animal__Hide__1:0": {
+            "craft": "Dyed Leather",
+            "desc": "Pigment rubbed into cured hide and sealed. The colour bonds permanently to the leather surface."
+        },
+        "other__Pigment__1:0|rare__Silk__1:0": {
+            "craft": "Silk Dye",
+            "desc": "Ground pigment dissolved into water and applied to woven silk \u2014 produces vivid, lasting colour."
+        },
+        "other__Pigment__1:0|plant__Pitch__1:0": {
+            "craft": "Pigment Ink",
+            "desc": "Ground pigment mixed into treated pitch \u2014 thick, waterproof ink used for marking tools and hides."
+        }
+    };
+    const GRINDING_DEFAULTS = {
+        "animal__Bone__0": "Crushed bone powder \u2014 mixed with fat for wound dressing.",
+        "animal__Hide__0": "Scraped hide dust \u2014 no useful grinding outcome.",
+        "animal__Shell__0": "Shell grit \u2014 used as abrasive or mixed into clay for temper.",
+        "animal__Guts__0": "Ground guts \u2014 yields a foul paste with some adhesive properties.",
+        "animal__Feather__0": "Feather powder \u2014 no structural use; may be ceremonial.",
+        "animal__Tooth__0": "Tooth powder \u2014 mild abrasive, used for cleaning or polishing.",
+        "animal__Bone__1": "Ground carved bone \u2014 fine powder for pigment fixer.",
+        "animal__Hide__1": "Hide shavings \u2014 usable as fine leather filler.",
+        "animal__Shell__1": "Sharpened shell dust \u2014 very fine cutting abrasive.",
+        "animal__Guts__1": "Cured gut powder \u2014 stiffening agent for fibre.",
+        "animal__Feather__1": "Cut quill powder \u2014 lightweight filler material.",
+        "animal__Tooth__1": "Drilled tooth dust \u2014 fine dental abrasive.",
+        "mineral__Clay__0": "Dry clay powder \u2014 ready to mix with water or pigment.",
+        "mineral__Cloudstone__0": "Cloudstone dust \u2014 mildly luminescent; used in rare ceremonies.",
+        "mineral__Riverstone__0": "Riverstone grit \u2014 coarse abrasive for tool sharpening.",
+        "mineral__Sunstone__0": "Sunstone powder \u2014 warm-coloured pigment base, used in body paint.",
+        "mineral__Clay__1": "Fired clay dust \u2014 inert filler, no reactive properties.",
+        "mineral__Cloudstone__1": "Shaped cloudstone powder \u2014 concentrated glow dust.",
+        "mineral__Riverstone__1": "Flaked stone dust \u2014 very fine edge-honing compound.",
+        "mineral__Sunstone__1": "Shaped sunstone powder \u2014 premium pigment for ritual use.",
+        "plant__Wood__0": "Wood shavings \u2014 tinder; burns quickly when dry.",
+        "plant__Fiber__0": "Fiber dust \u2014 poor structural use; softens other materials.",
+        "plant__Pitch__0": "Raw pitch flakes \u2014 dissolve in water, yields a thin resin.",
+        "plant__Wood__1": "Hardened wood dust \u2014 filler for pitch sealant.",
+        "plant__Fiber__1": "Woven fiber powder \u2014 mixed into clay for reinforcement.",
+        "plant__Pitch__1": "Treated pitch powder \u2014 re-mixed with water restores adhesive.",
+        "rare__Moonblood__0": "Moonblood crystals \u2014 extremely potent; handle with care.",
+        "rare__Coral__0": "Dead coral dust \u2014 calcium-rich; used as wound coagulant.",
+        "rare__Silk__0": "Raw silk powder \u2014 near-invisible; used as a dry lubricant.",
+        "rare__Moonblood__1": "Solid moonblood powder \u2014 ritual-grade, used sparingly in rites.",
+        "rare__Coral__1": "Living coral residue \u2014 bioluminescent dust; toxic if ingested.",
+        "rare__Silk__1": "Woven silk powder \u2014 ultra-fine, used in delicate pigment mixing.",
+        "other__Pigment__0": "Ground pigment \u2014 the standard processed form. Mixes readily with any binder.",
+        "other__Pigment__1": "Finely ground pigment \u2014 maximum colour intensity per unit."
+    };
+
+    // Settings state
+    const settings = {
+        grinding: false,
+        showAll: false,
+        pigment: false,
+        mealList: false,
+    };
+
+    // Load persisted settings
+    (function () {
+        try {
+            const s = JSON.parse(localStorage.getItem('stonesaga_settings') || '{}');
+            Object.assign(settings, s);
+            document.getElementById('settingGrinding').checked = !!settings.grinding;
+            document.getElementById('settingShowAll').checked = !!settings.showAll;
+            document.getElementById('settingPigment').checked = !!settings.pigment;
+            document.getElementById('settingMealList').checked = !!settings.mealList;
+        } catch {
+        }
+    })();
+
+    function saveSettings() {
+        localStorage.setItem('stonesaga_settings', JSON.stringify(settings));
+    }
+
+    function applySetting(key) {
+        settings[key] = document.getElementById('setting' + key.charAt(0).toUpperCase() + key.slice(1)).checked;
+        saveSettings();
+        if (key === 'pigment') rebuildGrid();
+        if (key === 'grinding') toggleGrindingUI();
+        if (key === 'mealList') document.getElementById('mealSection').style.display = settings.mealList ? '' : 'none';
+        if (key === 'showAll') renderWheel();
+    }
+
+    function toggleSettings() {
+        const el = document.getElementById('settingsOverlay');
+        const btn = document.getElementById('settingsBtn');
+        const isOpen = el.classList.contains('open');
+        el.classList.toggle('open', !isOpen);
+        if (!isOpen) {
+            btn.classList.add('spinning');
+            setTimeout(() => btn.classList.remove('spinning'), 500);
+        }
+    }
+
+    console.log('toggleSettings', toggleSettings())
+
+    function settingsOverlayClick(e) {
+        if (e.target === e.currentTarget) toggleSettings();
+    }
+
+    // ── Card data (dynamic with pigment) ──
+    function getCards() {
+        const cards = [...ALL_CARDS_BASE];
+        if (settings.pigment) {
+            if (!cards.find(c => c.id === 'other__Pigment__0')) {
+                cards.push({id: 'other__Pigment__0', name: 'Pigment', state: 'raw', imgIdx: 32, cat: 'other'});
+                cards.push({id: 'other__Pigment__1', name: 'Pigment', state: 'ground', imgIdx: 32, cat: 'other'});
+            }
+        }
+        return cards;
+    }
+
+    function cardById(id) {
+        return getCards().find(c => c.id === id);
+    }
+
+    // ── Combo helpers ──
+    function comboKey(id0, id1) {
+        const a = id0 + ':0', b = id1 + ':0';
+        return a <= b ? a + '|' + b : b + '|' + a;
+    }
+
+    function parseKey(key) {
+        const [p0, p1] = key.split('|');
+        const p = s => {
+            const i = s.lastIndexOf(':');
+            return {id: s.slice(0, i), rot: parseInt(s.slice(i + 1))}
+        };
+        return [p(p0), p(p1)];
+    }
+
+    function loadUser() {
+        try {
+            return JSON.parse(localStorage.getItem('stonesaga_combos_v2') || '{}')
+        }
+
+    catch
+        {
+            return {}
+        }
+    }
+
+    function saveUser(key, craft, desc) {
+        const d = loadUser();
+        d[key] = {craft: craft || null, desc};
+        localStorage.setItem('stonesaga_combos_v2', JSON.stringify(d));
+        renderWheel();
+        renderCombosList();
+    }
+
+    function deleteUser(key) {
+        const d = loadUser();
+        delete d[key];
+        localStorage.setItem('stonesaga_combos_v2', JSON.stringify(d));
+        renderWheel();
+        renderCombosList();
+    }
+
+    function lookup(key) {
+        if (BUILTIN[key]) return {...BUILTIN[key], key, custom: false};
+        const u = loadUser();
+        if (u[key]) return {...u[key], key, custom: true};
+        return null;
+    }
+
+    function allCombos() {
+        const all = [];
+        Object.entries(BUILTIN).forEach(([k, v]) => all.push({...v, key: k, custom: false}));
+        Object.entries(loadUser()).forEach(([k, v]) => all.push({...v, key: k, custom: true}));
+        return all;
+    }
+
+    // ── Selected card ──
+    let selectedId = null;
+
+    function selectCard(id) {
+        selectedId = (selectedId === id) ? null : id;
+        document.querySelectorAll('.card').forEach(el => el.classList.toggle('selected', el.dataset.id === selectedId));
+        renderWheel();
+    }
+
+    // ── Wheel ──
+    const CAT_ZONE = {animal: 'top', mineral: 'right', plant: 'bottom', rare: 'left', other: 'bottom'};
+
+    function chipHTML(partnerCard) {
+        const key = comboKey(selectedId, partnerCard.id);
+        const combo = lookup(key);
+        const src = IMG[partnerCard.imgIdx];
+        const imgTag = src
+            ? `<img class="chip-img" src="${src}" alt="${partnerCard.name}">`
+            : `<div class="chip-img" style="background:#aaa"></div>`;
+        let resClass, resText;
+        if (combo && combo.craft) {
+            resClass = 'known';
+            resText = combo.craft;
+        } else if (combo && combo.desc) {
+            resClass = 'known';
+            resText = '✓';
+        } else if (settings.showAll) {
+            resClass = 'unknown';
+            resText = 'Unknown';
+        } else {
+            resClass = 'unknown';
+            resText = '?';
+        }
+        const sk = key.replace(/`/g, '\`');
+        return `<div class="combo-chip" onclick="openModal(\`${sk}\`)" title="${partnerCard.name} (${partnerCard.state}) — click to edit">
+    ${imgTag}
+    <div class="chip-name">${partnerCard.name}</div>
+    <div class="chip-result ${resClass}">${resText}</div>
+  </div>`;
+    }
+
+    function zoneChips(cards) {
+        if (!selectedId) return `<span style="color:var(--ink-light);font-style:italic;font-size:0.78rem;padding:6px 0">—</span>`;
+        return cards.map(c => chipHTML(c)).join('');
+    }
+
+    function renderWheel() {
+        const wheel = document.getElementById('wheel');
+        const sel = selectedId ? cardById(selectedId) : null;
+        const cards = getCards();
+
+        const zones = {top: [], right: [], bottom: [], left: []};
+        cards.forEach(c => {
+            if (c.id === selectedId) return; // skip self in zone but still show as chip
+            const z = CAT_ZONE[c.cat] || 'top';
+            zones[z].push(c);
+        });
+        // Include same card again so same-material combos show
+        if (sel) cards.filter(c => c.id === selectedId).forEach(c => {
+            // Already included via all cards; just don't skip — actually re-add to correct zone
+        });
+        // Simpler: include all cards including selected for chips (some games allow self-combo)
+        const allForZones = {top: [], right: [], bottom: [], left: []};
+        cards.forEach(c => {
+            const z = CAT_ZONE[c.cat] || 'top';
+            allForZones[z].push(c);
+        });
+
+        let centerHTML;
+        if (sel) {
+            const src = IMG[sel.imgIdx];
+            centerHTML = `<div class="center-card ${sel.cat}"><div class="center-card-bg"></div>${src ? `<img src="${src}" alt="${sel.name}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover">` : ''}</div><div class="center-name">${sel.name}</div><div class="center-state">${sel.state}</div>`;
+        } else {
+            centerHTML = `<div class="center-empty"><span style="font-size:2rem;opacity:0.25">◈</span>Select a card</div>`;
+        }
+
+        const catLabels = {animal: 'Animal', mineral: 'Mineral', plant: 'Plant', rare: 'Rare', other: 'Other'};
+        const catClasses = {animal: 'animal', mineral: 'mineral', plant: 'plant', rare: 'rare', other: 'other'};
+
+        // Group chips by category within each zone
+        function zoneCatChips(zoneName) {
+            if (!selectedId) return `<span style="color:var(--ink-light);font-style:italic;font-size:0.78rem;padding:6px">—</span>`;
+            const zCards = allForZones[zoneName];
+            if (!zCards.length) return '';
+            const byCat = {};
+            zCards.forEach(c => {
+                (byCat[c.cat] || (byCat[c.cat] = [])).push(c);
+            });
+            return Object.entries(byCat).map(([cat, cs]) =>
+                `<div class="section-label ${cat}">${catLabels[cat] || cat}</div>` + cs.map(c => chipHTML(c)).join('')
+            ).join('');
+        }
+
+        wheel.innerHTML = `
+    <div class="wheel-top">${zoneCatChips('top')}</div>
+    <div class="wheel-left">${zoneCatChips('left')}</div>
+    <div class="wheel-center">${centerHTML}</div>
+    <div class="wheel-right">${zoneCatChips('right')}</div>
+    <div class="wheel-bottom">${zoneCatChips('bottom')}</div>`;
+    }
+
+    // ── Modal ──
+    let modalKey = null;
+
+    function openModal(key) {
+        if (!selectedId) return;
+        modalKey = key;
+        const [a, b] = parseKey(key);
+        const ca = cardById(a.id), cb = cardById(b.id);
+        const existing = lookup(key) || {};
+        const tA = ca && IMG[ca.imgIdx] ? `<img class="modal-thumb" src="${IMG[ca.imgIdx]}" alt="${ca.name}">` : '';
+        const tB = cb && IMG[cb.imgIdx] ? `<img class="modal-thumb" src="${IMG[cb.imgIdx]}" alt="${cb.name}">` : '';
+        document.getElementById('modalPair').innerHTML = `${tA}<div class="modal-names">${ca?.name || a.id}<br><span style="color:var(--ink-light)">+</span><br>${cb?.name || b.id}</div>${tB}`;
+        document.getElementById('modalCraft').value = existing.craft || '';
+        document.getElementById('modalDesc').value = existing.desc || '';
+        document.getElementById('addComboOverlay').classList.add('open');
+        setTimeout(() => document.getElementById('modalCraft').focus(), 60);
+    }
+
+    function closeModal() {
+        document.getElementById('addComboOverlay').classList.remove('open');
+        modalKey = null;
+    }
+
+    function saveFromModal() {
+        const craft = document.getElementById('modalCraft').value.trim();
+        const desc = document.getElementById('modalDesc').value.trim();
+        if (!desc && !craft) {
+            closeModal();
+            return;
+        }
+        saveUser(modalKey, craft, desc || craft);
+        closeModal();
+    }
+
+    document.getElementById('addComboOverlay').addEventListener('click', e => {
+        if (e.target === e.currentTarget) closeModal();
+    });
+    document.addEventListener('keydown', e => {
+        if (e.key === 'Escape') {
+            closeModal();
+            if (document.getElementById('settingsOverlay').classList.contains('open')) toggleSettings();
+        }
+    });
+
+    // ── Grinding ──
+    function loadGrind() {
+        try {
+            return JSON.parse(localStorage.getItem('stonesaga_grind') || '{}')
+        } catch {
+            return {}
+        }
+    }
+
+    function saveGrind(d) {
+        localStorage.setItem('stonesaga_grind', JSON.stringify(d));
+    }
+
+    function toggleGrindingUI() {
+        document.querySelectorAll('.grind-wrap').forEach(w => {
+            w.style.display = settings.grinding ? '' : 'none';
+        });
+    }
+
+    function onGrindCheck(cardId, checked) {
+        const d = loadGrind();
+        d[cardId] = d[cardId] || {};
+        d[cardId].checked = checked;
+        saveGrind(d);
+        const wrap = document.querySelector(`.grind-wrap[data-id="${cardId}"]`);
+        if (wrap) {
+            const txt = wrap.querySelector('.grind-text');
+            txt.classList.toggle('visible', checked);
+        }
+    }
+
+    function onGrindText(cardId, value) {
+        const d = loadGrind();
+        d[cardId] = d[cardId] || {};
+        d[cardId].text = value;
+        saveGrind(d);
+    }
+
+    // ── Grid build ──
+    function buildGrid() {
+        const container = document.getElementById('gridSections');
+        container.innerHTML = '';
+        const catOrder = ['animal', 'mineral', 'plant', 'rare'];
+        if (settings.pigment) catOrder.push('other');
+        const catLabels = {animal: 'Animal', mineral: 'Mineral', plant: 'Plant', rare: 'Rare', other: 'Other'};
+        const cards = getCards();
+        const grindData = loadGrind();
+
+        catOrder.forEach(cat => {
+            const catCards = cards.filter(c => c.cat === cat);
+            const names = [...new Set(catCards.map(c => c.name))];
+
+            const groupsHTML = names.map(name => {
+                const pair = catCards.filter(c => c.name === name);
+                const stateLabel = pair.length > 1 ? pair[1].state : pair[0].state;
+                const cardsHTML = pair.map(c => {
+                    const src = IMG[c.imgIdx];
+                    const art = src ? `<img class="card-art" src="${src}" alt="${c.name}" draggable="false">` : '';
+                    const gd = grindData[c.id] || {};
+                    const gChecked = gd.checked ? 'checked' : '';
+                    const gText = gd.text !== undefined ? gd.text : (GRINDING_DEFAULTS[c.id] || '');
+                    const gVisible = gd.checked ? 'visible' : '';
+                    const grindHTML = `<div class="grind-wrap" data-id="${c.id}" style="${settings.grinding ? '' : 'display:none'}">
+          <label class="grind-check-row">
+            <input type="checkbox" ${gChecked} onchange="onGrindCheck('${c.id}',this.checked)"> Grind
+          </label>
+          <textarea class="grind-text ${gVisible}" rows="2" placeholder="Grinding outcome…" onchange="onGrindText('${c.id}',this.value)" onfocus="onGrindText('${c.id}',this.value)">${gText}</textarea>
+        </div>`;
+                    return `<div style="display:flex;flex-direction:column;align-items:center;gap:0">
+          <div class="card ${cat}" data-id="${c.id}" onclick="selectCard('${c.id}')" title="${c.name} (${c.state})">
+            <div class="card-bg"></div>${art}<div class="card-border-overlay"></div>
+          </div>
+          ${grindHTML}
+        </div>`;
+                }).join('');
+
+                return `<div class="material-group">
+        <div class="material-name">${name}</div>
+        <div class="material-state">${stateLabel}</div>
+        <div class="cards-pair">${cardsHTML}</div>
+      </div>`;
+            }).join('');
+
+            const section = document.createElement('div');
+            section.className = 'section';
+            section.dataset.cat = cat;
+            section.innerHTML = `
+      <div class="category-header" onclick="toggleCategory(this)">
+        <span class="category-label ${cat}">${catLabels[cat]}</span>
+        <div class="category-rule"></div>
+        <span class="cat-toggle-icon">▲</span>
+      </div>
+      <div class="card-grid">${groupsHTML}</div>`;
+            container.appendChild(section);
+        });
+
+        // Re-apply selected highlight
+        if (selectedId) {
+            const el = document.querySelector(`.card[data-id="${selectedId}"]`);
+            if (el) el.classList.add('selected');
+        }
+
+        requestAnimationFrame(() => {
+            document.querySelectorAll('.card-grid').forEach(g => {
+                g.style.height = g.scrollHeight + 'px';
+                setTimeout(() => {
+                    if (!g.classList.contains('is-collapsed')) g.style.height = 'auto';
+                }, 50);
+            });
+        });
+    }
+
+    function rebuildGrid() {
+        buildGrid();
+        renderWheel();
+        renderCombosList();
+    }
+
+    // ── Collapse ──
+    function expandEl(el) {
+        el.classList.remove('is-collapsed');
+        el.style.height = el.scrollHeight + 'px';
+        el.addEventListener('transitionend', function h() {
+            el.style.height = 'auto';
+            el.removeEventListener('transitionend', h);
+        }, {once: true});
+    }
+
+    function collapseEl(el) {
+        el.style.height = el.scrollHeight + 'px';
+        el.offsetHeight;
+        el.classList.add('is-collapsed');
+        el.style.height = '0px';
+    }
+
+    function toggleCategory(headerEl) {
+        const g = headerEl.nextElementSibling, icon = headerEl.querySelector('.cat-toggle-icon');
+        if (g.classList.contains('is-collapsed')) {
+            expandEl(g);
+            icon.style.transform = 'rotate(0deg)';
+        } else {
+            collapseEl(g);
+            icon.style.transform = 'rotate(180deg)';
+        }
+    }
+
+    function toggleCombos() {
+        const l = document.getElementById('combosList'), icon = document.querySelector('.combos-toggle');
+        if (l.classList.contains('is-collapsed')) {
+            expandEl(l);
+            icon.style.transform = 'rotate(0deg)';
+        } else {
+            collapseEl(l);
+            icon.style.transform = 'rotate(180deg)';
+        }
+    }
+
+    // ── Combos list ──
+    function renderCombosList() {
+        const container = document.getElementById('combosList');
+        const all = allCombos();
+        if (!all.length) {
+            container.innerHTML = '<div class="combos-empty">No combinations recorded yet.</div>';
+            return;
+        }
+        container.innerHTML = all.map(entry => {
+            const [a, b] = parseKey(entry.key);
+            const ca = cardById(a.id) || {}, cb = cardById(b.id) || {};
+            const srcA = IMG[ca.imgIdx], srcB = IMG[cb.imgIdx];
+            const tA = srcA ? `<img class="combo-thumb" src="${srcA}" alt="${ca.name || ''}">` : ca.name || a.id;
+            const tB = srcB ? `<img class="combo-thumb" src="${srcB}" alt="${cb.name || ''}">` : cb.name || b.id;
+            const craft = entry.craft ? `<div class="craft-tag">${entry.craft}</div>` : '';
+            const del = entry.custom ? `<button class="combo-del-btn" onclick="deleteUser('${entry.key.replace(/'/g, "\'")}')" title="Delete">✕</button>` : `<span class="combo-builtin-badge">built-in</span>`;
+            return `<div class="combo-entry">
+      <div class="combo-entry-cards">${tA}<span style="color:var(--ink-light);padding:0 2px;font-size:0.9rem">+</span>${tB}</div>
+      <div>${craft}<div style="font-size:0.7rem;color:var(--ink-light);margin-top:2px">${ca.name || ''} + ${cb.name || ''}</div></div>
+      <div class="combo-entry-desc">${entry.desc || ''}</div>
+      <div class="combo-entry-actions">${del}</div>
+    </div>`;
+        }).join('');
+    }
+
+    // ── Meal list ──
+    function loadMeals() {
+        try {
+            return JSON.parse(localStorage.getItem('stonesaga_meals') || '[]')
+        } catch {
+            return []
+        }
+    }
+
+    function saveMeals(m) {
+        localStorage.setItem('stonesaga_meals', JSON.stringify(m));
+    }
+
+    function renderMeals() {
+        const meals = loadMeals();
+        document.getElementById('mealListItems').innerHTML = meals.length
+            ? meals.map((m, i) => `<div style="display:flex;align-items:center;gap:8px;padding:6px 8px;background:rgba(255,255,255,0.4);border-radius:5px;border:1px solid var(--parchment-deep)">
+        <span style="flex:1;font-size:0.95rem">${m}</span>
+        <button onclick="deleteMeal(${i})" style="background:none;border:none;cursor:pointer;color:var(--ink-light);font-size:0.8rem" title="Remove">✕</button>
+      </div>`).join('')
+            : '<div style="color:var(--ink-light);font-style:italic;font-size:0.9rem">No meals added yet.</div>';
+    }
+
+    function addMeal() {
+        const inp = document.getElementById('mealInput');
+        const val = inp.value.trim();
+        if (!val) return;
+        const m = loadMeals();
+        m.push(val);
+        saveMeals(m);
+        inp.value = '';
+        renderMeals();
+    }
+
+    function deleteMeal(i) {
+        const m = loadMeals();
+        m.splice(i, 1);
+        saveMeals(m);
+        renderMeals();
+    }
+
+    // ── Init ──
+    document.getElementById('mealSection').style.display = settings.mealList ? '' : 'none';
+    buildGrid();
+    renderWheel();
+    renderCombosList();
+    renderMeals();
+
+</script>
+</body>
+</html>

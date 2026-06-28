@@ -1,4 +1,5 @@
 
+// TODO: Gör endast en bild selekterbar. Runtomden ska visas alla kopplingar som kan göras.
 // TODO: The list should show crafted (discovered) items and all known recepies.
 // TODO: A switch in settings should enable "read all recepies on cards" and not only discovered.
 // TODO: Grinding should be enabled when the structure is built (setting with only structure code enabled)
@@ -18,8 +19,8 @@
 // TODO: OLD clearer show list of items created and their recepies
 // TODO: DUPLICATE sort list of items
 // TODO: DONE Press combo in list to load two slots
+// TODO: DONE Lägg bilder i egen katalog
 
-// TODO: Lägg bilder i egen katalog
 
 // Instruktion:
 // kör, kopiera allt innehåll i ls.txt
