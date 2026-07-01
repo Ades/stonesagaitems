@@ -10,7 +10,7 @@
           rel="stylesheet">
     <style>
         @font-face {font-family:'Trattatello'; src:url(Trattatello.ttf)}
-        .trattatello {font-family:'Trattatello';}
+        /*.trattatello {font-family:'Trattatello';}*/
 
         *, *::before, *::after {
             box-sizing: border-box;
@@ -1012,6 +1012,75 @@
             opacity: 0.85
         }
 
+        /* ── Spectacular drum-hit lightshow (triggered on known combo edit) ── */
+        .lightshow-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 600;
+            pointer-events: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden
+        }
+
+        .ls-flash {
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at center, rgba(255, 248, 220, 0.95) 0%, rgba(255, 210, 120, 0.55) 25%, rgba(255, 180, 60, 0) 60%);
+            animation: lsFlash 0.55s ease-out forwards;
+            mix-blend-mode: screen
+        }
+
+        @keyframes lsFlash {
+            0% {
+                opacity: 0;
+                transform: scale(0.3)
+            }
+            10% {
+                opacity: 1;
+                transform: scale(1)
+            }
+            100% {
+                opacity: 0;
+                transform: scale(1.6)
+            }
+        }
+
+        .ls-burst-wrap {
+            position: relative;
+            width: 0;
+            height: 0
+        }
+
+        .ls-spark {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: var(--size);
+            height: var(--size);
+            border-radius: 50%;
+            background: var(--color);
+            box-shadow: 0 0 10px 2px var(--color), 0 0 22px 4px var(--color);
+            opacity: 0;
+            animation: lsSpark 0.65s cubic-bezier(.18, .86, .36, 1) var(--delay) forwards
+        }
+
+        @keyframes lsSpark {
+            0% {
+                opacity: 0;
+                transform: translate(-50%, -50%) rotate(var(--angle)) translateX(0) scale(0.4)
+            }
+            12% {
+                opacity: 1;
+                transform: translate(-50%, -50%) rotate(var(--angle)) translateX(calc(var(--dist) * 0.18)) scale(1.15)
+            }
+            100% {
+                opacity: 0;
+                transform: translate(-50%, -50%) rotate(var(--angle)) translateX(var(--dist)) scale(0.5)
+            }
+        }
+
         /* ── Hover info overlay beside settings cog ── */
         #hoverInfo {
             display: none;
@@ -1119,7 +1188,7 @@
         }
 
         textarea.modal-input {
-            min-height: 65px;
+            min-height: 165px;
             resize: vertical
         }
 
@@ -1334,7 +1403,7 @@
         31: `public/images/31.png`,
         32: `public/images/32.png`
     };
-const a = [
+const materials = [
     {
         "item": "bone",
         "type": "animal",
@@ -2281,7 +2350,7 @@ const a = [
     }
     //, {"id": "other__Pigment__1", "name": "Pigment", "state": "ground", "imgIdx": 32, "cat": "other"}
 ];
-a.forEach(x=>{
+materials.forEach(x=>{
     let index = ALL_CARDS_BASE.findIndex(y=>y.id === x.note);
     // console.log('index',index)
     ALL_CARDS_BASE[index].cols = [x.w.substring(0,1),x.n.substring(0,1),x.e.substring(0,1),x.s.substring(0,1)]
@@ -2580,7 +2649,7 @@ a.forEach(x=>{
         let key, key2
 
             key = comboKey(partnerCard.id, selectedId, cardRot1, selectedRot1)
-            key2 = comboKey(selectedId, partnerCard.id, selectedRot2, cardRot2)
+            // key2 = comboKey(selectedId, partnerCard.id, selectedRot2, cardRot2)
         // if (zoneName === 'left') {
         //     key = comboKey(partnerCard.id, selectedId, cardRot1, selectedRot1)
         //     key2 = comboKey(selectedId, partnerCard.id, selectedRot2, cardRot2)
@@ -2743,7 +2812,7 @@ a.forEach(x=>{
             craftLine = `<div class="result-craft is-unknown">Unknown Combination</div>`;
             descLine = `<div class="result-desc">No description has been recorded for this pairing yet.</div>`;
         }
-        console.log('key',key)
+        //console.log('key',key)
 
         document.getElementById('resultBox').innerHTML = `
     <div class="result-pair">${srcA}<span class="result-plus">+</span>${srcB}</div>
@@ -2756,6 +2825,15 @@ a.forEach(x=>{
     </div>`;
         document.getElementById('resultOverlay').classList.add('open');
     }
+    let isShiftPressed = false
+    document.addEventListener('keydown', e=> {
+        isShiftPressed = e.shiftKey
+        // console.log('isShiftPressed',isShiftPressed)
+    })
+    document.addEventListener('keyup', e=> {
+        isShiftPressed = false
+        // console.log('isShiftPressed',isShiftPressed)
+    })
 
     function closeResult() {
         document.getElementById('resultOverlay').classList.remove('open');
@@ -2765,17 +2843,217 @@ a.forEach(x=>{
         if (e.target === e.currentTarget) closeResult();
     }
 
+    function getStoryInfo(c5) {
+        const color = {'R':'red','B':'blue','P':'purple','Y':'yellow'}[c5.substring(0,1)]
+        const code = c5.substring(1,5)
+        return items?.[color]?.[code]
+    }
+
     function editFromResult() {
+        const wasKnown = !!(lookup(lastResultKey) && (lookup(lastResultKey).craft || lookup(lastResultKey).desc));
         closeResult();
+
+        const codes = getCodes(lastResultKey)
+        // console.log(lastResultKey)
+        const prevItem = !(loadUser()[lastResultKey])
+        console.log('lastResultKey',lastResultKey,materials[lastResultKey])
+        let foundItem
+        let foundSomething = false
+
+        // TODO check if all found items are same
+        codes.valid.forEach(x=>{
+            const item = getStoryInfo(x)
+            const itemName = item?.['Item Name']
+            const flavorText = item?.['Flavor Text']
+            const gameText = item?.['Flavor Text']
+            const itNumber = gameText?.replace(/.*(IT\d\d).*/,'$1')
+            if (itemName && itemName !== 'None') {
+                if (itemName !== 'None') {
+                    foundSomething = true
+                }
+                foundItem = item
+            }
+            // console.log(x,color,code,items[color][code])
+            // console.log('!!previtem',!!prevItem,prevItem)
+            // console.log('foundItem: Code: ',foundItem?.Code, itemName)
+            // console.log('foundSomething',foundSomething, 'prevItem', prevItem)
+        })
+        if (foundSomething && prevItem) celebrateKnownCombo();
         openModal(lastResultKey);
     }
 
-    // ── Hover info panel beside settings cog ──
-    function showHoverInfo(key) {
+    // ── Drum hit + lightshow celebration for known combinations ──
+    let _audioCtx = null;
+
+    function playDrumHit() {
+        try {
+            _audioCtx = _audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+            const ctx = _audioCtx;
+            const now = ctx.currentTime;
+
+            // Body: short pitch-dropping sine "thump"
+            const osc = ctx.createOscillator();
+            const oscGain = ctx.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(170, now);
+            osc.frequency.exponentialRampToValueAtTime(48, now + 0.16);
+            oscGain.gain.setValueAtTime(0.001, now);
+            oscGain.gain.exponentialRampToValueAtTime(0.9, now + 0.008);
+            oscGain.gain.exponentialRampToValueAtTime(0.001, now + 0.32);
+            osc.connect(oscGain).connect(ctx.destination);
+            osc.start(now);
+            osc.stop(now + 0.34);
+
+            // Noise burst: skin "crack" transient
+            const bufSize = ctx.sampleRate * 0.12;
+            const buf = ctx.createBuffer(1, bufSize, ctx.sampleRate);
+            const data = buf.getChannelData(0);
+            for (let i = 0; i < bufSize; i++) data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / bufSize, 2.2);
+            const noise = ctx.createBufferSource();
+            noise.buffer = buf;
+            const noiseFilter = ctx.createBiquadFilter();
+            noiseFilter.type = 'bandpass';
+            noiseFilter.frequency.value = 1400;
+            noiseFilter.Q.value = 0.7;
+            const noiseGain = ctx.createGain();
+            noiseGain.gain.setValueAtTime(0.5, now);
+            noiseGain.gain.exponentialRampToValueAtTime(0.001, now + 0.1);
+            noise.connect(noiseFilter).connect(noiseGain).connect(ctx.destination);
+            noise.start(now);
+        } catch (e) { /* audio not available, fail silently */
+        }
+    }
+
+    function celebrateKnownCombo() {
+        playDrumHit();
+        spawnLightshow();
+        playDrumHit();
+    }
+
+    function spawnLightshow() {
+        const overlay = document.createElement('div');
+        overlay.className = 'lightshow-overlay';
+        const colors = ['#e8c060', '#c8952a', '#4a8ac4', '#c44444', '#70d040', '#e0a8f0'];
+        let burstHTML = '';
+        const burstCount = 14;
+        for (let i = 0; i < burstCount; i++) {
+            const angle = (360 / burstCount) * i + (Math.random() * 14 - 7);
+            const dist = 140 + Math.random() * 110;
+            const color = colors[i % colors.length];
+            const delay = (Math.random() * 0.06).toFixed(3);
+            const size = 6 + Math.random() * 6;
+            burstHTML += `<span class="ls-spark" style="--angle:${angle}deg;--dist:${dist}px;--color:${color};--delay:${delay}s;--size:${size}px"></span>`;
+        }
+        overlay.innerHTML = `<div class="ls-flash"></div><div class="ls-burst-wrap">${burstHTML}</div>`;
+        document.body.appendChild(overlay);
+        setTimeout(() => overlay.remove(), 750);
+    }
+
+    function getCodes(key) {
         const [a, b] = parseKey(key);
         const ca = cardById(a.id), cb = cardById(b.id);
-        document.getElementById('hoverInfoKey').textContent = key;
-        document.getElementById('hoverInfoNames').textContent = `${ca?.name || a.id} + ${cb?.name || b.id}`;
+        const [rot1,rot2] = key.split("|").map(x=>x.split(":")[1])
+        //const combo = lookup(key);
+
+        const infoA = materials.find(x=>x.note === a.id)
+        const infoB = materials.find(x=>x.note === b.id)
+// console.log(rot1,rot2,infoA,infoB,infoA.cols,infoA.vals,infoB.cols,infoB.vals)
+        let l11,v11,v12,l12
+        if (rot1 == 0) {
+            l11 = infoA.cols[0]
+            v11 = infoA.vals[0]
+            v12 = infoA.vals[2]
+            l12 = infoA.cols[2]
+        } else if (rot1 == 90) {
+            l11 = infoA.cols[3]
+            v11 = infoA.vals[3]
+            v12 = infoA.vals[1]
+            l12 = infoA.cols[1]
+        } else if (rot1 == 180) {
+            l11 = infoA.cols[2]
+            v11 = infoA.vals[2]
+            v12 = infoA.vals[0]
+            l12 = infoA.cols[0]
+        } else if (rot1 == 270) {
+            l11 = infoA.cols[1]
+            v11 = infoA.vals[1]
+            v12 = infoA.vals[3]
+            l12 = infoA.cols[3]
+        }
+
+        let l21,v21,v22,l22
+        if (rot2 == 0) {
+            l21 = infoB.cols[0]
+            v21 = infoB.vals[0]
+            v22 = infoB.vals[2]
+            l22 = infoB.cols[2]
+        } else if (rot2 == 90) {
+            l21 = infoB.cols[3]
+            v21 = infoB.vals[3]
+            v22 = infoB.vals[1]
+            l22 = infoB.cols[1]
+        } else if (rot2 == 180) {
+            l21 = infoB.cols[2]
+            v21 = infoB.vals[2]
+            v22 = infoB.vals[0]
+            l22 = infoB.cols[0]
+        } else if (rot2 == 270) {
+            l21 = infoB.cols[1]
+            v21 = infoB.vals[1]
+            v22 = infoB.vals[3]
+            l22 = infoB.cols[3]
+        }
+        // console.log(l11,v11,v12,l12,l21,v21,v22,l22)
+
+        // const rotA = (a.rot + {'left':0, 'top':180, 'right':90, 'bottom':180}[zoneName] || 0)%360/90
+        // const rotB = (b.rot + {'left':0, 'top':180, 'right':270, 'bottom':90}[zoneName] || 0)%360/90
+
+        // const zoneAdj = {'left':0,'top':1,'right':2,'bottom':3}[zoneName]
+        // console.log('zoneName,zoneAdj',zoneName,zoneAdj)
+        // const rotA = a.rot/90
+        // const rotB = (zoneAdj + b.rot/90)%4
+        //
+        // console.log('rotA,rotB',rotA,rotB)
+        // console.log('rot1,rot2',rot1,rot2)
+        //
+        // const code5 = infoA.cols[rotA]
+        //     + infoA.vals[rotA]
+        //     + infoA.vals[(2 + rotA)%4]
+        //     + infoB.vals[rotB]
+        //     + infoB.vals[(2 + rotB)%4]
+        // const code6 = code5 + infoB.cols[(2 + rotB)%4]
+
+        // console.log(zoneName, a,b,infoA,infoB, code6)
+        const code6 = l11+v11+v12+v21+v22+l22
+        const code5 = code6.substring(0, 5)
+        let code6r = code6.split('').reverse().join('')
+        let code5r = code6r.substring(0, 5)
+        return {
+            code5, code6, code6r, code5r,
+            valid: [code5, code5r].filter(x => ![0,2].includes(x.indexOf('0')))
+        }
+    }
+
+    // ── Hover info panel beside settings cog ──
+    function showHoverInfo(key,zoneName = 0) {
+        const [a, b] = parseKey(key);
+        const ca = cardById(a.id), cb = cardById(b.id);
+        const [rot1,rot2] = key.split("|").map(x=>x.split(":")[1])
+        // console.log('rot1,rot2',rot1,rot2)
+
+        const codes = getCodes(key)
+
+        codes.valid.forEach(x=>{
+            const color = {'R':'red','B':'blue','P':'purple','Y':'yellow'}[x.substring(0,1)]
+            const code = x.substring(1,5)
+            // console.log(x,color,code,items[color][code])
+        })
+        // const foundItem = items.yellow["1111"]
+        // console.log(ca)
+
+        // console.log(codes)
+        document.getElementById('hoverInfoKey').textContent = `${ca?.name || a.id}${ca?.state !== 'raw'?', '+ca.state:''} + ${cb?.name || b.id}${cb?.state !== 'raw'?', '+cb.state:''}`;
+        document.getElementById('hoverInfoNames').textContent = `${codes.valid.join(' ')}`;
         document.getElementById('hoverInfo').classList.add('show');
     }
 
@@ -2789,6 +3067,7 @@ a.forEach(x=>{
     function openModal(key) {
         if (!selectedId) return;
         modalKey = key;
+        // console.log(JSON.stringify(getCodes(key)))
         const [a, b] = parseKey(key);
         const ca = cardById(a.id), cb = cardById(b.id);
         const existing = lookup(key) || {};
@@ -2797,9 +3076,51 @@ a.forEach(x=>{
         const tB = cb && IMG[cb.imgIdx] ? `<img class="modal-thumb" src="${IMG[cb.imgIdx]}" alt="${cb.name}" style="transform:rotate(${rot2}deg)">` : '';
         //const combItem = getCode()
         //console.log(ca,cb,rot1,rot2)
+
+        const codes = getCodes(key)
+        const prevItem = !(loadUser()[key])
+        let foundItem
+        let foundSomething = false
+        let itemName = '', itNumber, gameText = '', flavorText = ''
+
+        // TODO check if all found items are same
+        codes.valid.forEach(x=>{
+            const item = getStoryInfo(x)
+            itemName = item?.['Item Name']
+            flavorText = item?.['Flavor Text']
+            gameText = item?.['Game Text']
+            itNumber = !!gameText.match(/IT\d\d/) && gameText?.replace(/.*(IT\d\d).*/,'$1')
+            if (itemName && itemName !== 'None') {
+                if (itemName !== 'None') {
+                    foundSomething = true
+                }
+                foundItem = item
+            }
+            // console.log('!!previtem',!!prevItem,prevItem)
+            // console.log('foundItem: Code: ',foundItem?.Code, itemName)
+            // console.log('foundSomething',foundSomething, 'prevItem', prevItem)
+        })
+
+        if (isShiftPressed) {
+            console.log('CRAFT',existing.craft)
+            console.log('DESC',existing.desc)
+        }
+        if (itemName === 'None') {
+            itemName = 'Nothing'
+        }
+        console.log((!isShiftPressed && existing.craft))
+        console.log((((itNumber + ' ')||'') + itemName))
+        console.log((((itNumber + ' ')||'') + itemName))
+
         document.getElementById('modalPair').innerHTML = `${tA}<div class="modal-names">${ca?.name || a.id}<br><span style="color:var(--ink-light)">+</span><br>${cb?.name || b.id}</div>${tB}`;
-        document.getElementById('modalCraft').value = existing.craft || '';
-        document.getElementById('modalDesc').value = existing.desc || '';
+        document.getElementById('modalCraft').value = (!isShiftPressed && existing.craft) || (((itNumber || '') + (!!itNumber?' ':'')) + itemName)
+        document.getElementById('modalDesc').value = (!isShiftPressed && existing.desc) || gameText + `
+
+${flavorText}`;
+        // console.log('itNumber', itNumber)
+        // console.log('itemName', itemName)
+        // console.log('gameText', gameText)
+        // console.log('flavorText', flavorText)
         document.getElementById('addComboOverlay').classList.add('open');
         setTimeout(() => document.getElementById('modalCraft').focus(), 60);
     }
