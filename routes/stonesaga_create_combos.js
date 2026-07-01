@@ -92,7 +92,7 @@ function codes(x) {
 
 const strReverse = (x) => x.split('').reverse().join('')
 const onlyUnique = (value, index, array) => array.indexOf(value) === index
-a = [{
+let a = [{
     item: 'bone',
     type: 'animal',
     note: 'animal__Bone__0',
@@ -1118,12 +1118,14 @@ const code6 = c
 //     "R5225R",
 //     "B25400"
 // ]
+const get5from6 = () => code6.map(x => x.replace(/(.....)./, '$1'))
 const code5 = code6.map(x => x.replace(/(.....)./, '$1'))
 const code6r = code6.map(x => strReverse(x))
 const code5r = code6r.map(x => x.replace(/(.....)./, '$1'))
 
 //console.log(code6[0],code5[0],code6r[0],code5r[0])
 let res = [];
+let resc = [];
 const z = code6//.slice(0,10);
 //console.log(z);
 
@@ -1145,9 +1147,10 @@ z.forEach(((c6, i) => {
         i = code5.indexOf(rev)
     } while (i != -1 && code5[i] !== '')
     res.push(r)
+    resc.push(r.map(x=>code6[x]))
 }));
-res = res.filter(x => x.length)
 // console.log(res);
+res = res.filter(x => x.length)
 // console.log(ls)
 let known = {
     'B2232': 'IT21 Mallet',
@@ -1254,14 +1257,59 @@ res
 // console.log('code5r',code5r.filter(x => !!x));
 // console.log(ls)
 // console.log(b)
-console.log('a', a.length)
-console.log('b', b.length)
-console.log('failed', failed.length)
-console.log('res', res.length)
-console.log('ls', Object.keys(ls).length)
+//     console.log('a', a.length)
+//     console.log('b', b.length)
+//     console.log('failed', failed.length)
+//     console.log('res', res.length)
+//     console.log('ls', Object.keys(ls).length)
 // console.log(Object.keys(ls).length)
+function csvJSON(csv) {
+    var lines = csv.split("\n");
+    var result = [];
+    var headers = lines[0].split(";");
+    for (var i = 1; i < lines.length; i++) {
+        var obj = {};
+        var currentline = lines[i].split(";");
+        for (var j = 0; j < headers.length; j++) {
+            obj[headers[j]] = currentline[j];
+        }
+        result.push(obj);
+    }
+    //return result; //JavaScript object
+    return JSON.stringify(result); //JSON
+}
+const red = fs.readFileSync('../public/javascripts/stonesaga-crafting-red.csv', 'utf8')
+const blue = fs.readFileSync('../public/javascripts/stonesaga-crafting-blue.csv', 'utf8')
+const purple = fs.readFileSync('../public/javascripts/stonesaga-crafting-purple.csv', 'utf8')
+const yellow = fs.readFileSync('../public/javascripts/stonesaga-crafting-yellow.csv', 'utf8')
+const redJSONstr = csvJSON(red);
+const blueJSONstr = csvJSON(blue);
+const purpleJSONstr = csvJSON(purple);
+const yellowJSONstr = csvJSON(yellow);
+const redObj = JSON.parse(redJSONstr);
+const blueObj = JSON.parse(blueJSONstr);
+const purpleObj = JSON.parse(purpleJSONstr);
+const yellowObj = JSON.parse(yellowJSONstr);
+// console.log(yellowObj);
+let items = {red:{},blue:{},purple:{},yellow:{}}
+redObj.forEach(x => items.red[x.Code] = x);
+blueObj.forEach(x => items.blue[x.Code] = x);
+purpleObj.forEach(x => items.purple[x.Code] = x);
+yellowObj.forEach(x => items.yellow[x.Code] = x);
+// console.log(items);
+fs.writeFileSync('red.json', csvJSON(red), 'utf8')
+fs.writeFileSync('blue.json', csvJSON(blue), 'utf8')
+fs.writeFileSync('purple.json', csvJSON(purple), 'utf8')
+fs.writeFileSync('yellow.json', csvJSON(yellow), 'utf8')
+fs.writeFileSync('items.json', JSON.stringify(items,null,2), 'utf8')
+
 fs.writeFileSync('b.txt', JSON.stringify(b, null, 2), 'utf8')
+fs.writeFileSync('c.txt', JSON.stringify(c, null, 2), 'utf8')
+fs.writeFileSync('c5.txt', JSON.stringify(get5from6().filter(onlyUnique).sort(), null, 2), 'utf8')
 fs.writeFileSync('failed.txt', JSON.stringify(failed, null, 2), 'utf8')
 fs.writeFileSync('ls.txt', JSON.stringify(ls, null, 2), 'utf8')
+fs.writeFileSync('res.txt', JSON.stringify(res, null, 2), 'utf8')
+fs.writeFileSync('resc.txt', JSON.stringify(resc, null, 2), 'utf8')
+
 
 
