@@ -1188,7 +1188,7 @@
         }
 
         textarea.modal-input {
-            min-height: 165px;
+            min-height: 185px;
             resize: vertical
         }
 
@@ -1289,6 +1289,12 @@
             <div>
                 <div class="setting-label">Show all items in list</div>
                 <div class="setting-desc">Show all items Unknown, Nothing, Items ...</div>
+            </div>
+        </label>
+        <label class="setting-row">
+            <div>
+                <div class="setting-label">NB:</div>
+                <div class="setting-desc">Hold down shift to get original item text. <br/>Shift+Save affects all items with same code.</div>
             </div>
         </label>
     </div>
@@ -2856,7 +2862,7 @@ materials.forEach(x=>{
         const codes = getCodes(lastResultKey)
         // console.log(lastResultKey)
         const prevItem = !(loadUser()[lastResultKey])
-        console.log('lastResultKey',lastResultKey,materials[lastResultKey])
+        // console.log('lastResultKey',lastResultKey,materials[lastResultKey])
         let foundItem
         let foundSomething = false
 
@@ -3108,9 +3114,9 @@ materials.forEach(x=>{
         if (itemName === 'None') {
             itemName = 'Nothing'
         }
-        console.log((!isShiftPressed && existing.craft))
-        console.log((((itNumber + ' ')||'') + itemName))
-        console.log((((itNumber + ' ')||'') + itemName))
+        // console.log((!isShiftPressed && existing.craft))
+        // console.log((((itNumber + ' ')||'') + itemName))
+        // console.log((((itNumber + ' ')||'') + itemName))
 
         document.getElementById('modalPair').innerHTML = `${tA}<div class="modal-names">${ca?.name || a.id}<br><span style="color:var(--ink-light)">+</span><br>${cb?.name || b.id}</div>${tB}`;
         document.getElementById('modalCraft').value = (!isShiftPressed && existing.craft) || (((itNumber || '') + (!!itNumber?' ':'')) + itemName)
@@ -3137,6 +3143,25 @@ ${flavorText}`;
             closeModal();
             return;
         }
+        //const combos = allCombos(modalKey)
+
+        // TODO find all similar keys and update them as well (if they don't have a value)
+        //const codes = getCodes(modalKey)
+
+        //codes.valid.forEach(x=>{
+        // console.log('modalKey',modalKey, _lsi.indexOf(modalKey), _resa[_lsi.indexOf(modalKey)])
+        // console.log('_resa',_resa[modalKey])
+        // _resa[_lsi.indexOf(modalKey)]?.forEach(x=>{
+        const users = loadUser()
+        _resa[modalKey]?.forEach(x=>{
+            const key = _lsi[x]
+            // console.log(x, key, users?.[key])
+            // console.log('isShiftPressed',isShiftPressed)
+            if (isShiftPressed || !users?.[key]) {
+                // console.log('save',key,craft,desc)
+                saveUser(key,craft,desc || craft)
+            }
+        })
         saveUser(modalKey, craft, desc || craft);
         closeModal();
     }
