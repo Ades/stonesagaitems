@@ -1292,9 +1292,10 @@
             </div>
         </label>
         <label class="setting-row">
+            <input type="checkbox" id="settingAddEligibleCombos" onchange="applySetting('addEligibleCombos')">
             <div>
-                <div class="setting-label">NB:</div>
-                <div class="setting-desc">Hold down shift to get original item text. <br/>Shift+Save affects all items with same code.</div>
+                <div class="setting-label">Item creation adds eligible combos.</div>
+                <div class="setting-desc">When an item is crafted, add eligible combos (TODO: TDB:on back of card).</div>
             </div>
         </label>
     </div>
@@ -1481,8 +1482,8 @@ const materials = [
         "n": "",
         "e": "",
         "s": "",
-        "cols": [],
-        "vals": [],
+        "cols": ["","","",""],
+        "vals": ["","","",""],
         "codes": []
     },
     {
@@ -1497,12 +1498,12 @@ const materials = [
         "e": "R5",
         "s": "",
         "cols": [
-            "B",
-            "R"
+            "B","",
+            "R",""
         ],
         "vals": [
-            "3",
-            "5"
+            "3","",
+            "5",""
         ],
         "codes": [
             "B3R5",
@@ -1520,8 +1521,8 @@ const materials = [
         "n": "",
         "e": "",
         "s": "",
-        "cols": [],
-        "vals": [],
+        "cols": ["","","",""],
+        "vals": ["","","",""],
         "codes": []
     },
     {
@@ -1565,8 +1566,8 @@ const materials = [
         "n": "",
         "e": "",
         "s": "",
-        "cols": [],
-        "vals": [],
+        "cols": ["","","",""],
+        "vals": ["","","",""],
         "codes": []
     },
     {
@@ -1611,12 +1612,12 @@ const materials = [
         "e": "B1",
         "s": "",
         "cols": [
-            "0",
-            "B"
+            "0","",
+            "B",""
         ],
         "vals": [
-            "0",
-            "1"
+            "0","",
+            "1",""
         ],
         "codes": [
             "00B1",
@@ -1635,12 +1636,12 @@ const materials = [
         "e": "0",
         "s": "",
         "cols": [
-            "Y",
-            "0"
+            "Y","",
+            "0",""
         ],
         "vals": [
-            "1",
-            "0"
+            "1","",
+            "0",""
         ],
         "codes": [
             "Y100",
@@ -1658,8 +1659,8 @@ const materials = [
         "n": "",
         "e": "",
         "s": "",
-        "cols": [],
-        "vals": [],
+        "cols": ["","","",""],
+        "vals": ["","","",""],
         "codes": []
     },
     {
@@ -1703,8 +1704,8 @@ const materials = [
         "n": "",
         "e": "",
         "s": "",
-        "cols": [],
-        "vals": [],
+        "cols": ["","","",""],
+        "vals": ["","","",""],
         "codes": []
     },
     {
@@ -1719,12 +1720,12 @@ const materials = [
         "e": "R6",
         "s": "",
         "cols": [
-            "R",
-            "R"
+            "R","",
+            "R",""
         ],
         "vals": [
-            "6",
-            "6"
+            "6","",
+            "6","",
         ],
         "codes": [
             "R6R6",
@@ -1742,8 +1743,8 @@ const materials = [
         "n": "",
         "e": "",
         "s": "",
-        "cols": [],
-        "vals": [],
+        "cols": ["","","",""],
+        "vals": ["","","",""],
         "codes": []
     },
     {
@@ -1787,8 +1788,8 @@ const materials = [
         "n": "",
         "e": "",
         "s": "",
-        "cols": [],
-        "vals": [],
+        "cols": ["","","",""],
+        "vals": ["","","",""],
         "codes": []
     },
     {
@@ -1832,8 +1833,8 @@ const materials = [
         "n": "",
         "e": "",
         "s": "",
-        "cols": [],
-        "vals": [],
+        "cols": ["","","",""],
+        "vals": ["","","",""],
         "codes": []
     },
     {
@@ -1852,12 +1853,12 @@ const materials = [
             "Y"
         ],
         "vals": [
-            "5",
-            "6"
+            "5","",
+            "6",""
         ],
         "codes": [
-            "R5Y6",
-            "Y6R5"
+            "R5Y6","",
+            "Y6R5",""
         ]
     },
     {
@@ -1931,8 +1932,8 @@ const materials = [
         "n": "",
         "e": "",
         "s": "",
-        "cols": [],
-        "vals": [],
+        "cols": ["","","",""],
+        "vals": ["","","",""],
         "codes": []
     },
     {
@@ -1976,8 +1977,8 @@ const materials = [
         "n": "",
         "e": "",
         "s": "",
-        "cols": [],
-        "vals": [],
+        "cols": ["","","",""],
+        "vals": ["","","",""],
         "codes": []
     },
     {
@@ -1992,12 +1993,12 @@ const materials = [
         "e": "0",
         "s": "",
         "cols": [
-            "R",
-            "0"
+            "R","",
+            "0",""
         ],
         "vals": [
-            "5",
-            "0"
+            "5","",
+            "0","",
         ],
         "codes": [
             "R500",
@@ -2015,8 +2016,8 @@ const materials = [
         "n": "",
         "e": "",
         "s": "",
-        "cols": [],
-        "vals": [],
+        "cols": ["","","",""],
+        "vals": ["","","",""],
         "codes": []
     },
     {
@@ -2060,8 +2061,8 @@ const materials = [
         "n": "",
         "e": "",
         "s": "",
-        "cols": [],
-        "vals": [],
+        "cols": ["","","",""],
+        "vals": ["","","",""],
         "codes": []
     },
     {
@@ -2136,12 +2137,12 @@ const materials = [
         "e": "R5",
         "s": "",
         "cols": [
-            "B",
-            "R"
+            "B","",
+            "R",""
         ],
         "vals": [
-            "2",
-            "5"
+            "2","",
+            "5",""
         ],
         "codes": [
             "B2R5",
@@ -2160,12 +2161,12 @@ const materials = [
         "e": "0",
         "s": "",
         "cols": [
-            "R",
-            "0"
+            "R","",
+            "0",""
         ],
         "vals": [
-            "4",
-            "0"
+            "4","",
+            "0",""
         ],
         "codes": [
             "R400",
@@ -2352,8 +2353,15 @@ const materials = [
         "name": "Pigment",
         "state": "raw",
         "imgIdx": 32,
-        "cat": "other"
+        "cat": "other",
     }
+    // , { // this alternative is superfluous
+    //     "id": "ground__Pigment__1",
+    //     "name": "Pigment",
+    //     "state": "ground",
+    //     "imgIdx": 32,
+    //     "cat": "other"
+    // }
     //, {"id": "other__Pigment__1", "name": "Pigment", "state": "ground", "imgIdx": 32, "cat": "other"}
 ];
 materials.forEach(x=>{
@@ -2508,6 +2516,7 @@ materials.forEach(x=>{
         pigment: false,
         mealList: false,
         showAllItems: false,
+        addEligibleCombos: false,
     };
 
     // Load persisted settings
@@ -2520,6 +2529,7 @@ materials.forEach(x=>{
             document.getElementById('settingPigment').checked = !!settings.pigment;
             document.getElementById('settingMealList').checked = !!settings.mealList;
             document.getElementById('settingShowAllItems').checked = !!settings.showAllItems;
+            document.getElementById('settingAddEligibleCombos').checked = !!settings.addEligibleCombos;
         } catch {
         }
     })();
@@ -2582,7 +2592,14 @@ materials.forEach(x=>{
     function parseKey(key) {
         const [p0, p1] = key.split('|');
         const p = s => {
-            const i = s.lastIndexOf(':');
+            const i = s?.lastIndexOf(':') || -1
+            if (i === -1) {
+                // console.log('key is missing :',key)
+                if (Integer.isNumber(key)) {
+                    throw new Exception('key is number')
+                }
+                return {}
+            }
             return {id: s.slice(0, i), rot: parseInt(s.slice(i + 1))}
         };
         return [p(p0), p(p1)];
@@ -2834,11 +2851,11 @@ materials.forEach(x=>{
     let isShiftPressed = false
     document.addEventListener('keydown', e=> {
         isShiftPressed = e.shiftKey
-        // console.log('isShiftPressed',isShiftPressed)
+        console.log('isShiftPressed',isShiftPressed)
     })
     document.addEventListener('keyup', e=> {
         isShiftPressed = false
-        // console.log('isShiftPressed',isShiftPressed)
+        console.log('isShiftPressed',isShiftPressed)
     })
 
     function closeResult() {
@@ -2867,6 +2884,7 @@ materials.forEach(x=>{
         let foundSomething = false
 
         // TODO check if all found items are same
+        // console.log('editFromResult',codes)
         codes.valid.forEach(x=>{
             const item = getStoryInfo(x)
             const itemName = item?.['Item Name']
@@ -2963,6 +2981,7 @@ materials.forEach(x=>{
 
         const infoA = materials.find(x=>x.note === a.id)
         const infoB = materials.find(x=>x.note === b.id)
+        // console.log('infoA',infoA,a.id,'infoB',b.id,infoB)
 // console.log(rot1,rot2,infoA,infoB,infoA.cols,infoA.vals,infoB.cols,infoB.vals)
         let l11,v11,v12,l12
         if (rot1 == 0) {
@@ -3041,17 +3060,18 @@ materials.forEach(x=>{
     }
 
     // ── Hover info panel beside settings cog ──
-    function showHoverInfo(key,zoneName = 0) {
+    function showHoverInfo(key) {
         const [a, b] = parseKey(key);
         const ca = cardById(a.id), cb = cardById(b.id);
         const [rot1,rot2] = key.split("|").map(x=>x.split(":")[1])
+        // console.log('parseKey','key',key,'a',a,'b',b,'ca',ca,'cb',cb,'rot1',rot1,'rot2',rot2,rot2,'ca?.rot',ca?.rot,'cb?.rot',cb?.rot)
         // console.log('rot1,rot2',rot1,rot2)
 
         const codes = getCodes(key)
-
+        // console.log(codes)
         codes.valid.forEach(x=>{
-            const color = {'R':'red','B':'blue','P':'purple','Y':'yellow'}[x.substring(0,1)]
-            const code = x.substring(1,5)
+            const color = {'R':'red','B':'blue','P':'purple','Y':'yellow'}[x.substring(0,1)]||''
+            const code = x.substring(1,5)||''
             // console.log(x,color,code,items[color][code])
         })
         // const foundItem = items.yellow["1111"]
@@ -3087,15 +3107,15 @@ materials.forEach(x=>{
         const prevItem = !(loadUser()[key])
         let foundItem
         let foundSomething = false
-        let itemName = '', itNumber, gameText = '', flavorText = ''
+        let itemName = 'None', itNumber = '', gameText = "That's an odd combination.", flavorText = 'Nothing came out of it.'
 
         // TODO check if all found items are same
         codes.valid.forEach(x=>{
             const item = getStoryInfo(x)
-            itemName = item?.['Item Name']
-            flavorText = item?.['Flavor Text']
-            gameText = item?.['Game Text']
-            itNumber = !!gameText.match(/IT\d\d/) && gameText?.replace(/.*(IT\d\d).*/,'$1')
+            itemName = item?.['Item Name'] || itemName
+            flavorText = item?.['Flavor Text'] || flavorText
+            gameText = item?.['Game Text'] || gameText
+            itNumber = !!gameText?.match(/IT\d\d/) && gameText?.replace(/.*(IT\d\d).*/,'$1') || itNumber
             if (itemName && itemName !== 'None') {
                 if (itemName !== 'None') {
                     foundSomething = true
@@ -3107,7 +3127,7 @@ materials.forEach(x=>{
             // console.log('foundSomething',foundSomething, 'prevItem', prevItem)
         })
 
-        if (isShiftPressed) {
+        if (settings.addEligibleCombos) {
             console.log('CRAFT',existing.craft)
             console.log('DESC',existing.desc)
         }
@@ -3119,8 +3139,8 @@ materials.forEach(x=>{
         // console.log((((itNumber + ' ')||'') + itemName))
 
         document.getElementById('modalPair').innerHTML = `${tA}<div class="modal-names">${ca?.name || a.id}<br><span style="color:var(--ink-light)">+</span><br>${cb?.name || b.id}</div>${tB}`;
-        document.getElementById('modalCraft').value = (!isShiftPressed && existing.craft) || (((itNumber || '') + (!!itNumber?' ':'')) + itemName)
-        document.getElementById('modalDesc').value = (!isShiftPressed && existing.desc) || gameText + `
+        document.getElementById('modalCraft').value = (!settings.addEligibleCombos && existing.craft) || (((itNumber || '') + (!!itNumber?' ':'')) + itemName)
+        document.getElementById('modalDesc').value = (!settings.addEligibleCombos && existing.desc) || gameText + `
 
 ${flavorText}`;
         // console.log('itNumber', itNumber)
@@ -3155,9 +3175,8 @@ ${flavorText}`;
         const users = loadUser()
         _resa[modalKey]?.forEach(x=>{
             const key = _lsi[x]
-            // console.log(x, key, users?.[key])
-            // console.log('isShiftPressed',isShiftPressed)
-            if (isShiftPressed || !users?.[key]) {
+            // console.log('settings.addEligibleCombos',settings.addEligibleCombos)
+            if (settings.addEligibleCombos || !users?.[key]) {
                 // console.log('save',key,craft,desc)
                 saveUser(key,craft,desc || craft)
             }

@@ -27,6 +27,7 @@
 // TODO: DONE Press combo in list to load two slots
 // TODO: DONE Lägg bilder i egen katalog
 // TODO: DONE Only show open categories combos from selected card.
+// TODO: IRREPRODUCIBLE When adding Pigment (Other) rerender wheel
 
 
 // Adjustments:
