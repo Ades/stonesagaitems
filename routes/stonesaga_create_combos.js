@@ -1,15 +1,17 @@
-// TODO: A switch in settings should enable "read all recepies on cards" and not only discovered.
+// TODO: Add pigment material if Pigment item is invented (override in settings)
+// TODO: Cooking pot enables two ingredients. Three ingredients are enabled by ...
 // TODO: Show meals when corresponding structure is build (enable number as is done for grinding in settings)
-// TODO: Have a list of items and their combinations — quick guide to see what can be done.
+// TODO: A switch in settings should enable "read all recepies on cards" and not only discovered.
+// TODO: MAYBE Have a list of items and their combinations — quick guide to see what can be done.
 // TODO: Group items into similar objects (eg. mallet, adze, axe, knife)
 // TODO: Also show stats for items (number unknown, nothing, items)
 // TODO: Show smaller items as smaller - make smaller images?
 // TODO: Make internal list of items (Unknown, Nothing) and map them against codes
 // TODO: Make icons in combo list rotate according to recipe
-// TODO: MAYBE Button to get next Unknown
-// TODO: MAYBE: Mark when anything is completely explored
 // TODO: NOT NECESSARY, automatic when tab closed: Missing combos should be sorted and enabled according to closed or open tab.
 // TODO: NOT NECESSARY as it is easy to spot the missing sides: The number of missing Unknown recepies should be listed
+// TODO: MAYBE Button to get next Unknown
+// TODO: MAYBE: Mark when anything is completely explored
 // TODO: MAYBE   hur hantera dupletter i wheel - låta den vara kvar? ...
 // TODO: MAYBE make wheel categories exandable and closeable
 // TODO: OLD Untested combos should be listed — when second slot (or first slot) empty, show mark on all available unknowns besides pips
@@ -75,11 +77,11 @@
 //
 
 //
-const consoleFunction = () => {
-    q = (localStorage.getItem('stonesaga_combos_v2'))
-    qq = JSON.parse(q)
-    Object.keys(qq).filter(x => qq[x].craft.indexOf('Unknown') == -1).filter(x => qq[x].craft.indexOf('Nothing') == -1).map(x => qq[x])
-}
+// const consoleFunction = () => {
+//     q = (localStorage.getItem('stonesaga_combos_v2'))
+//     qq = JSON.parse(q)
+//     Object.keys(qq).filter(x => qq[x].craft.indexOf('Unknown') == -1).filter(x => qq[x].craft.indexOf('Nothing') == -1).map(x => qq[x])
+// }
 const fs = require('fs');
 
 function codes(x) {

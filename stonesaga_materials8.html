@@ -1238,6 +1238,320 @@
             border-top: 1px solid var(--parchment-deep);
             margin-top: 2rem
         }
+
+        /* ── Tab system ── */
+        #appTabs {
+            display: flex;
+            gap: 0;
+            max-width: 1100px;
+            margin: 0 auto 0;
+            padding: 0 2rem;
+            border-bottom: 2px solid var(--parchment-deep)
+        }
+
+        .tab-btn {
+            font-family: 'Cinzel', serif;
+            font-size: 0.78rem;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            padding: 0.55rem 1.4rem;
+            cursor: pointer;
+            background: none;
+            border: none;
+            border-bottom: 3px solid transparent;
+            color: var(--ink-light);
+            transition: color 0.15s, border-color 0.15s;
+            margin-bottom: -2px
+        }
+
+        .tab-btn:hover {
+            color: var(--ink)
+        }
+
+        .tab-btn.active {
+            color: var(--ink);
+            border-bottom-color: var(--gold);
+            font-weight: 700
+        }
+
+        .tab-panel {
+            display: none
+        }
+
+        .tab-panel.active {
+            display: block
+        }
+
+        /* ── Meal tab ── */
+        #mealTab {
+            max-width: 1000px;
+            margin: 2rem auto 0;
+            padding: 0 2rem
+        }
+
+        /* Ingredient picker bar */
+        .ingredient-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            background: var(--parchment);
+            border: 2px solid var(--parchment-deep);
+            border-radius: 8px;
+            padding: 1rem 1.25rem;
+            margin-bottom: 1.25rem;
+            justify-content: center
+        }
+
+        .ingredient-btn {
+            width: 64px;
+            height: 64px;
+            border-radius: 8px;
+            border: 2.5px solid transparent;
+            background: rgba(255, 255, 255, 0.5);
+            cursor: pointer;
+            padding: 0px 5px 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: border-color 0.15s, box-shadow 0.15s, transform 0.12s;
+            position: relative
+        }
+
+        .ingredient-btn img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: block
+        }
+
+        .ingredient-btn:hover {
+            border-color: var(--gold-light);
+            transform: translateY(-2px)
+        }
+
+        .ingredient-btn.selected {
+            border-color: var(--gold);
+            box-shadow: 0 0 0 2px var(--gold), 0 2px 10px rgba(200, 149, 42, 0.35);
+            transform: translateY(-3px);
+            background: rgba(255, 245, 220, 0.85)
+        }
+
+        .ingredient-btn .ing-label {
+            font-family: 'Cinzel', serif;
+            font-size: 0.42rem;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            color: var(--ink-light);
+            position: absolute;
+            bottom: 2px;
+            left: 0;
+            right: 0;
+            text-align: center
+        }
+
+        /* Selected display row */
+        .selected-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 1rem;
+            min-height: 40px;
+            flex-wrap: wrap
+        }
+
+        .selected-row-label {
+            font-family: 'Cinzel', serif;
+            font-size: 0.7rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--ink-light)
+        }
+
+        .sel-ingredient-chip {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            background: var(--parchment);
+            border: 1.5px solid var(--parchment-deep);
+            border-radius: 6px;
+            padding: 4px 10px 4px 6px;
+            font-family: 'Cinzel', serif;
+            font-size: 0.65rem;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            color: var(--ink)
+        }
+
+        .sel-ingredient-chip img {
+            width: 22px;
+            height: 22px;
+            object-fit: contain
+        }
+
+        .sel-plus {
+            font-size: 1rem;
+            color: var(--ink-light)
+        }
+
+        /* Meal result / add form area */
+        .meal-compose {
+            background: var(--parchment);
+            border: 2px solid var(--parchment-deep);
+            border-radius: 8px;
+            padding: 1.1rem 1.25rem;
+            margin-bottom: 1.25rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.65rem
+        }
+
+        .meal-compose-title {
+            font-family: 'Cinzel', serif;
+            font-size: 0.72rem;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--ink-light)
+        }
+
+        .pot-required {
+            font-size: 0.82rem;
+            color: #c44;
+            font-style: italic;
+            font-family: 'Crimson Text', serif
+        }
+
+        .meal-name-input {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.7);
+            border: 1.5px dashed var(--parchment-deep);
+            border-radius: 6px;
+            padding: 0.5rem 0.8rem;
+            font-family: 'Crimson Text', Georgia, serif;
+            font-size: 1rem;
+            color: var(--ink);
+            outline: none;
+            transition: border-color 0.15s
+        }
+
+        .meal-name-input:focus {
+            border-color: var(--gold);
+            background: rgba(255, 255, 255, 0.95)
+        }
+
+        .meal-add-btn {
+            font-family: 'Cinzel', serif;
+            font-size: 0.7rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            background: var(--gold);
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            padding: 6px 18px;
+            cursor: pointer;
+            align-self: flex-end
+        }
+
+        .meal-add-btn:hover {
+            opacity: 0.85
+        }
+
+        .meal-add-btn:disabled {
+            opacity: 0.4;
+            cursor: default
+        }
+
+        /* Meals list */
+        .meals-list-header {
+            font-family: 'Cinzel', serif;
+            font-size: 0.85rem;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--ink);
+            border-bottom: 1px solid var(--parchment-deep);
+            padding-bottom: 0.5rem;
+            margin-bottom: 0.75rem
+        }
+
+        .meal-entry {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0.6rem 0.85rem;
+            border-bottom: 1px solid var(--parchment-deep);
+            transition: background 0.12s
+        }
+
+        .meal-entry:last-child {
+            border-bottom: none
+        }
+
+        .meal-entry:hover {
+            background: rgba(200, 149, 42, 0.05)
+        }
+
+        .meal-ing-icons {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            flex-shrink: 0
+        }
+
+        .meal-ing-icons img {
+            width: 28px;
+            height: 28px;
+            object-fit: contain
+        }
+
+        .meal-ing-sep {
+            font-size: 0.75rem;
+            color: var(--ink-light)
+        }
+
+        .meal-entry-name {
+            flex: 1;
+            font-family: 'Crimson Text', serif;
+            font-size: 1rem;
+            color: var(--ink)
+        }
+
+        .meal-pot-badge {
+            font-family: 'Cinzel', serif;
+            font-size: 0.55rem;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            background: #8B5E3C;
+            color: #f5d9b8;
+            padding: 1px 6px;
+            border-radius: 3px;
+            flex-shrink: 0
+        }
+
+        .meal-del-btn {
+            background: none;
+            border: 1px solid var(--parchment-deep);
+            border-radius: 4px;
+            cursor: pointer;
+            color: var(--ink-light);
+            font-size: 0.7rem;
+            padding: 2px 8px;
+            flex-shrink: 0
+        }
+
+        .meal-del-btn:hover {
+            background: #f4d0d0;
+            border-color: #c44;
+            color: #c44
+        }
+
+        .meals-empty {
+            color: var(--ink-light);
+            font-style: italic;
+            padding: 1rem 0;
+            text-align: center;
+            font-size: 0.92rem
+        }
+
     </style>
 </head>
 <body>
@@ -1278,10 +1592,10 @@
             </div>
         </label>
         <label class="setting-row">
-            <input type="checkbox" id="settingMealList" onchange="applySetting('mealList')">
+            <input type="checkbox" id="settingCookingPot" onchange="applySetting('cookingPot')">
             <div>
-                <div class="setting-label">Enable Meal List</div>
-                <div class="setting-desc">Adds a meal planning section at the bottom of the page.</div>
+                <div class="setting-label">Enable Cooking Pot</div>
+                <div class="setting-desc">Allows three-ingredient meals in the Meals tab.</div>
             </div>
         </label>
         <label class="setting-row">
@@ -1306,6 +1620,14 @@
     <div class="subtitle">Stonesaga · Field Reference</div>
     <div class="ornament">◈</div>
 </header>
+
+
+<div id="appTabs">
+    <button class="tab-btn active" onclick="switchTab('materials')">Materials</button>
+    <button class="tab-btn" onclick="switchTab('meals')" id="tabBtnMeals">Meals</button>
+</div>
+
+<div id="tab-materials" class="tab-panel active">
 
 <div id="wheelWrap">
     <h2>Combinations — select a card below</h2>
@@ -1367,6 +1689,19 @@
             <button class="modal-cancel" onclick="closeModal()">Cancel</button>
             <button class="modal-save" onclick="saveFromModal()">Save</button>
         </div>
+    </div>
+</div>
+
+
+</div><!-- end tab-materials -->
+
+<div id="tab-meals" class="tab-panel">
+    <div id="mealTab">
+        <div class="ingredient-bar" id="ingredientBar"></div>
+        <div class="selected-row" id="selectedIngredientRow"></div>
+        <div class="meal-compose" id="mealCompose"></div>
+        <div class="meals-list-header">Meal List</div>
+        <div id="mealEntriesList"></div>
     </div>
 </div>
 
@@ -2515,6 +2850,7 @@ materials.forEach(x=>{
         showAll: false,
         pigment: false,
         mealList: false,
+        cookingPot: false,
         showAllItems: false,
         addEligibleCombos: false,
     };
@@ -2951,7 +3287,6 @@ materials.forEach(x=>{
     function celebrateKnownCombo() {
         playDrumHit();
         spawnLightshow();
-        playDrumHit();
     }
 
     function spawnLightshow() {
@@ -3421,6 +3756,168 @@ ${flavorText}`;
         m.splice(i, 1);
         saveMeals(m);
         renderMeals();
+    }
+
+
+    // ── Meal system ──
+    const FOOD_IMGS = {
+        "egg": "public/images/egg.png",
+        "fish": "public/images/fish.png",
+        "grain": "public/images/grain.png",
+        "honey": "public/images/honey.png",
+        "meat": "public/images/meat.png",
+        "mushroom": "public/images/mushroom.png",
+        "nut": "public/images/nut.png",
+        "root": "public/images/root.png",
+        "water": "public/images/water.png"
+    };
+    const FOOD_LIST = ['egg', 'fish', 'grain', 'honey', 'meat', 'mushroom', 'nut', 'root', 'water'];
+    const FOOD_LABELS = {
+        egg: 'Egg',
+        fish: 'Fish',
+        grain: 'Grain',
+        honey: 'Honey',
+        meat: 'Meat',
+        mushroom: 'Mushroom',
+        nut: 'Nut',
+        root: 'Root',
+        water: 'Water'
+    };
+
+    let selectedIngredients = [];
+
+    function loadMeals() {
+        try {
+            return JSON.parse(localStorage.getItem('stonesaga_meals_v2') || '[]')
+        } catch {
+            return []
+        }
+    }
+
+    function saveMeals(m) {
+        localStorage.setItem('stonesaga_meals_v2', JSON.stringify(m));
+    }
+
+    function ingredientClick(name) {
+        const idx = selectedIngredients.indexOf(name);
+        const pot = document.getElementById('settingCookingPot') && document.getElementById('settingCookingPot').checked;
+        const max = pot ? 3 : 2;
+        if (idx >= 0) {
+            selectedIngredients.splice(idx, 1);
+        } else {
+            if (selectedIngredients.length >= max) return;
+            selectedIngredients.push(name);
+        }
+        renderIngredientBar();
+        renderSelectedRow();
+        renderMealCompose();
+    }
+
+    function renderIngredientBar() {
+        const bar = document.getElementById('ingredientBar');
+        if (!bar) return;
+        bar.innerHTML = FOOD_LIST.map(f => `
+    <button class="ingredient-btn${selectedIngredients.includes(f) ? ' selected' : ''}" onclick="ingredientClick('${f}')" title="${FOOD_LABELS[f]}">
+      <img src="${FOOD_IMGS[f]}" alt="${FOOD_LABELS[f]}">
+      <span class="ing-label">${FOOD_LABELS[f]}</span>
+    </button>`).join('');
+    }
+
+    function renderSelectedRow() {
+        const row = document.getElementById('selectedIngredientRow');
+        if (!row) return;
+        if (!selectedIngredients.length) {
+            row.innerHTML = '<span class="selected-row-label">Select 1–2 ingredients (or up to 3 with Cooking Pot)</span>';
+            return;
+        }
+        row.innerHTML = selectedIngredients.map((f, i) =>
+            (i > 0 ? '<span class="sel-plus">+</span>' : '') +
+            `<span class="sel-ingredient-chip"><img src="${FOOD_IMGS[f]}" alt="${f}">${FOOD_LABELS[f]}</span>`
+        ).join('');
+    }
+
+    function renderMealCompose() {
+        const box = document.getElementById('mealCompose');
+        if (!box) return;
+        const pot = document.getElementById('settingCookingPot') && document.getElementById('settingCookingPot').checked;
+        const max = pot ? 3 : 2;
+        const count = selectedIngredients.length;
+        if (count === 0) {
+            box.innerHTML = `<div class="meal-compose-title">Compose</div><div style="color:var(--ink-light);font-style:italic;font-size:0.9rem">Select ingredients above to compose a meal.</div>`;
+            return;
+        }
+        if (count === 3 && !pot) {
+            box.innerHTML = `<div class="meal-compose-title">Compose</div><div class="pot-required">⚑ Three-ingredient meals require the Cooking Pot setting to be enabled.</div>`;
+            return;
+        }
+        box.innerHTML = `
+    <div class="meal-compose-title">Name this meal</div>
+    <input id="mealNameInput" class="meal-name-input" placeholder="e.g. Honey-glazed fish, Root broth…" onkeydown="if(event.key==='Enter')addMealEntry()">
+    <button class="meal-add-btn" onclick="addMealEntry()">Add to meal list</button>`;
+        setTimeout(() => {
+            const el = document.getElementById('mealNameInput');
+            if (el) el.focus();
+        }, 40);
+    }
+
+    function addMealEntry() {
+        const input = document.getElementById('mealNameInput');
+        if (!input) return;
+        const name = input.value.trim();
+        const pot = selectedIngredients.length === 3;
+        const meals = loadMeals();
+        meals.push({
+            name: name || selectedIngredients.map(f => FOOD_LABELS[f]).join(' + '),
+            ingredients: [...selectedIngredients],
+            pot
+        });
+        saveMeals(meals);
+        selectedIngredients = [];
+        renderIngredientBar();
+        renderSelectedRow();
+        renderMealCompose();
+        renderMealsList();
+    }
+
+    function deleteMealEntry(i) {
+        const meals = loadMeals();
+        meals.splice(i, 1);
+        saveMeals(meals);
+        renderMealsList();
+    }
+
+    function renderMealsList() {
+        const container = document.getElementById('mealEntriesList');
+        if (!container) return;
+        const meals = loadMeals();
+        if (!meals.length) {
+            container.innerHTML = '<div class="meals-empty">No meals recorded yet. Select ingredients above and name your creation.</div>';
+            return;
+        }
+        container.innerHTML = meals.map((m, i) => {
+            const icons = m.ingredients.map(f => `<img src="${FOOD_IMGS[f]}" alt="${FOOD_LABELS[f] || f}" title="${FOOD_LABELS[f] || f}">`).join('<span class="meal-ing-sep">+</span>');
+            const potBadge = m.pot ? `<span class="meal-pot-badge">🪵 Pot</span>` : '';
+            return `<div class="meal-entry">
+      <div class="meal-ing-icons">${icons}</div>
+      <div class="meal-entry-name">${m.name}</div>
+      ${potBadge}
+      <button class="meal-del-btn" onclick="deleteMealEntry(${i})" title="Remove">✕</button>
+    </div>`;
+        }).join('');
+    }
+
+    function initMealTab() {
+        renderIngredientBar();
+        renderSelectedRow();
+        renderMealCompose();
+        renderMealsList();
+    }
+
+
+    function switchTab(name) {
+        document.querySelectorAll('.tab-panel').forEach(p => p.classList.toggle('active', p.id === 'tab-' + name));
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.onclick.toString().includes("'" + name + "'")));
+        if (name === 'meals') initMealTab();
     }
 
     // ── Init ──
