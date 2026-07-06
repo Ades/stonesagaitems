@@ -1,3 +1,6 @@
+// TODO: setting has built structure STXX ("grinding") enables grinding setting and changes name of setting from STXX to "grinding"
+// TODO: successful grinding of pigment enables Add pigment in settings — could also be automatically enabled when pigment is generated
+// TODO: Save to file
 // TODO: Add pigment material if Pigment item is invented (override in settings)
 // TODO: Cooking pot enables two ingredients. Three ingredients are enabled by ...
 // TODO: Show meals when corresponding structure is build (enable number as is done for grinding in settings)
@@ -543,7 +546,10 @@ for (let i = 0; i < a.length; i++) {
                 const code = item1.replace(/(..).(.)/, '$1$2') + item2.replace(/.(.).(.)/, '$1$2') + end
                 const conn1 = item1.replace(/..(.)./, '$1')
                 const conn2 = item2.replace(/(.).../, '$1')
-                const bstr = code + ' ' + conn1 + conn2 + ' ' + a[i].codes[k] + a[j].codes[l] + end + ` ${a[i].item}(${k}) + ${a[j].item}(${l})`
+                const bstr = [code, code.substring(0,5), code.split('').reverse().join('').substring(0,5),
+                    conn1 + conn2,
+                    a[i].codes[k] + a[j].codes[l] + end,
+                    `${a[i].item}(${k}) + ${a[j].item}(${l})`].join(';')
                 if (conn1 == conn2 && conn1 != '' && start != '0' && conn1 != '0' && conn2 != '0') {
                     // console.log('HERE',a[i],a[j])
                     b.push(bstr)
@@ -1306,6 +1312,7 @@ fs.writeFileSync('purple.json', csvJSON(purple), 'utf8')
 fs.writeFileSync('yellow.json', csvJSON(yellow), 'utf8')
 fs.writeFileSync('items.json', JSON.stringify(items,null,2), 'utf8')
 
+fs.writeFileSync('a.txt', JSON.stringify(a, null, 2), 'utf8')
 fs.writeFileSync('b.txt', JSON.stringify(b, null, 2), 'utf8')
 fs.writeFileSync('c.txt', JSON.stringify(c, null, 2), 'utf8')
 fs.writeFileSync('c5.txt', JSON.stringify(get5from6().filter(onlyUnique).sort(), null, 2), 'utf8')

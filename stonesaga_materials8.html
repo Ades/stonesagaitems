@@ -1579,9 +1579,16 @@
         <label class="setting-row">
             <input type="checkbox" id="settingShowAll" onchange="applySetting('showAll')">
             <div>
-                <div class="setting-label">Show All Card Combos</div>
-                <div class="setting-desc">Reveals all combination outcomes in the wheel, including unrecorded ones.
+                <div class="setting-label">Save All Equal Combinations</div>
+                <div class="setting-desc">When a combination is saved, update all equal combinations (and reverse) with same outcome.
                 </div>
+            </div>
+        </label>
+        <label class="setting-row">
+            <input type="checkbox" id="settingAddEligibleCombos" onchange="applySetting('addEligibleCombos')">
+            <div>
+                <div class="setting-label">Save All Eligible Combinations</div>
+                <div class="setting-desc">When a combination is saved, update all eligible combinations (TODO: TDB:on back of card) with same outcome.</div>
             </div>
         </label>
         <label class="setting-row">
@@ -1603,13 +1610,6 @@
             <div>
                 <div class="setting-label">Show all items in list</div>
                 <div class="setting-desc">Show all items Unknown, Nothing, Items ...</div>
-            </div>
-        </label>
-        <label class="setting-row">
-            <input type="checkbox" id="settingAddEligibleCombos" onchange="applySetting('addEligibleCombos')">
-            <div>
-                <div class="setting-label">Item creation adds eligible combos.</div>
-                <div class="setting-desc">When an item is crafted, add eligible combos (TODO: TDB:on back of card).</div>
             </div>
         </label>
     </div>
@@ -2702,8 +2702,8 @@ const materials = [
 materials.forEach(x=>{
     let index = ALL_CARDS_BASE.findIndex(y=>y.id === x.note);
     // console.log('index',index)
-    ALL_CARDS_BASE[index].cols = [x.w.substring(0,1),x.n.substring(0,1),x.e.substring(0,1),x.s.substring(0,1)]
-    ALL_CARDS_BASE[index].vals = [x.w.substring(1,2),x.n.substring(1,2),x.e.substring(1,2),x.s.substring(1,2)]
+    ALL_CARDS_BASE[index].cols = x.cols //[x.w.substring(0,1),x.n.substring(0,1),x.e.substring(0,1),x.s.substring(0,1)]
+    ALL_CARDS_BASE[index].vals = x.vals //[x.w.substring(1,2),x.n.substring(1,2),x.e.substring(1,2),x.s.substring(1,2)]
     // ALL_CARDS_BASE[index].vals = x.vals
 } )
     // console.log(ALL_CARDS_BASE[0])
@@ -3043,10 +3043,12 @@ materials.forEach(x=>{
         } else if (combo && combo.desc) {
             resClass = 'known';
             resText = '✓';
-        } else if (settings.showAll) {
-            resClass = 'unknown';
-            resText = 'Unknown';
-        } else {
+        }
+        // else if (settings.showAll) {
+        //     resClass = 'unknown';
+        //     resText = 'Unknown';
+        // }
+        else {
             resClass = 'unknown';
             resText = '?';
         }
@@ -3414,7 +3416,8 @@ materials.forEach(x=>{
 
         // console.log(codes)
         document.getElementById('hoverInfoKey').textContent = `${ca?.name || a.id}${ca?.state !== 'raw'?', '+ca.state:''} + ${cb?.name || b.id}${cb?.state !== 'raw'?', '+cb.state:''}`;
-        document.getElementById('hoverInfoNames').textContent = `${codes.valid.join(' ')}`;
+        document.getElementById('hoverInfoNames').textContent = `${codes.valid.join(' ')}
+${key}`;
         document.getElementById('hoverInfo').classList.add('show');
     }
 
@@ -3439,6 +3442,7 @@ materials.forEach(x=>{
         //console.log(ca,cb,rot1,rot2)
 
         const codes = getCodes(key)
+        // console.log('codes',key,codes)
         const prevItem = !(loadUser()[key])
         let foundItem
         let foundSomething = false
@@ -3462,10 +3466,10 @@ materials.forEach(x=>{
             // console.log('foundSomething',foundSomething, 'prevItem', prevItem)
         })
 
-        if (settings.addEligibleCombos) {
-            console.log('CRAFT',existing.craft)
-            console.log('DESC',existing.desc)
-        }
+        // if (settings.addEligibleCombos) {
+        //     console.log('CRAFT',existing.craft)
+        //     console.log('DESC',existing.desc)
+        // }
         if (itemName === 'None') {
             itemName = 'Nothing'
         }
@@ -3474,8 +3478,8 @@ materials.forEach(x=>{
         // console.log((((itNumber + ' ')||'') + itemName))
 
         document.getElementById('modalPair').innerHTML = `${tA}<div class="modal-names">${ca?.name || a.id}<br><span style="color:var(--ink-light)">+</span><br>${cb?.name || b.id}</div>${tB}`;
-        document.getElementById('modalCraft').value = (!settings.addEligibleCombos && existing.craft) || (((itNumber || '') + (!!itNumber?' ':'')) + itemName)
-        document.getElementById('modalDesc').value = (!settings.addEligibleCombos && existing.desc) || gameText + `
+        document.getElementById('modalCraft').value = (existing.craft) || (((itNumber || '') + (!!itNumber?' ':'')) + itemName)
+        document.getElementById('modalDesc').value = (existing.desc) || gameText + `
 
 ${flavorText}`;
         // console.log('itNumber', itNumber)
@@ -3489,6 +3493,15 @@ ${flavorText}`;
     function closeModal() {
         document.getElementById('addComboOverlay').classList.remove('open');
         modalKey = null;
+    }
+
+    function genCodes(key) {
+        const [a,b] = parseKey(key)
+        const ca = cardById(a.id), cb = cardById(b.id);
+        const code6 = ca.cols[a.rot/90] + ca.vals[a.rot/90]       + ca.vals[(2+a.rot/90)%4]
+                    + cb.vals[b.rot/90] + cb.vals[(2+b.rot/90)%4] + cb.cols[(2+b.rot/90)%4]
+        return [code6.substring(0,5),code6.split('').reverse().join('').substring(0,5)]
+            .filter(x=>x[0]!=='0')
     }
 
     function saveFromModal() {
@@ -3508,15 +3521,59 @@ ${flavorText}`;
         // console.log('_resa',_resa[modalKey])
         // _resa[_lsi.indexOf(modalKey)]?.forEach(x=>{
         const users = loadUser()
-        _resa[modalKey]?.forEach(x=>{
+        /*
+. 306 animal__Guts__1:180|plant__Wood__0:180 180 (4) ['Y', '0', 'B', 'R'] (4) ['1', '0', '1', '3'] 180 (4) ['B', 'R', 'Y', 'Y'] (4) ['2', '2', '2', '3'] (2) ['B1122', 'B2211']
+ . 19 animal__Bone__0:0|animal__Guts__1:0 0 (4) ['B', 'Y', 'Y', 'R'] (4) ['2', '3', '2', '2'] 0 (4) ['Y', '0', 'B', 'R'] (4) ['1', '0', '1', '3'] (2) ['B2211', 'B1122']
+. 287 animal__Guts__1:180|animal__Bone__0:180 180 (4) ['Y', '0', 'B', 'R'] (4) ['1', '0', '1', '3'] 180 (4) ['B', 'Y', 'Y', 'R'] (4) ['2', '3', '2', '2'] (2) ['B1122', 'B2211']
+.  57 animal__Bone__0:0|plant__Fiber__1:0 0 (4) ['B', 'Y', 'Y', 'R'] (4) ['2', '3', '2', '2'] 0 (4) ['Y', 'Y', 'B', 'R'] (4) ['1', '5', '1', '5'] (2) ['B2211', 'B1122']
+.  71 animal__Bone__0:0|rare__Silk__0:180 0 (4) ['B', 'Y', 'Y', 'R'] (4) ['2', '3', '2', '2'] 180 (4) ['B', 'R', 'Y', '0'] (4) ['1', '3', '1', '0'] (2) ['B2211', 'B1122']
+. 741 plant__Fiber__1:180|animal__Bone__0:180 180 (4) ['Y', 'Y', 'B', 'R'] (4) ['1', '5', '1', '5'] 180 (4) ['B', 'Y', 'Y', 'R'] (4) ['2', '3', '2', '2'] (2) ['B1122', 'B2211']
+. 589 plant__Wood__0:0|animal__Guts__1:0 0 (4) ['B', 'R', 'Y', 'Y'] (4) ['2', '2', '2', '3'] 0 (4) ['Y', '0', 'B', 'R'] (4) ['1', '0', '1', '3'] (2) ['B2211', 'B1122']
+. 785 plant__Fiber__1:180|plant__Wood__0:180 180 (4) ['Y', 'Y', 'B', 'R'] (4) ['1', '5', '1', '5'] 180 (4) ['B', 'R', 'Y', 'Y'] (4) ['2', '2', '2', '3'] (2) ['B1122', 'B2211']
+. 627 plant__Wood__0:0|plant__Fiber__1:0 0 (4) ['B', 'R', 'Y', 'Y'] (4) ['2', '2', '2', '3'] 0 (4) ['Y', 'Y', 'B', 'R'] (4) ['1', '5', '1', '5'] (2) ['B2211', 'B1122']
+. 936 rare__Silk__0:0|animal__Bone__0:180 0 (4) ['B', 'R', 'Y', '0'] (4) ['1', '3', '1', '0'] 180 (4) ['B', 'Y', 'Y', 'R'] (4) ['2', '3', '2', '2'] (2) ['B1122', 'B2211']
+. 641 plant__Wood__0:0|rare__Silk__0:180 0 (4) ['B', 'R', 'Y', 'Y'] (4) ['2', '2', '2', '3'] 180 (4) ['B', 'R', 'Y', '0'] (4) ['1', '3', '1', '0'] (2) ['B2211', 'B1122']
+. 955 rare__Silk__0:0|plant__Wood__0:180 0 (4) ['B', 'R', 'Y', '0'] (4) ['1', '3', '1', '0'] 180 (4) ['B', 'R', 'Y', 'Y'] (4) ['2', '2', '2', '3'] (2) ['B1122', 'B2211']
+
+*/
+        const listOfValidCombos = []
+        console.log('settings.addEligibleCombos',settings.addEligibleCombos)
+        console.log('settings.showAll',settings.showAll)
+        if (settings.addEligibleCombos) {
+            // TODO: if settings.addEligibleCombos add all card combos to list of valid cominations, ie. all combos _resa-arrays
+            console.log('TDB not implemented')
+        }
+        // TODO else
+        if (settings.showAll
+        || settings.addEligibleCombos // TODO REMOVE
+        ) {
+            listOfValidCombos.push(..._resa[modalKey])
+        } else {
+            const modalKeyIndex = _lsi.indexOf(modalKey)
+            listOfValidCombos.push(modalKeyIndex)
+            console.log('modalKeyIndex')
+            // const [a, b] = parseKey(modalKey)
+            // const ca = cardById(a.id), cb = cardById(b.id);
+            // console.log('save.', modalKey, ca.cols.join(''), ca.vals.join(''), cb.cols.join(''), cb.vals.join(''), genCodes(modalKey))
+            // saveUser(modalKey, craft, desc || craft);
+
+        }
+        console.log('listOfValidCombos',listOfValidCombos)
+        listOfValidCombos?.forEach(x => {
             const key = _lsi[x]
             // console.log('settings.addEligibleCombos',settings.addEligibleCombos)
-            if (settings.addEligibleCombos || !users?.[key]) {
-                // console.log('save',key,craft,desc)
-                saveUser(key,craft,desc || craft)
-            }
+            // if (!users?.[key]) {
+                const [a, b] = parseKey(key)
+                const ca = cardById(a.id), cb = cardById(b.id);
+                console.log('save.', x, key, ca.cols.join(''), ca.vals.join(''), cb.cols.join(''), cb.vals.join(''), genCodes(key))
+                saveUser(key, craft, desc || craft)
+            // }
         })
-        saveUser(modalKey, craft, desc || craft);
+
+        // const [a, b] = parseKey(modalKey)
+        // const ca = cardById(a.id), cb = cardById(b.id);
+        // console.log('save.', modalKey, ca.cols.join(''), ca.vals.join(''), cb.cols.join(''), cb.vals.join(''), genCodes(modalKey))
+        // saveUser(modalKey, craft, desc || craft);
         closeModal();
     }
 
