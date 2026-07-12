@@ -1656,16 +1656,16 @@ saveAs(fileToSave, fileName);
         <label class="setting-row">
             <input type="checkbox" id="settingShowAll" onchange="applySetting('showAll')">
             <div>
-                <div class="setting-label">Save All Equal Combinations</div>
-                <div class="setting-desc">When a combination is saved, update all equal combinations (and reverse) with same outcome.
+                <div class="setting-label">Reveal items with same combination (and reverse)</div>
+                <div class="setting-desc">When an item combination is saved, reveal items with same combination (and reverse).
                 </div>
             </div>
         </label>
         <label class="setting-row">
             <input type="checkbox" id="settingAddEligibleCombos" onchange="applySetting('addEligibleCombos')">
             <div>
-                <div class="setting-label">Save All Eligible Combinations</div>
-                <div class="setting-desc">When a combination is saved, update all eligible combinations (TODO: TDB:on back of card) with same outcome.</div>
+                <div class="setting-label">Reveal all All Eligible Combinations</div>
+                <div class="setting-desc">When an item combination is saved, reveal all eligible combinations (on back of card) with same outcome. (shift-save treats 'Nothing' as item)</div>
             </div>
         </label>
         <label class="setting-row">
@@ -2999,7 +2999,17 @@ materials.forEach(x=>{
     (function () {
         try {
             const s = JSON.parse(localStorage.getItem('stonesaga_settings') || '{}');
+            // console.log('GETITEM S',s)
             Object.assign(settings, s);
+
+            // console.log('settings.grinding',document.getElementById('settingGrinding').checked , !!settings.grinding)
+            // console.log('settings.showAll',document.getElementById('settingShowAll').checked , !!settings.showAll)
+            // console.log('settings.pigment',document.getElementById('settingPigment').checked , !!settings.pigment)
+            // console.log('settings.mealList',document.getElementById('settingMealList').checked , !!settings.mealList)
+            // console.log('settings.showAllItems',document.getElementById('settingShowAllItems').checked , !!settings.showAllItems)
+            // console.log('settings.addEligibleCombos',document.getElementById('settingAddEligibleCombos').checked , !!settings.addEligibleCombos)
+
+
             document.getElementById('settingGrinding').checked = !!settings.grinding;
             document.getElementById('settingShowAll').checked = !!settings.showAll;
             document.getElementById('settingPigment').checked = !!settings.pigment;
@@ -3011,6 +3021,7 @@ materials.forEach(x=>{
     })();
 
     function saveSettings() {
+        // console.log('SETTINGS',settings,JSON.stringify(settings))
         localStorage.setItem('stonesaga_settings', JSON.stringify(settings));
     }
 
@@ -3022,6 +3033,7 @@ materials.forEach(x=>{
         if (key === 'mealList') document.getElementById('mealSection').style.display = settings.mealList ? '' : 'none';
         if (key === 'showAll') renderWheel();
         if (key === 'showAllItems') renderCombosList();
+        if (key === 'addEligibleCombos') renderCombosList();
     }
 
     function toggleSettings() {
@@ -3697,9 +3709,20 @@ ${flavorText}`;
             // console.log('settings.addEligibleCombos',settings.addEligibleCombos)
             // console.log('settings.showAll',settings.showAll)
             const codes = getCodes(lastResultKey)
+            // console.log('CODES',codes)
             codes.valid.forEach(x=> {
                 const item = getStoryInfo(x)
                 const itemName = item?.['Item Name']
+                // console.log('ITEMNAME',itemName)
+                if (!isShiftPressed && itemName === 'None') {
+                    if (settings.showAll) {
+                        listOfValidCombos.push(..._resa[modalKey]) || console.log('MODALKEY',modalKey)
+                    } else {
+                        const modalKeyIndex = _lsi.indexOf(modalKey)
+                        listOfValidCombos.push(modalKeyIndex)
+                    }
+                    return
+                }
                 const eligibleCodes = _itemCodes[itemName]
                 eligibleCodes.forEach(code5 => listOfValidCombos.push(...code5_itemIndex[code5]))
                 // console.log('ADDELIGIBLECOMBOS',x, itemName, eligibleCodes)
