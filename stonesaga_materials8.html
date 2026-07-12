@@ -1555,7 +1555,84 @@
     </style>
 </head>
 <body>
+<!-- save file anchor -->
+<a id="downloadAnchorElem" style="display:none"></a>
+<script>
+    /*
+    alternative implementation
+function downloadObjectAsJson(exportObj, exportName){
+    var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(exportObj));
+    var downloadAnchorNode = document.createElement('a');
+    downloadAnchorNode.setAttribute("href",     dataStr);
+    downloadAnchorNode.setAttribute("download", exportName + ".json");
+    document.body.appendChild(downloadAnchorNode); // required for firefox
+    downloadAnchorNode.click();
+    downloadAnchorNode.remove();
+  }
 
+  alternative implementation:
+  var data = {
+    key: 'value'
+};
+var fileName = 'myData.json';
+
+// Create a blob of the data
+var fileToSave = new Blob([JSON.stringify(data)], {
+    type: 'application/json'
+});
+
+// Save the file
+saveAs(fileToSave, fileName);
+     */
+    function saveToFile() {
+        const saveFile = {
+            'stonesaga_combos_v2':JSON.parse(localStorage.getItem('stonesaga_combos_v2')) || {},
+            'stonesaga_settings':JSON.parse(localStorage.getItem('stonesaga_settings')) || {},
+            'stonesaga_grind':JSON.parse(localStorage.getItem('stonesaga_grind')) || {},
+            'stonesaga_meals':JSON.parse(localStorage.getItem('stonesaga_meals')) || [],
+            'stonesaga_meals_v2':JSON.parse(localStorage.getItem('stonesaga_meals_v2')) || [],
+        }
+        var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(saveFile));
+        var dlAnchorElem = document.getElementById('downloadAnchorElem');
+        dlAnchorElem.setAttribute("href",     dataStr     );
+        dlAnchorElem.setAttribute("download", "stonesaga_savefile.json");
+        dlAnchorElem.click();
+        toggleSettings()
+    }
+
+    function loadFromJSON(json) {
+        // const lsKeys = ["stonesaga_combos_v2",
+        //     "stonesaga_settings",
+        //     "stonesaga_grind",
+        //     "stonesaga_meals",
+        //     "stonesaga_meals_v2"]
+        if (isShiftPressed) {
+            console.log('RESET info')
+            json = {
+                "stonesaga_combos_v2": {},
+                "stonesaga_settings": {},
+                "stonesaga_grind": {},
+                "stonesaga_meals": [],
+                "stonesaga_meals_v2": []
+            }
+        }
+        // lsKeys.forEach(x=>{
+        //     if (!!json?.[x]) {
+        //
+        //     }
+        json?.stonesaga_combos_v2 && localStorage.setItem('stonesaga_combos_v2', JSON.stringify(json.stonesaga_combos_v2) || '{}')
+        json?.stonesaga_settings && localStorage.setItem('stonesaga_settings', JSON.stringify(json.stonesaga_settings) || '{}')
+        json?.stonesaga_grind && localStorage.setItem('stonesaga_grind', JSON.stringify(json.stonesaga_grind) || '{}')
+        json?.stonesaga_meals && localStorage.setItem('stonesaga_meals', JSON.stringify(json.stonesaga_meals) || '[]')
+        json?.stonesaga_meals_v2 && localStorage.setItem('stonesaga_meals_v2', JSON.stringify(json.stonesaga_meals_v2) || '[]')
+
+        json?.stonesaga_combos_v2 || console.log('savefile is missing: stonesaga_combos_v2')
+        json?.stonesaga_settings || console.log('savefile is missing: stonesaga_settings')
+        json?.stonesaga_grind || console.log('savefile is missing: stonesaga_grind')
+        json?.stonesaga_meals || console.log('savefile is missing: stonesaga_meals')
+        json?.stonesaga_meals_v2 || console.log('savefile is missing: stonesaga_meals_v2')
+    }
+</script>
 <!-- Settings cog button -->
 <button id="settingsBtn" onclick="toggleSettings()" title="Settings" aria-label="Settings">
     <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -1610,6 +1687,20 @@
             <div>
                 <div class="setting-label">Show all items in list</div>
                 <div class="setting-desc">Show all items Unknown, Nothing, Items ...</div>
+            </div>
+        </label>
+        <label class="setting-row">
+            <input type="button" id="saveToFile" value="Save" onclick="saveToFile()"/>
+<!--            <input type="button" id="loadFromFile" value="Load" onclick="loadFromFile()">-->
+<!--            <input type="file" id="file-input" value="Load"/>-->
+<!--            <div>-->
+<!--                <label for="file-input" class="btn">Load</label>-->
+                <button onclick="document.getElementById('file-input').click()" value="Load">Load</button>
+                <input id="file-input" style="display:none;" type="file">
+<!--            </div>-->
+            <div>
+                <div class="setting-label">File management</div>
+                <div class="setting-desc">Save/Load all info to file.</div>
             </div>
         </label>
     </div>
@@ -1708,6 +1799,55 @@
 <footer>Stonesaga Materials Reference · Interactive Edition</footer>
 
 <script type="application/javascript" src="./routes/items.js"></script>
+<script>
+    const fileInput = document.getElementById("file-input");
+
+    fileInput.addEventListener("change", handleFileSelection);
+
+    function handleFileSelection(event) {
+        const file = event.target.files[0];
+        // fileContentDisplay.textContent = ""; // Clear previous file content
+        // messageDisplay.textContent = ""; // Clear previous messages
+
+        // Validate file existence and type
+        // if (!file) {
+        //     showMessage("No file selected. Please choose a file.", "error");
+        //     return;
+        // }
+
+        // if (!file.type.startsWith("text")) {
+        //     showMessage("Unsupported file type. Please select a text file.", "error");
+        //     return;
+        // }
+
+        // Read the file
+        const reader = new FileReader();
+        // console.log('CREATED FILEREADER')
+        reader.onload = () => {
+            // fileContentDisplay.textContent = reader.result;
+            const result = JSON.parse(reader.result)
+            // console.log('READ',Object.keys(result), Object.values(result).map(x=>JSON.stringify(x).length))
+            loadFromJSON(result)
+            renderWheel();
+            renderCombosList();
+            toggleSettings()
+
+        };
+        reader.onerror = () => {
+            // showMessage("Error reading the file. Please try again.", "error");
+            console.log("Error reading the file. Please try again.")
+        };
+        reader.readAsText(file);
+    }
+
+    // Displays a message to the user
+    // function showMessage(message, type) {
+    //     messageDisplay.textContent = message;
+    //     messageDisplay.style.color = type === "error" ? "red" : "green";
+    // }
+
+</script>
+
 <script>
     // ── Image data ──
     const IMG = {
@@ -2184,16 +2324,16 @@ const materials = [
         "e": "Y6",
         "s": "",
         "cols": [
-            "R",
-            "Y"
+            "R","",
+            "Y",""
         ],
         "vals": [
             "5","",
             "6",""
         ],
         "codes": [
-            "R5Y6","",
-            "Y6R5",""
+            "R5Y6",
+            "Y6R5"
         ]
     },
     {
@@ -3235,6 +3375,11 @@ materials.forEach(x=>{
                 }
                 foundItem = item
             }
+
+            Object.keys(items).forEach(col=> Object.keys(items[col]).forEach((num)=>{
+                if (items[col][num]["Item Name"] === itemName) console.log(col,num)
+            }))
+
             // console.log(x,color,code,items[color][code])
             // console.log('!!previtem',!!prevItem,prevItem)
             // console.log('foundItem: Code: ',foundItem?.Code, itemName)
@@ -3396,6 +3541,16 @@ materials.forEach(x=>{
         }
     }
 
+    function sideSymbol(rot) {
+        return ''
+        return {
+            '0': '◨',
+            '90':'⬒',
+            '180':'◧',
+            '270':'⬓',
+        }[rot] || ''
+    }
+
     // ── Hover info panel beside settings cog ──
     function showHoverInfo(key) {
         const [a, b] = parseKey(key);
@@ -3415,7 +3570,7 @@ materials.forEach(x=>{
         // console.log(ca)
 
         // console.log(codes)
-        document.getElementById('hoverInfoKey').textContent = `${ca?.name || a.id}${ca?.state !== 'raw'?', '+ca.state:''} + ${cb?.name || b.id}${cb?.state !== 'raw'?', '+cb.state:''}`;
+        document.getElementById('hoverInfoKey').textContent = `${getMaterialName(ca)+sideSymbol(rot1) || a.id} + ${getMaterialName(cb)+sideSymbol(rot2) || b.id}`;
         document.getElementById('hoverInfoNames').textContent = `${codes.valid.join(' ')}
 ${key}`;
         document.getElementById('hoverInfo').classList.add('show');
@@ -3536,29 +3691,35 @@ ${flavorText}`;
 . 955 rare__Silk__0:0|plant__Wood__0:180 0 (4) ['B', 'R', 'Y', '0'] (4) ['1', '3', '1', '0'] 180 (4) ['B', 'R', 'Y', 'Y'] (4) ['2', '2', '2', '3'] (2) ['B1122', 'B2211']
 
 */
-        const listOfValidCombos = []
-        console.log('settings.addEligibleCombos',settings.addEligibleCombos)
-        console.log('settings.showAll',settings.showAll)
+
+        let listOfValidCombos = []
         if (settings.addEligibleCombos) {
-            // TODO: if settings.addEligibleCombos add all card combos to list of valid cominations, ie. all combos _resa-arrays
-            console.log('TDB not implemented')
-        }
-        // TODO else
-        if (settings.showAll
-        || settings.addEligibleCombos // TODO REMOVE
-        ) {
-            listOfValidCombos.push(..._resa[modalKey])
+            // console.log('settings.addEligibleCombos',settings.addEligibleCombos)
+            // console.log('settings.showAll',settings.showAll)
+            const codes = getCodes(lastResultKey)
+            codes.valid.forEach(x=> {
+                const item = getStoryInfo(x)
+                const itemName = item?.['Item Name']
+                const eligibleCodes = _itemCodes[itemName]
+                eligibleCodes.forEach(code5 => listOfValidCombos.push(...code5_itemIndex[code5]))
+                // console.log('ADDELIGIBLECOMBOS',x, itemName, eligibleCodes)
+                // console.log('ADDELIGIBLECOMBOS',code5_itemIndex[eligibleCodes[0]])
+            })
+        } else if (settings.showAll) {
+            listOfValidCombos.push(..._resa[modalKey]) || console.log('MODALKEY',modalKey)
         } else {
             const modalKeyIndex = _lsi.indexOf(modalKey)
             listOfValidCombos.push(modalKeyIndex)
-            console.log('modalKeyIndex')
+            // console.log('modalKeyIndex')
             // const [a, b] = parseKey(modalKey)
             // const ca = cardById(a.id), cb = cardById(b.id);
             // console.log('save.', modalKey, ca.cols.join(''), ca.vals.join(''), cb.cols.join(''), cb.vals.join(''), genCodes(modalKey))
             // saveUser(modalKey, craft, desc || craft);
 
         }
-        console.log('listOfValidCombos',listOfValidCombos)
+        const onlyUnique = (value, index, array) => array.indexOf(value) === index
+        listOfValidCombos = listOfValidCombos.filter(onlyUnique)
+        // console.log('listOfValidCombos',listOfValidCombos)
         listOfValidCombos?.forEach(x => {
             const key = _lsi[x]
             // console.log('settings.addEligibleCombos',settings.addEligibleCombos)
@@ -3749,6 +3910,11 @@ ${flavorText}`;
         }
     }
 
+    function getMaterialName(card) {
+        const state = card.state === 'raw' ? '': `, ${card.state}`
+        return card.name + state
+    }
+
     // ── Combos list ──
     function renderCombosList() {
         const container = document.getElementById('combosList');
@@ -3757,18 +3923,23 @@ ${flavorText}`;
             container.innerHTML = '<div class="combos-empty">No combinations recorded yet.</div>';
             return;
         }
+
+        let lastDesc
+        let duplicateDesc = false
         container.innerHTML = all.map(entry => {
             const [a, b] = parseKey(entry.key);
             const ca = cardById(a.id) || {}, cb = cardById(b.id) || {};
             const srcA = IMG[ca.imgIdx], srcB = IMG[cb.imgIdx];
-            const tA = srcA ? `<img class="combo-thumb" src="${srcA}" alt="${ca.name || ''}">` : ca.name || a.id;
-            const tB = srcB ? `<img class="combo-thumb" src="${srcB}" alt="${cb.name || ''}">` : cb.name || b.id;
+            const tA = srcA ? `<img class="combo-thumb" src="${srcA}" alt="${getMaterialName(ca) || ''}">` : getMaterialName(ca) || a.id;
+            const tB = srcB ? `<img class="combo-thumb" src="${srcB}" alt="${getMaterialName(cb) || ''}">` : getMaterialName(cb) || b.id;
             const craft = entry.craft ? `<div class="craft-tag">${entry.craft}</div>` : '';
             const del = entry.custom ? `<button class="combo-del-btn" onclick="deleteUser('${entry.key.replace(/'/g, "\'")}')" title="Delete">✕</button>` : `<span class="combo-builtin-badge">built-in</span>`;
+            duplicateDesc = lastDesc === entry.desc
+            lastDesc = entry.desc
             return `<div class="combo-entry">
       <div class="combo-entry-cards">${tA}<span style="color:var(--ink-light);padding:0 2px;font-size:0.9rem">+</span>${tB}</div>
-      <div>${craft}<div style="font-size:0.7rem;color:var(--ink-light);margin-top:2px">${ca.name || ''} + ${cb.name || ''}</div></div>
-      <div class="combo-entry-desc">${entry.desc || ''}</div>
+      <div>${craft}<div style="font-size:0.7rem;color:var(--ink-light);margin-top:2px">${getMaterialName(ca) || ''} + ${getMaterialName(cb) || ''}</div></div>
+      <div class="combo-entry-desc">${duplicateDesc ? '': (entry.desc || '')}</div>
       <div class="combo-entry-actions">${del}</div>
     </div>`;
         }).join('');

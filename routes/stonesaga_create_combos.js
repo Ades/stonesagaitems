@@ -98,7 +98,8 @@ function codes(x) {
 
 const strReverse = (x) => x.split('').reverse().join('')
 const onlyUnique = (value, index, array) => array.indexOf(value) === index
-let a = [{
+let a = [
+    {
     item: 'bone',
     type: 'animal',
     note: 'animal__Bone__0',
@@ -546,10 +547,13 @@ for (let i = 0; i < a.length; i++) {
                 const code = item1.replace(/(..).(.)/, '$1$2') + item2.replace(/.(.).(.)/, '$1$2') + end
                 const conn1 = item1.replace(/..(.)./, '$1')
                 const conn2 = item2.replace(/(.).../, '$1')
+                const g = [0, 270, 180, 90]
                 const bstr = [code, code.substring(0,5), code.split('').reverse().join('').substring(0,5),
                     conn1 + conn2,
                     a[i].codes[k] + a[j].codes[l] + end,
-                    `${a[i].item}(${k}) + ${a[j].item}(${l})`].join(';')
+                    `${a[i].item}(${k}) + ${a[j].item}(${l})`,
+                    `${a[i].note}:${g[k]}|${a[j].note}:${g[l]}`
+                ].join(';')
                 if (conn1 == conn2 && conn1 != '' && start != '0' && conn1 != '0' && conn2 != '0') {
                     // console.log('HERE',a[i],a[j])
                     b.push(bstr)
@@ -1305,6 +1309,26 @@ redObj.forEach(x => items.red[x.Code] = x);
 blueObj.forEach(x => items.blue[x.Code] = x);
 purpleObj.forEach(x => items.purple[x.Code] = x);
 yellowObj.forEach(x => items.yellow[x.Code] = x);
+
+//code5_to_allDescNotes
+const code5_notes = {}
+const code5_itemListIndex = {}
+const itemList = JSON.parse(fs.readFileSync('./_lsi.txt', 'utf8'))
+// console.log('ITEMLIST',itemList);
+// console.log(b.map(x=>x.split(';')))
+b.map(x=>x.split(';')).forEach((x) => {
+    // console.log('x[1]',x[1])
+    if (x[1].substring(0,1) !== '0') {
+        code5_notes[x[1]] = [...(code5_notes[x[1]] || []), x[6]]
+        code5_itemListIndex[x[1]] = [...(code5_itemListIndex[x[1]] || []), itemList.indexOf(x[6])]
+
+    }
+    if (x[2].substring(0,1) !== '0') {
+        code5_notes[x[2]] = [...(code5_notes[x[2]] || []), x[6]]
+        code5_itemListIndex[x[2]] = [...(code5_itemListIndex[x[2]] || []), itemList.indexOf(x[6])]
+    }
+})
+
 // console.log(items);
 fs.writeFileSync('red.json', csvJSON(red), 'utf8')
 fs.writeFileSync('blue.json', csvJSON(blue), 'utf8')
@@ -1320,6 +1344,11 @@ fs.writeFileSync('failed.txt', JSON.stringify(failed, null, 2), 'utf8')
 fs.writeFileSync('ls.txt', JSON.stringify(ls, null, 2), 'utf8')
 fs.writeFileSync('res.txt', JSON.stringify(res, null, 2), 'utf8')
 fs.writeFileSync('resc.txt', JSON.stringify(resc, null, 2), 'utf8')
+fs.writeFileSync('../public/javascripts/_code5_notes.json', JSON.stringify(code5_notes, null, 2), 'utf8')
+fs.writeFileSync('../public/javascripts/_code5_itemListIndex.json', JSON.stringify(code5_itemListIndex, null, 2), 'utf8')
+
+
+
 
 
 

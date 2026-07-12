@@ -11,7 +11,8 @@ function codes(x) {
 
 const strReverse = (x) => x.split('').reverse().join('')
 const onlyUnique = (value, index, array) => array.indexOf(value) === index
-let a = [{
+let a = [
+    {
     item: 'bone',
     type: 'animal',
     note: 'animal__Bone__0',
@@ -521,6 +522,7 @@ res
             }
             resa[lsindextokey[y]] = x
         }))
+
 
 fs.writeFileSync('_ls.txt', JSON.stringify(ls, null, 2), 'utf8')
 fs.writeFileSync('_res.txt', JSON.stringify(res, null, 2), 'utf8')
