@@ -1,7 +1,6 @@
 // TODO: setting has built structure STXX ("grinding") enables grinding setting and changes name of setting from STXX to "grinding"
 // TODO: successful grinding of pigment enables Add pigment in settings — could also be automatically enabled when pigment is generated
-// TODO: Save to file
-// TODO: Add pigment material if Pigment item is invented (override in settings)
+// TODO: Add pigment material only if Pigment item is invented (override this behaviour in settings)
 // TODO: Cooking pot enables two ingredients. Three ingredients are enabled by ...
 // TODO: Show meals when corresponding structure is build (enable number as is done for grinding in settings)
 // TODO: A switch in settings should enable "read all recepies on cards" and not only discovered.
@@ -22,6 +21,7 @@
 // TODO: OLD: handle pigment (add image, section, combinations)
 // TODO: OLD clearer show list of items created and their recepies
 // TODO: DUPLICATE sort list of items
+// TODO: DONE Save to file
 // TODO: DONE The list should show crafted (discovered) items (sorted) and all known recepies.
 // TODO: DONE? Only list crafted items checkbox in settings - group by item - comboAll()
 // TODO: DONE Gör endast en bild selekterbar. Runtomden ska visas alla kopplingar som kan göras.
