@@ -1,6 +1,6 @@
 ## Stonesaga item combination app
 
-I vibe coded a item combinator. Grinding and meal recipes are also added (in a simle format).
+I vibe coded a item combinator. Grinding and meal recipes are also added (in a simple format).
 
 ## Support on Patreon
 Please support me on Patreon. 
