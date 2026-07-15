@@ -7,11 +7,7 @@ I vibe coded an item combinator. Grinding and meal recipes are also added (in a 
 Download and open the stonesaga_item_combinations.html in a browser.
 
 ## Donations, Support on Patreon
-Please support me on Patreon. 
-
-[Patreon]([https://www.datacamp.com](https://patreon.com/u14994019))
-
-https://patreon.com/u14994019?utm_medium=unknown&utm_source=join_link&utm_campaign=creatorshare_creator&utm_content=copyLink
+Please support me on <a href="https://patreon.com/u14994019">Patreon</a>.
 
 Or support me with PayPal:
 
