@@ -2,6 +2,10 @@
 
 I vibe coded an item combinator. Grinding and meal recipes are also added (in a simple format).
 
+## Installation
+
+Download and open the stonesaga_item_combinations.html in a browser.
+
 ## Donations, Support on Patreon
 Please support me on Patreon. 
 
