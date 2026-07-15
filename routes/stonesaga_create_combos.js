@@ -1,3 +1,4 @@
+// TODO: Refresh after file loaded.
 // TODO: setting has built structure STXX ("grinding") enables grinding setting and changes name of setting from STXX to "grinding"
 // TODO: successful grinding of pigment enables Add pigment in settings — could also be automatically enabled when pigment is generated
 // TODO: Add pigment material only if Pigment item is invented (override this behaviour in settings)
