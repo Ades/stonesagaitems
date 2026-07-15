@@ -14,7 +14,8 @@ Please support me on Patreon.
 https://patreon.com/u14994019?utm_medium=unknown&utm_source=join_link&utm_campaign=creatorshare_creator&utm_content=copyLink
 
 Or support me with PayPal:
-<img width="500" height="500" alt="qrcode" src="https://github.com/user-attachments/assets/952aa74d-ae4e-492e-adaa-21fcea8e1de0" />
+
+<img width="200" height="200" alt="qrcode" src="https://github.com/user-attachments/assets/952aa74d-ae4e-492e-adaa-21fcea8e1de0" />
 
 ## Backlog
 
