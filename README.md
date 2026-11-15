@@ -15,8 +15,6 @@ Or support me with PayPal:
 
 ## Backlog
 
-// TODO: Refresh after file loaded.
-
 // TODO: setting has built structure STXX ("grinding") enables grinding setting and changes name of setting from STXX to "grinding"
 
 // TODO: successful grinding of pigment enables Add pigment in settings — could also be automatically enabled when pigment is generated
@@ -64,6 +62,8 @@ Or support me with PayPal:
 // TODO: DUPLICATE sort list of items
 
 // TODO: DONE Save to file
+
+// TODO: DONE Refresh after file loaded.
 
 // TODO: DONE The list should show crafted (discovered) items (sorted) and all known recepies.
 

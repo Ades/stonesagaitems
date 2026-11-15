@@ -1558,82 +1558,6 @@
 <body>
 <!-- save file anchor -->
 <a id="downloadAnchorElem" style="display:none"></a>
-<script>
-    /*
-    alternative implementation
-function downloadObjectAsJson(exportObj, exportName){
-    var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(exportObj));
-    var downloadAnchorNode = document.createElement('a');
-    downloadAnchorNode.setAttribute("href",     dataStr);
-    downloadAnchorNode.setAttribute("download", exportName + ".json");
-    document.body.appendChild(downloadAnchorNode); // required for firefox
-    downloadAnchorNode.click();
-    downloadAnchorNode.remove();
-  }
-
-  alternative implementation:
-  var data = {
-    key: 'value'
-};
-var fileName = 'myData.json';
-
-// Create a blob of the data
-var fileToSave = new Blob([JSON.stringify(data)], {
-    type: 'application/json'
-});
-
-// Save the file
-saveAs(fileToSave, fileName);
-     */
-    function saveToFile() {
-        const saveFile = {
-            'stonesaga_combos_v2':JSON.parse(localStorage.getItem('stonesaga_combos_v2')) || {},
-            'stonesaga_settings':JSON.parse(localStorage.getItem('stonesaga_settings')) || {},
-            'stonesaga_grind':JSON.parse(localStorage.getItem('stonesaga_grind')) || {},
-            'stonesaga_meals':JSON.parse(localStorage.getItem('stonesaga_meals')) || [],
-            'stonesaga_meals_v2':JSON.parse(localStorage.getItem('stonesaga_meals_v2')) || [],
-        }
-        var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(saveFile));
-        var dlAnchorElem = document.getElementById('downloadAnchorElem');
-        dlAnchorElem.setAttribute("href",     dataStr     );
-        dlAnchorElem.setAttribute("download", "stonesaga_savefile.json");
-        dlAnchorElem.click();
-        toggleSettings()
-    }
-
-    function loadFromJSON(json) {
-        // const lsKeys = ["stonesaga_combos_v2",
-        //     "stonesaga_settings",
-        //     "stonesaga_grind",
-        //     "stonesaga_meals",
-        //     "stonesaga_meals_v2"]
-        if (isShiftPressed) {
-            console.log('RESET info')
-            json = {
-                "stonesaga_combos_v2": {},
-                "stonesaga_settings": {},
-                "stonesaga_grind": {},
-                "stonesaga_meals": [],
-                "stonesaga_meals_v2": []
-            }
-        }
-        // lsKeys.forEach(x=>{
-        //     if (!!json?.[x]) {
-        //
-        //     }
-        json?.stonesaga_combos_v2 && localStorage.setItem('stonesaga_combos_v2', JSON.stringify(json.stonesaga_combos_v2) || '{}')
-        json?.stonesaga_settings && localStorage.setItem('stonesaga_settings', JSON.stringify(json.stonesaga_settings) || '{}')
-        json?.stonesaga_grind && localStorage.setItem('stonesaga_grind', JSON.stringify(json.stonesaga_grind) || '{}')
-        json?.stonesaga_meals && localStorage.setItem('stonesaga_meals', JSON.stringify(json.stonesaga_meals) || '[]')
-        json?.stonesaga_meals_v2 && localStorage.setItem('stonesaga_meals_v2', JSON.stringify(json.stonesaga_meals_v2) || '[]')
-
-        json?.stonesaga_combos_v2 || console.log('savefile is missing: stonesaga_combos_v2')
-        json?.stonesaga_settings || console.log('savefile is missing: stonesaga_settings')
-        json?.stonesaga_grind || console.log('savefile is missing: stonesaga_grind')
-        json?.stonesaga_meals || console.log('savefile is missing: stonesaga_meals')
-        json?.stonesaga_meals_v2 || console.log('savefile is missing: stonesaga_meals_v2')
-    }
-</script>
 <!-- Settings cog button -->
 <button id="settingsBtn" onclick="toggleSettings()" title="Settings" aria-label="Settings">
     <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -1690,20 +1614,15 @@ saveAs(fileToSave, fileName);
                 <div class="setting-desc">Show all items Unknown, Nothing, Items ...</div>
             </div>
         </label>
-        <label class="setting-row">
+        <div class="setting-row">
             <input type="button" id="saveToFile" value="Save" onclick="saveToFile()"/>
-<!--            <input type="button" id="loadFromFile" value="Load" onclick="loadFromFile()">-->
-<!--            <input type="file" id="file-input" value="Load"/>-->
-<!--            <div>-->
-<!--                <label for="file-input" class="btn">Load</label>-->
-                <button onclick="document.getElementById('file-input').click()" value="Load">Load</button>
-                <input id="file-input" style="display:none;" type="file">
-<!--            </div>-->
+            <button onclick="document.getElementById('file-input').click()">Load</button>
+            <input id="file-input" style="display:none;" type="file">
             <div>
                 <div class="setting-label">File management</div>
                 <div class="setting-desc">Save/Load all info to file.</div>
             </div>
-        </label>
+        </div>
     </div>
 </div>
 
@@ -1715,8 +1634,8 @@ saveAs(fileToSave, fileName);
 
 
 <div id="appTabs">
-    <button class="tab-btn active" onclick="switchTab('materials')">Materials</button>
-    <button class="tab-btn" onclick="switchTab('meals')" id="tabBtnMeals">Meals</button>
+    <button class="tab-btn active" data-tab="materials" onclick="switchTab('materials')">Materials</button>
+    <button class="tab-btn" data-tab="meals" onclick="switchTab('meals')" id="tabBtnMeals">Meals</button>
 </div>
 
 <div id="tab-materials" class="tab-panel active">
@@ -1737,24 +1656,6 @@ saveAs(fileToSave, fileName);
         <span class="combos-toggle">▲</span>
     </div>
     <div class="combos-list" id="combosList"></div>
-</div>
-
-<div id="mealSection" style="display:none;max-width:1000px;margin:2rem auto 0;padding:0 2rem">
-    <div style="display:flex;align-items:center;gap:1rem;border-bottom:2px solid var(--parchment-deep);padding-bottom:0.7rem;margin-bottom:1rem">
-        <h2 style="font-family:'Cinzel',serif;font-size:1.1rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--ink)">
-            Meal List</h2>
-        <div style="flex:1;height:1px;background:var(--parchment-deep)"></div>
-    </div>
-    <div id="mealListItems" style="display:flex;flex-direction:column;gap:0.5rem;margin-bottom:1rem"></div>
-    <div style="display:flex;gap:8px">
-        <input id="mealInput"
-               style="flex:1;background:rgba(255,255,255,0.7);border:1.5px dashed var(--parchment-deep);border-radius:6px;padding:0.5rem 0.85rem;font-family:'Crimson Text',Georgia,serif;font-size:1rem;color:var(--ink);outline:none;"
-               placeholder="Add a meal or recipe note…" onkeydown="if(event.key==='Enter')addMeal()">
-        <button onclick="addMeal()"
-                style="font-family:'Cinzel',serif;font-size:0.68rem;letter-spacing:0.1em;text-transform:uppercase;background:var(--gold);color:#fff;border:none;border-radius:4px;padding:5px 16px;cursor:pointer">
-            Add
-        </button>
-    </div>
 </div>
 
 <!-- Combination result reveal overlay -->
@@ -1801,1153 +1702,50 @@ saveAs(fileToSave, fileName);
 
 <script type="application/javascript" src="./routes/items.js"></script>
 <script>
-    const fileInput = document.getElementById("file-input");
-
-    fileInput.addEventListener("change", handleFileSelection);
-
-    function handleFileSelection(event) {
-        const file = event.target.files[0];
-        // fileContentDisplay.textContent = ""; // Clear previous file content
-        // messageDisplay.textContent = ""; // Clear previous messages
-
-        // Validate file existence and type
-        // if (!file) {
-        //     showMessage("No file selected. Please choose a file.", "error");
-        //     return;
-        // }
-
-        // if (!file.type.startsWith("text")) {
-        //     showMessage("Unsupported file type. Please select a text file.", "error");
-        //     return;
-        // }
-
-        // Read the file
-        const reader = new FileReader();
-        // console.log('CREATED FILEREADER')
-        reader.onload = () => {
-            // fileContentDisplay.textContent = reader.result;
-            const result = JSON.parse(reader.result)
-            // console.log('READ',Object.keys(result), Object.values(result).map(x=>JSON.stringify(x).length))
-            loadFromJSON(result)
-            renderWheel();
-            renderCombosList();
-            toggleSettings()
-
-        };
-        reader.onerror = () => {
-            // showMessage("Error reading the file. Please try again.", "error");
-            console.log("Error reading the file. Please try again.")
-        };
-        reader.readAsText(file);
-    }
-
-    // Displays a message to the user
-    // function showMessage(message, type) {
-    //     messageDisplay.textContent = message;
-    //     messageDisplay.style.color = type === "error" ? "red" : "green";
-    // }
-
-</script>
-
-<script>
     // ── Image data ──
-    const IMG = {
-        0: `public/images/0.png`,
-        1: `public/images/1.png`,
-        2: `public/images/2.png`,
-        3: `public/images/3.png`,
-        4: `public/images/4.png`,
-        5: `public/images/5.png`,
-        6: `public/images/6.png`,
-        7: `public/images/7.png`,
-        8: `public/images/8.png`,
-        9: `public/images/9.png`,
-        10: `public/images/10.png`,
-        11: `public/images/11.png`,
-        12: `public/images/12.png`,
-        13: `public/images/13.png`,
-        14: `public/images/14.png`,
-        15: `public/images/15.png`,
-        16: `public/images/16.png`,
-        17: `public/images/17.png`,
-        18: `public/images/18.png`,
-        19: `public/images/19.png`,
-        20: `public/images/20.png`,
-        21: `public/images/21.png`,
-        22: `public/images/22.png`,
-        23: `public/images/23.png`,
-        24: `public/images/24.png`,
-        25: `public/images/25.png`,
-        26: `public/images/26.png`,
-        27: `public/images/27.png`,
-        28: `public/images/28.png`,
-        29: `public/images/29.png`,
-        30: `public/images/30.png`,
-        31: `public/images/31.png`,
-        32: `public/images/32.png`
-    };
-const materials = [
-    {
-        "item": "bone",
-        "type": "animal",
-        "note": "animal__Bone__0",
-        "tool": "",
-        "process_1": "drill",
-        "process_2": "cut",
-        "w": "B2",
-        "n": "Y3",
-        "e": "Y2",
-        "s": "R2",
-        "cols": [
-            "B",
-            "Y",
-            "Y",
-            "R"
-        ],
-        "vals": [
-            "2",
-            "3",
-            "2",
-            "2"
-        ],
-        "codes": [
-            "B2Y2",
-            "Y3R2",
-            "Y2B2",
-            "R2Y3"
-        ]
-    },
-    {
-        "item": "bone, carved",
-        "type": "animal",
-        "note": "animal__Bone__1",
-        "tool": "drill",
-        "process_1": "",
-        "process_2": "",
-        "w": "R1",
-        "n": "R4",
-        "e": "Y3",
-        "s": "Y4",
-        "cols": [
-            "R",
-            "R",
-            "Y",
-            "Y"
-        ],
-        "vals": [
-            "1",
-            "4",
-            "3",
-            "4"
-        ],
-        "codes": [
-            "R1Y3",
-            "R4Y4",
-            "Y3R1",
-            "Y4R4"
-        ]
-    },
-    {
-        "item": "hide",
-        "type": "animal",
-        "note": "animal__Hide__0",
-        "tool": "",
-        "process_1": "drill",
-        "process_2": "cut",
-        "w": "",
-        "n": "",
-        "e": "",
-        "s": "",
-        "cols": ["","","",""],
-        "vals": ["","","",""],
-        "codes": []
-    },
-    {
-        "item": "hide, cured",
-        "type": "animal",
-        "note": "animal__Hide__1",
-        "tool": "",
-        "process_1": "",
-        "process_2": "",
-        "w": "B3",
-        "n": "",
-        "e": "R5",
-        "s": "",
-        "cols": [
-            "B","",
-            "R",""
-        ],
-        "vals": [
-            "3","",
-            "5",""
-        ],
-        "codes": [
-            "B3R5",
-            "R5B3"
-        ]
-    },
-    {
-        "item": "shell",
-        "type": "animal",
-        "note": "animal__Shell__0",
-        "tool": "",
-        "process_1": "drill",
-        "process_2": "grind",
-        "w": "",
-        "n": "",
-        "e": "",
-        "s": "",
-        "cols": ["","","",""],
-        "vals": ["","","",""],
-        "codes": []
-    },
-    {
-        "item": "shell, sharpened",
-        "type": "animal",
-        "note": "animal__Shell__1",
-        "tool": "cut",
-        "process_1": "",
-        "process_2": "",
-        "w": "B6",
-        "n": "Y5",
-        "e": "R3",
-        "s": "R1",
-        "cols": [
-            "B",
-            "Y",
-            "R",
-            "R"
-        ],
-        "vals": [
-            "6",
-            "5",
-            "3",
-            "1"
-        ],
-        "codes": [
-            "B6R3",
-            "Y5R1",
-            "R3B6",
-            "R1Y5"
-        ]
-    },
-    {
-        "item": "guts",
-        "type": "animal",
-        "note": "animal__Guts__0",
-        "tool": "",
-        "process_1": "heat",
-        "process_2": "cut",
-        "w": "",
-        "n": "",
-        "e": "",
-        "s": "",
-        "cols": ["","","",""],
-        "vals": ["","","",""],
-        "codes": []
-    },
-    {
-        "item": "guts, cured",
-        "type": "animal",
-        "note": "animal__Guts__1",
-        "tool": "",
-        "process_1": "",
-        "process_2": "",
-        "w": "Y1",
-        "n": "0",
-        "e": "B1",
-        "s": "R3",
-        "cols": [
-            "Y",
-            "0",
-            "B",
-            "R"
-        ],
-        "vals": [
-            "1",
-            "0",
-            "1",
-            "3"
-        ],
-        "codes": [
-            "Y1B1",
-            "00R3",
-            "B1Y1",
-            "R300"
-        ]
-    },
-    {
-        "item": "feather",
-        "type": "animal",
-        "note": "animal__Feather__0",
-        "tool": "",
-        "process_1": "cut",
-        "process_2": "",
-        "w": "0",
-        "n": "",
-        "e": "B1",
-        "s": "",
-        "cols": [
-            "0","",
-            "B",""
-        ],
-        "vals": [
-            "0","",
-            "1",""
-        ],
-        "codes": [
-            "00B1",
-            "B100"
-        ]
-    },
-    {
-        "item": "feather, cut",
-        "type": "animal",
-        "note": "animal__Feather__1",
-        "tool": "",
-        "process_1": "",
-        "process_2": "",
-        "w": "Y1",
-        "n": "",
-        "e": "0",
-        "s": "",
-        "cols": [
-            "Y","",
-            "0",""
-        ],
-        "vals": [
-            "1","",
-            "0",""
-        ],
-        "codes": [
-            "Y100",
-            "00Y1"
-        ]
-    },
-    {
-        "item": "tooth",
-        "type": "animal",
-        "note": "animal__Tooth__0",
-        "tool": "drill",
-        "process_1": "drill",
-        "process_2": "",
-        "w": "",
-        "n": "",
-        "e": "",
-        "s": "",
-        "cols": ["","","",""],
-        "vals": ["","","",""],
-        "codes": []
-    },
-    {
-        "item": "tooth, drilled",
-        "type": "animal",
-        "note": "animal__Tooth__1",
-        "tool": "drill",
-        "process_1": "",
-        "process_2": "",
-        "w": "B2",
-        "n": "Y2",
-        "e": "0",
-        "s": "0",
-        "cols": [
-            "B",
-            "Y",
-            "0",
-            "0"
-        ],
-        "vals": [
-            "2",
-            "2",
-            "0",
-            "0"
-        ],
-        "codes": [
-            "B200",
-            "Y200",
-            "00B2",
-            "00Y2"
-        ]
-    },
-    {
-        "item": "clay",
-        "type": "mineral",
-        "note": "mineral__Clay__0",
-        "tool": "",
-        "process_1": "heat",
-        "process_2": "",
-        "w": "",
-        "n": "",
-        "e": "",
-        "s": "",
-        "cols": ["","","",""],
-        "vals": ["","","",""],
-        "codes": []
-    },
-    {
-        "item": "clay, fired",
-        "type": "mineral",
-        "note": "mineral__Clay__1",
-        "tool": "",
-        "process_1": "",
-        "process_2": "",
-        "w": "R6",
-        "n": "",
-        "e": "R6",
-        "s": "",
-        "cols": [
-            "R","",
-            "R",""
-        ],
-        "vals": [
-            "6","",
-            "6","",
-        ],
-        "codes": [
-            "R6R6",
-            "R6R6"
-        ]
-    },
-    {
-        "item": "cloudstone",
-        "type": "mineral",
-        "note": "mineral__Cloudstone__0",
-        "tool": "",
-        "process_1": "grind",
-        "process_2": "",
-        "w": "",
-        "n": "",
-        "e": "",
-        "s": "",
-        "cols": ["","","",""],
-        "vals": ["","","",""],
-        "codes": []
-    },
-    {
-        "item": "cloudstone, shaped",
-        "type": "mineral",
-        "note": "mineral__Cloudstone__1",
-        "tool": "strike",
-        "process_1": "",
-        "process_2": "",
-        "w": "B5",
-        "n": "R4",
-        "e": "Y4",
-        "s": "B2",
-        "cols": [
-            "B",
-            "R",
-            "Y",
-            "B"
-        ],
-        "vals": [
-            "5",
-            "4",
-            "4",
-            "2"
-        ],
-        "codes": [
-            "B5Y4",
-            "R4B2",
-            "Y4B5",
-            "B2R4"
-        ]
-    },
-    {
-        "item": "riverstone",
-        "type": "mineral",
-        "note": "mineral__Riverstone__0",
-        "tool": "",
-        "process_1": "strike",
-        "process_2": "",
-        "w": "",
-        "n": "",
-        "e": "",
-        "s": "",
-        "cols": ["","","",""],
-        "vals": ["","","",""],
-        "codes": []
-    },
-    {
-        "item": "riverstone, flaked",
-        "type": "mineral",
-        "note": "mineral__Riverstone__1",
-        "tool": "cut",
-        "process_1": "",
-        "process_2": "",
-        "w": "R1",
-        "n": "Y4",
-        "e": "Y4",
-        "s": "R3",
-        "cols": [
-            "R",
-            "Y",
-            "Y",
-            "R"
-        ],
-        "vals": [
-            "1",
-            "4",
-            "4",
-            "3"
-        ],
-        "codes": [
-            "R1Y4",
-            "Y4R3",
-            "Y4R1",
-            "R3Y4"
-        ]
-    },
-    {
-        "item": "sunstone",
-        "type": "mineral",
-        "note": "mineral__Sunstone__0",
-        "tool": "grind",
-        "process_1": "grind",
-        "process_2": "",
-        "w": "",
-        "n": "",
-        "e": "",
-        "s": "",
-        "cols": ["","","",""],
-        "vals": ["","","",""],
-        "codes": []
-    },
-    {
-        "item": "sunstone, shaped",
-        "type": "mineral",
-        "note": "mineral__Sunstone__1",
-        "tool": "grind",
-        "process_1": "",
-        "process_2": "",
-        "w": "R5",
-        "n": "",
-        "e": "Y6",
-        "s": "",
-        "cols": [
-            "R","",
-            "Y",""
-        ],
-        "vals": [
-            "5","",
-            "6",""
-        ],
-        "codes": [
-            "R5Y6",
-            "Y6R5"
-        ]
-    },
-    {
-        "item": "wood",
-        "type": "plant",
-        "note": "plant__Wood__0",
-        "tool": "",
-        "process_1": "heat",
-        "process_2": "cut",
-        "w": "B2",
-        "n": "R2",
-        "e": "Y2",
-        "s": "Y3",
-        "cols": [
-            "B",
-            "R",
-            "Y",
-            "Y"
-        ],
-        "vals": [
-            "2",
-            "2",
-            "2",
-            "3"
-        ],
-        "codes": [
-            "B2Y2",
-            "R2Y3",
-            "Y2B2",
-            "Y3R2"
-        ]
-    },
-    {
-        "item": "wood, hardened",
-        "type": "plant",
-        "note": "plant__Wood__1",
-        "tool": "drill",
-        "process_1": "",
-        "process_2": "",
-        "w": "R1",
-        "n": "R3",
-        "e": "Y2",
-        "s": "Y3",
-        "cols": [
-            "R",
-            "R",
-            "Y",
-            "Y"
-        ],
-        "vals": [
-            "1",
-            "3",
-            "2",
-            "3"
-        ],
-        "codes": [
-            "R1Y2",
-            "R3Y3",
-            "Y2R1",
-            "Y3R3"
-        ]
-    },
-    {
-        "item": "fiber",
-        "type": "plant",
-        "note": "plant__Fiber__0",
-        "tool": "",
-        "process_1": "cut",
-        "process_2": "",
-        "w": "",
-        "n": "",
-        "e": "",
-        "s": "",
-        "cols": ["","","",""],
-        "vals": ["","","",""],
-        "codes": []
-    },
-    {
-        "item": "fiber, woven",
-        "type": "plant",
-        "note": "plant__Fiber__1",
-        "tool": "",
-        "process_1": "",
-        "process_2": "",
-        "w": "Y1",
-        "n": "Y5",
-        "e": "B1",
-        "s": "R5",
-        "cols": [
-            "Y",
-            "Y",
-            "B",
-            "R"
-        ],
-        "vals": [
-            "1",
-            "5",
-            "1",
-            "5"
-        ],
-        "codes": [
-            "Y1B1",
-            "Y5R5",
-            "B1Y1",
-            "R5Y5"
-        ]
-    },
-    {
-        "item": "pitch",
-        "type": "plant",
-        "note": "plant__Pitch__0",
-        "tool": "",
-        "process_1": "heat",
-        "process_2": "",
-        "w": "",
-        "n": "",
-        "e": "",
-        "s": "",
-        "cols": ["","","",""],
-        "vals": ["","","",""],
-        "codes": []
-    },
-    {
-        "item": "pitch, treated",
-        "type": "plant",
-        "note": "plant__Pitch__1",
-        "tool": "",
-        "process_1": "",
-        "process_2": "",
-        "w": "R5",
-        "n": "",
-        "e": "0",
-        "s": "",
-        "cols": [
-            "R","",
-            "0",""
-        ],
-        "vals": [
-            "5","",
-            "0","",
-        ],
-        "codes": [
-            "R500",
-            "00R5"
-        ]
-    },
-    {
-        "item": "moonblood",
-        "type": "rare",
-        "note": "rare__Moonblood__0",
-        "tool": "",
-        "process_1": "moon",
-        "process_2": "",
-        "w": "",
-        "n": "",
-        "e": "",
-        "s": "",
-        "cols": ["","","",""],
-        "vals": ["","","",""],
-        "codes": []
-    },
-    {
-        "item": "moonblood, solid",
-        "type": "rare",
-        "note": "rare__Moonblood__1",
-        "tool": "",
-        "process_1": "",
-        "process_2": "",
-        "w": "R1",
-        "n": "R2",
-        "e": "Y6",
-        "s": "S6",
-        "cols": [
-            "R",
-            "R",
-            "Y",
-            "S"
-        ],
-        "vals": [
-            "1",
-            "2",
-            "6",
-            "6"
-        ],
-        "codes": [
-            "R1Y6",
-            "R2S6",
-            "Y6R1",
-            "S6R2"
-        ]
-    },
-    {
-        "item": "coral, dead",
-        "type": "rare",
-        "note": "rare__Coral__0",
-        "tool": "",
-        "process_1": "comet",
-        "process_2": "",
-        "w": "",
-        "n": "",
-        "e": "",
-        "s": "",
-        "cols": ["","","",""],
-        "vals": ["","","",""],
-        "codes": []
-    },
-    {
-        "item": "coral, living",
-        "type": "rare",
-        "note": "rare__Coral__1",
-        "tool": "",
-        "process_1": "",
-        "process_2": "",
-        "w": "P6",
-        "n": "P6",
-        "e": "R4",
-        "s": "Y4",
-        "cols": [
-            "P",
-            "P",
-            "R",
-            "Y"
-        ],
-        "vals": [
-            "6",
-            "6",
-            "4",
-            "4"
-        ],
-        "codes": [
-            "P6R4",
-            "P6Y4",
-            "R4P6",
-            "Y4P6"
-        ]
-    },
-    {
-        "item": "silk",
-        "type": "rare",
-        "note": "rare__Silk__0",
-        "tool": "",
-        "process_1": "energy",
-        "process_2": "",
-        "w": "B1",
-        "n": "R3",
-        "e": "Y1",
-        "s": "0",
-        "cols": [
-            "B",
-            "R",
-            "Y",
-            "0"
-        ],
-        "vals": [
-            "1",
-            "3",
-            "1",
-            "0"
-        ],
-        "codes": [
-            "B1Y1",
-            "R300",
-            "Y1B1",
-            "00R3"
-        ]
-    },
-    {
-        "item": "silk, woven",
-        "type": "rare",
-        "note": "rare__Silk__1",
-        "tool": "",
-        "process_1": "",
-        "process_2": "",
-        "w": "B2",
-        "n": "",
-        "e": "R5",
-        "s": "",
-        "cols": [
-            "B","",
-            "R",""
-        ],
-        "vals": [
-            "2","",
-            "5",""
-        ],
-        "codes": [
-            "B2R5",
-            "R5B2"
-        ]
-    },
-    {
-        "item": "pigment",
-        "type": "other",
-        "note": "other__Pigment__0",
-        "tool": "",
-        "process_1": "",
-        "process_2": "",
-        "w": "R4",
-        "n": "",
-        "e": "0",
-        "s": "",
-        "cols": [
-            "R","",
-            "0",""
-        ],
-        "vals": [
-            "4","",
-            "0",""
-        ],
-        "codes": [
-            "R400",
-            "00R4"
-        ]
-    }
-]
-    const ALL_CARDS_BASE = [{
-        "id": "animal__Bone__0",
-        "name": "Bone",
-        "state": "raw",
-        "imgIdx": 12,
-        "cat": "animal"
-    }, {
-        "id": "animal__Bone__1",
-        "name": "Bone",
-        "state": "carved",
-        "imgIdx": 23,
-        "cat": "animal"
-    }, {
-        "id": "animal__Hide__0",
-        "name": "Hide",
-        "state": "raw",
-        "imgIdx": 0,
-        "cat": "animal"
-    }, {
-        "id": "animal__Hide__1",
-        "name": "Hide",
-        "state": "cured",
-        "imgIdx": 1,
-        "cat": "animal"
-    }, {
-        "id": "animal__Shell__0",
-        "name": "Shell",
-        "state": "raw",
-        "imgIdx": 26,
-        "cat": "animal"
-    }, {
-        "id": "animal__Shell__1",
-        "name": "Shell",
-        "state": "sharpened",
-        "imgIdx": 27,
-        "cat": "animal"
-    }, {
-        "id": "animal__Guts__0",
-        "name": "Guts",
-        "state": "raw",
-        "imgIdx": 30,
-        "cat": "animal"
-    }, {
-        "id": "animal__Guts__1",
-        "name": "Guts",
-        "state": "cured",
-        "imgIdx": 31,
-        "cat": "animal"
-    }, {
-        "id": "animal__Feather__0",
-        "name": "Feather",
-        "state": "raw",
-        "imgIdx": 28,
-        "cat": "animal"
-    }, {
-        "id": "animal__Feather__1",
-        "name": "Feather",
-        "state": "cut",
-        "imgIdx": 29,
-        "cat": "animal"
-    }, {
-        "id": "animal__Tooth__0",
-        "name": "Tooth",
-        "state": "raw",
-        "imgIdx": 2,
-        "cat": "animal"
-    }, {
-        "id": "animal__Tooth__1",
-        "name": "Tooth",
-        "state": "drilled",
-        "imgIdx": 3,
-        "cat": "animal"
-    }, {
-        "id": "mineral__Clay__0",
-        "name": "Clay",
-        "state": "raw",
-        "imgIdx": 6,
-        "cat": "mineral"
-    }, {
-        "id": "mineral__Clay__1",
-        "name": "Clay",
-        "state": "fired",
-        "imgIdx": 7,
-        "cat": "mineral"
-    }, {
-        "id": "mineral__Cloudstone__0",
-        "name": "Cloudstone",
-        "state": "raw",
-        "imgIdx": 4,
-        "cat": "mineral"
-    }, {
-        "id": "mineral__Cloudstone__1",
-        "name": "Cloudstone",
-        "state": "shaped",
-        "imgIdx": 5,
-        "cat": "mineral"
-    }, {
-        "id": "mineral__Riverstone__0",
-        "name": "Riverstone",
-        "state": "raw",
-        "imgIdx": 8,
-        "cat": "mineral"
-    }, {
-        "id": "mineral__Riverstone__1",
-        "name": "Riverstone",
-        "state": "flaked",
-        "imgIdx": 9,
-        "cat": "mineral"
-    }, {
-        "id": "mineral__Sunstone__0",
-        "name": "Sunstone",
-        "state": "raw",
-        "imgIdx": 10,
-        "cat": "mineral"
-    }, {
-        "id": "mineral__Sunstone__1",
-        "name": "Sunstone",
-        "state": "shaped",
-        "imgIdx": 11,
-        "cat": "mineral"
-    }, {"id": "plant__Wood__0", "name": "Wood", "state": "raw", "imgIdx": 13, "cat": "plant"}, {
-        "id": "plant__Wood__1",
-        "name": "Wood",
-        "state": "hardened",
-        "imgIdx": 14,
-        "cat": "plant"
-    }, {
-        "id": "plant__Fiber__0",
-        "name": "Fiber",
-        "state": "raw",
-        "imgIdx": 17,
-        "cat": "plant"
-    }, {
-        "id": "plant__Fiber__1",
-        "name": "Fiber",
-        "state": "woven",
-        "imgIdx": 18,
-        "cat": "plant"
-    }, {
-        "id": "plant__Pitch__0",
-        "name": "Pitch",
-        "state": "raw",
-        "imgIdx": 19,
-        "cat": "plant"
-    }, {
-        "id": "plant__Pitch__1",
-        "name": "Pitch",
-        "state": "treated",
-        "imgIdx": 20,
-        "cat": "plant"
-    }, {
-        "id": "rare__Moonblood__0",
-        "name": "Moonblood",
-        "state": "raw",
-        "imgIdx": 15,
-        "cat": "rare"
-    }, {
-        "id": "rare__Moonblood__1",
-        "name": "Moonblood",
-        "state": "solid",
-        "imgIdx": 16,
-        "cat": "rare"
-    }, {"id": "rare__Coral__0", "name": "Coral", "state": "raw", "imgIdx": 21, "cat": "rare"}, {
-        "id": "rare__Coral__1",
-        "name": "Coral",
-        "state": "dead/living",
-        "imgIdx": 22,
-        "cat": "rare"
-    }, {"id": "rare__Silk__0", "name": "Silk", "state": "raw", "imgIdx": 24, "cat": "rare"}, {
-        "id": "rare__Silk__1",
-        "name": "Silk",
-        "state": "woven",
-        "imgIdx": 25,
-        "cat": "rare"
-    }, {
-        "id": "other__Pigment__0",
-        "name": "Pigment",
-        "state": "raw",
-        "imgIdx": 32,
-        "cat": "other",
-    }
-    // , { // this alternative is superfluous
-    //     "id": "ground__Pigment__1",
-    //     "name": "Pigment",
-    //     "state": "ground",
-    //     "imgIdx": 32,
-    //     "cat": "other"
-    // }
-    //, {"id": "other__Pigment__1", "name": "Pigment", "state": "ground", "imgIdx": 32, "cat": "other"}
-];
-materials.forEach(x=>{
-    let index = ALL_CARDS_BASE.findIndex(y=>y.id === x.note);
-    // console.log('index',index)
-    ALL_CARDS_BASE[index].cols = x.cols //[x.w.substring(0,1),x.n.substring(0,1),x.e.substring(0,1),x.s.substring(0,1)]
-    ALL_CARDS_BASE[index].vals = x.vals //[x.w.substring(1,2),x.n.substring(1,2),x.e.substring(1,2),x.s.substring(1,2)]
-    // ALL_CARDS_BASE[index].vals = x.vals
-} )
-    // console.log(ALL_CARDS_BASE[0])
-    // console.table(ALL_CARDS_BASE)
-    const BUILTIN = {} // DISABLE AI hallucinations
-    const BUILTIN_ = {
-        "animal__Bone__0:0|animal__Hide__0:0": {
-            "craft": "Bone Needle & Thread",
-            "desc": "The long bone split into a needle; raw sinew threads through the eye."
-        },
-        "animal__Bone__1:0|animal__Hide__1:0": {
-            "craft": "Stitched Leather Wraps",
-            "desc": "Carved bone needles pierce the cured hide \u2014 tight leather bindings."
-        },
-        "animal__Hide__1:0|plant__Wood__1:0": {
-            "craft": "Drum",
-            "desc": "Cured hide stretched taut over a hardened wooden frame."
-        },
-        "animal__Shell__1:0|animal__Tooth__1:0": {
-            "craft": "Ornamental Clasp",
-            "desc": "A sharpened shell edge slots into a drilled tooth hole."
-        },
-        "animal__Guts__1:0|plant__Wood__1:0": {
-            "craft": "Bowstring & Stave",
-            "desc": "Cured gut wrapped and dried on the hardened stave."
-        },
-        "animal__Feather__1:0|plant__Wood__0:0": {
-            "craft": "Arrow Shaft",
-            "desc": "A cut flight feather fletched onto a straight twig."
-        },
-        "mineral__Riverstone__1:0|plant__Wood__1:0": {
-            "craft": "Flint Knife",
-            "desc": "A flaked riverstone blade hafted into a hardened-wood handle."
-        },
-        "mineral__Clay__1:0|plant__Pitch__1:0": {
-            "craft": "Sealed Vessel",
-            "desc": "Fired clay walls waterproofed with treated pitch."
-        },
-        "mineral__Cloudstone__1:0|rare__Moonblood__1:0": {
-            "craft": "Spirit Focus",
-            "desc": "A shaped cloudstone set in hardened moonblood resin."
-        },
-        "mineral__Sunstone__1:0|rare__Silk__1:0": {
-            "craft": "Sunstone Pendant",
-            "desc": "A shaped sunstone wrapped in woven silk cord."
-        },
-        "rare__Coral__0:0|rare__Moonblood__0:0": {
-            "craft": "Tide Offering",
-            "desc": "Dead coral placed in a bowl of moonblood liquid."
-        },
-        "animal__Hide__1:0|plant__Fiber__1:0": {
-            "craft": "Padded Vest",
-            "desc": "Woven fiber sandwiched between cured hide."
-        },
-        "mineral__Riverstone__1:0|plant__Pitch__1:0": {
-            "craft": "Hafted Spearhead",
-            "desc": "A flaked stone point locked into a split shaft with pitch."
-        },
-        "animal__Bone__0:0|plant__Wood__0:0": {
-            "craft": "Simple Splint",
-            "desc": "A straight bone bound alongside a twig to reinforce a weak shaft."
-        },
-        "mineral__Sunstone__0:0|mineral__Riverstone__0:0": {
-            "craft": "Grinding Kit",
-            "desc": "The rough riverstone grinds against the flat sunstone \u2014 used to crush seeds or sharpen soft edges."
-        },
-        "animal__Feather__0:0|rare__Silk__1:0": {
-            "craft": "Ceremonial Fan",
-            "desc": "Loose feathers woven into silk thread, fanned out and tied at the spine."
-        },
-        "animal__Tooth__0:0|plant__Pitch__1:0": {
-            "craft": "Pitch-Dipped Fang",
-            "desc": "A raw tooth dipped in treated pitch \u2014 worn as a slow-release applicator."
-        },
-        "animal__Guts__0:0|plant__Fiber__1:0": {
-            "craft": "Braided Cord",
-            "desc": "Raw gut twisted together with woven fiber \u2014 stronger than either alone."
-        },
-        "rare__Coral__1:0|rare__Silk__1:0": {
-            "craft": "Living Silk Veil",
-            "desc": "Living coral polyps woven into silk \u2014 the silk slowly takes on bioluminescent properties."
-        },
-        "rare__Moonblood__1:0|plant__Pitch__1:0": {
-            "craft": "Moonpitch Seal",
-            "desc": "Solid moonblood dissolved in treated pitch \u2014 sets into a jet-black waterproof resin."
-        },
-        "other__Pigment__0:0|mineral__Clay__0:0": {
-            "craft": "Cave Paint Base",
-            "desc": "Raw pigment mixed with wet clay \u2014 applied to stone surfaces with a fingertip or twig brush."
-        },
-        "other__Pigment__0:0|animal__Hide__1:0": {
-            "craft": "Dyed Leather",
-            "desc": "Pigment rubbed into cured hide and sealed. The colour bonds permanently to the leather surface."
-        },
-        "other__Pigment__1:0|rare__Silk__1:0": {
-            "craft": "Silk Dye",
-            "desc": "Ground pigment dissolved into water and applied to woven silk \u2014 produces vivid, lasting colour."
-        },
-        "other__Pigment__1:0|plant__Pitch__1:0": {
-            "craft": "Pigment Ink",
-            "desc": "Ground pigment mixed into treated pitch \u2014 thick, waterproof ink used for marking tools and hides."
-        }
-    };
+    const IMG = {};
+    for (let i = 0; i <= 32; i++) IMG[i] = `public/images/${i}.png`;
+
+    // ── Card data ──
+    // cols/vals: colour and value of each side (west, north, east, south).
+    // '' means the card has no such side, '0' is a blank connector.
+    const CARDS = [
+        {id: 'animal__Bone__0', name: 'Bone', state: 'raw', imgIdx: 12, cat: 'animal', cols: ['B', 'Y', 'Y', 'R'], vals: ['2', '3', '2', '2']},
+        {id: 'animal__Bone__1', name: 'Bone', state: 'carved', imgIdx: 23, cat: 'animal', cols: ['R', 'R', 'Y', 'Y'], vals: ['1', '4', '3', '4']},
+        {id: 'animal__Hide__0', name: 'Hide', state: 'raw', imgIdx: 0, cat: 'animal', cols: ['', '', '', ''], vals: ['', '', '', '']},
+        {id: 'animal__Hide__1', name: 'Hide', state: 'cured', imgIdx: 1, cat: 'animal', cols: ['B', '', 'R', ''], vals: ['3', '', '5', '']},
+        {id: 'animal__Shell__0', name: 'Shell', state: 'raw', imgIdx: 26, cat: 'animal', cols: ['', '', '', ''], vals: ['', '', '', '']},
+        {id: 'animal__Shell__1', name: 'Shell', state: 'sharpened', imgIdx: 27, cat: 'animal', cols: ['B', 'Y', 'R', 'R'], vals: ['6', '5', '3', '1']},
+        {id: 'animal__Guts__0', name: 'Guts', state: 'raw', imgIdx: 30, cat: 'animal', cols: ['', '', '', ''], vals: ['', '', '', '']},
+        {id: 'animal__Guts__1', name: 'Guts', state: 'cured', imgIdx: 31, cat: 'animal', cols: ['Y', '0', 'B', 'R'], vals: ['1', '0', '1', '3']},
+        {id: 'animal__Feather__0', name: 'Feather', state: 'raw', imgIdx: 28, cat: 'animal', cols: ['0', '', 'B', ''], vals: ['0', '', '1', '']},
+        {id: 'animal__Feather__1', name: 'Feather', state: 'cut', imgIdx: 29, cat: 'animal', cols: ['Y', '', '0', ''], vals: ['1', '', '0', '']},
+        {id: 'animal__Tooth__0', name: 'Tooth', state: 'raw', imgIdx: 2, cat: 'animal', cols: ['', '', '', ''], vals: ['', '', '', '']},
+        {id: 'animal__Tooth__1', name: 'Tooth', state: 'drilled', imgIdx: 3, cat: 'animal', cols: ['B', 'Y', '0', '0'], vals: ['2', '2', '0', '0']},
+        {id: 'mineral__Clay__0', name: 'Clay', state: 'raw', imgIdx: 6, cat: 'mineral', cols: ['', '', '', ''], vals: ['', '', '', '']},
+        {id: 'mineral__Clay__1', name: 'Clay', state: 'fired', imgIdx: 7, cat: 'mineral', cols: ['R', '', 'R', ''], vals: ['6', '', '6', '']},
+        {id: 'mineral__Cloudstone__0', name: 'Cloudstone', state: 'raw', imgIdx: 4, cat: 'mineral', cols: ['', '', '', ''], vals: ['', '', '', '']},
+        {id: 'mineral__Cloudstone__1', name: 'Cloudstone', state: 'shaped', imgIdx: 5, cat: 'mineral', cols: ['B', 'R', 'Y', 'B'], vals: ['5', '4', '4', '2']},
+        {id: 'mineral__Riverstone__0', name: 'Riverstone', state: 'raw', imgIdx: 8, cat: 'mineral', cols: ['', '', '', ''], vals: ['', '', '', '']},
+        {id: 'mineral__Riverstone__1', name: 'Riverstone', state: 'flaked', imgIdx: 9, cat: 'mineral', cols: ['R', 'Y', 'Y', 'R'], vals: ['1', '4', '4', '3']},
+        {id: 'mineral__Sunstone__0', name: 'Sunstone', state: 'raw', imgIdx: 10, cat: 'mineral', cols: ['', '', '', ''], vals: ['', '', '', '']},
+        {id: 'mineral__Sunstone__1', name: 'Sunstone', state: 'shaped', imgIdx: 11, cat: 'mineral', cols: ['R', '', 'Y', ''], vals: ['5', '', '6', '']},
+        {id: 'plant__Wood__0', name: 'Wood', state: 'raw', imgIdx: 13, cat: 'plant', cols: ['B', 'R', 'Y', 'Y'], vals: ['2', '2', '2', '3']},
+        {id: 'plant__Wood__1', name: 'Wood', state: 'hardened', imgIdx: 14, cat: 'plant', cols: ['R', 'R', 'Y', 'Y'], vals: ['1', '3', '2', '3']},
+        {id: 'plant__Fiber__0', name: 'Fiber', state: 'raw', imgIdx: 17, cat: 'plant', cols: ['', '', '', ''], vals: ['', '', '', '']},
+        {id: 'plant__Fiber__1', name: 'Fiber', state: 'woven', imgIdx: 18, cat: 'plant', cols: ['Y', 'Y', 'B', 'R'], vals: ['1', '5', '1', '5']},
+        {id: 'plant__Pitch__0', name: 'Pitch', state: 'raw', imgIdx: 19, cat: 'plant', cols: ['', '', '', ''], vals: ['', '', '', '']},
+        {id: 'plant__Pitch__1', name: 'Pitch', state: 'treated', imgIdx: 20, cat: 'plant', cols: ['R', '', '0', ''], vals: ['5', '', '0', '']},
+        {id: 'rare__Moonblood__0', name: 'Moonblood', state: 'raw', imgIdx: 15, cat: 'rare', cols: ['', '', '', ''], vals: ['', '', '', '']},
+        {id: 'rare__Moonblood__1', name: 'Moonblood', state: 'solid', imgIdx: 16, cat: 'rare', cols: ['R', 'R', 'Y', 'S'], vals: ['1', '2', '6', '6']},
+        {id: 'rare__Coral__0', name: 'Coral', state: 'raw', imgIdx: 21, cat: 'rare', cols: ['', '', '', ''], vals: ['', '', '', '']},
+        {id: 'rare__Coral__1', name: 'Coral', state: 'dead/living', imgIdx: 22, cat: 'rare', cols: ['P', 'P', 'R', 'Y'], vals: ['6', '6', '4', '4']},
+        {id: 'rare__Silk__0', name: 'Silk', state: 'raw', imgIdx: 24, cat: 'rare', cols: ['B', 'R', 'Y', '0'], vals: ['1', '3', '1', '0']},
+        {id: 'rare__Silk__1', name: 'Silk', state: 'woven', imgIdx: 25, cat: 'rare', cols: ['B', '', 'R', ''], vals: ['2', '', '5', '']},
+        {id: 'other__Pigment__0', name: 'Pigment', state: 'raw', imgIdx: 32, cat: 'other', cols: ['R', '', '0', ''], vals: ['4', '', '0', '']},
+    ];
+
+    // ── Default grinding outcomes ──
     const GRINDING_DEFAULTS = {
         "animal__Bone__0": "Crushed bone powder \u2014 mixed with fat for wound dressing.",
         "animal__Hide__0": "Scraped hide dust \u2014 no useful grinding outcome.",
@@ -2985,53 +1783,56 @@ materials.forEach(x=>{
         "other__Pigment__1": "Finely ground pigment \u2014 maximum colour intensity per unit."
     };
 
-    // Settings state
-    const settings = {
+    // ── Storage ──
+    // Everything the app remembers lives in localStorage under these keys.
+    // The value is what an empty store looks like (also used for the save file).
+    const STORAGE_DEFAULTS = {
+        stonesaga_combos_v2: {},
+        stonesaga_settings: {},
+        stonesaga_grind: {},
+        stonesaga_meals: [], // old free-text meal list, only kept so old save files stay complete
+        stonesaga_meals_v2: [],
+    };
+
+    function readStore(key) {
+        try {
+            return JSON.parse(localStorage.getItem(key)) || STORAGE_DEFAULTS[key];
+        } catch {
+            return STORAGE_DEFAULTS[key];
+        }
+    }
+
+    function writeStore(key, value) {
+        localStorage.setItem(key, JSON.stringify(value));
+    }
+
+    // ── Settings ──
+    const SETTING_DEFAULTS = {
         grinding: false,
         showAll: false,
         pigment: false,
-        mealList: false,
         cookingPot: false,
         showAllItems: false,
         addEligibleCombos: false,
     };
+    const settings = {...SETTING_DEFAULTS};
 
-    // Load persisted settings
-    (function () {
-        try {
-            const s = JSON.parse(localStorage.getItem('stonesaga_settings') || '{}');
-            // console.log('GETITEM S',s)
-            Object.assign(settings, s);
+    function settingCheckbox(key) {
+        return document.getElementById('setting' + key.charAt(0).toUpperCase() + key.slice(1));
+    }
 
-            // console.log('settings.grinding',document.getElementById('settingGrinding').checked , !!settings.grinding)
-            // console.log('settings.showAll',document.getElementById('settingShowAll').checked , !!settings.showAll)
-            // console.log('settings.pigment',document.getElementById('settingPigment').checked , !!settings.pigment)
-            // console.log('settings.mealList',document.getElementById('settingMealList').checked , !!settings.mealList)
-            // console.log('settings.showAllItems',document.getElementById('settingShowAllItems').checked , !!settings.showAllItems)
-            // console.log('settings.addEligibleCombos',document.getElementById('settingAddEligibleCombos').checked , !!settings.addEligibleCombos)
-
-
-            document.getElementById('settingGrinding').checked = !!settings.grinding;
-            document.getElementById('settingShowAll').checked = !!settings.showAll;
-            document.getElementById('settingPigment').checked = !!settings.pigment;
-            document.getElementById('settingMealList').checked = !!settings.mealList;
-            document.getElementById('settingShowAllItems').checked = !!settings.showAllItems;
-            document.getElementById('settingAddEligibleCombos').checked = !!settings.addEligibleCombos;
-        } catch {
-        }
-    })();
-
-    function saveSettings() {
-        // console.log('SETTINGS',settings,JSON.stringify(settings))
-        localStorage.setItem('stonesaga_settings', JSON.stringify(settings));
+    function loadSettings() {
+        Object.assign(settings, SETTING_DEFAULTS, readStore('stonesaga_settings'));
+        Object.keys(SETTING_DEFAULTS).forEach(key => {
+            settingCheckbox(key).checked = !!settings[key];
+        });
     }
 
     function applySetting(key) {
-        settings[key] = document.getElementById('setting' + key.charAt(0).toUpperCase() + key.slice(1)).checked;
-        saveSettings();
+        settings[key] = settingCheckbox(key).checked;
+        writeStore('stonesaga_settings', settings);
         if (key === 'pigment') rebuildGrid();
         if (key === 'grinding') toggleGrindingUI();
-        if (key === 'mealList') document.getElementById('mealSection').style.display = settings.mealList ? '' : 'none';
         if (key === 'showAll') renderWheel();
         if (key === 'showAllItems') renderCombosList();
         if (key === 'addEligibleCombos') renderCombosList();
@@ -3048,67 +1849,104 @@ materials.forEach(x=>{
         }
     }
 
-    // console.log('toggleSettings', toggleSettings())
-
     function settingsOverlayClick(e) {
         if (e.target === e.currentTarget) toggleSettings();
     }
 
-    // ── Card data (dynamic with pigment) ──
-    function getCards() {
-        const cards = [...ALL_CARDS_BASE];
-        // console.log('getCards',cards[0])
-        if (settings.pigment) {
-            if (!cards.find(c => c.id === 'other__Pigment__0')) {
-                cards.push({id: 'other__Pigment__0', name: 'Pigment', state: 'raw', imgIdx: 32, cat: 'other'});
-                cards.push({id: 'other__Pigment__1', name: 'Pigment', state: 'ground', imgIdx: 32, cat: 'other'});
-            }
-        }
-        return cards;
+    // ── Save file ──
+    function saveToFile() {
+        const saveFile = {};
+        Object.keys(STORAGE_DEFAULTS).forEach(key => {
+            saveFile[key] = readStore(key);
+        });
+        const anchor = document.getElementById('downloadAnchorElem');
+        anchor.setAttribute('href', 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(saveFile)));
+        anchor.setAttribute('download', 'stonesaga_savefile.json');
+        anchor.click();
+        toggleSettings();
     }
 
+    // Shift + load resets everything instead of reading the file.
+    function loadFromJSON(json) {
+        if (isShiftPressed) json = STORAGE_DEFAULTS;
+        Object.keys(STORAGE_DEFAULTS).forEach(key => {
+            if (json?.[key]) {
+                writeStore(key, json[key]);
+            } else {
+                console.warn('savefile is missing: ' + key);
+            }
+        });
+    }
+
+    function handleFileSelection(event) {
+        const input = event.target;
+        const file = input.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = () => {
+            input.value = ''; // so the same file can be loaded again
+            let json;
+            try {
+                json = JSON.parse(reader.result);
+            } catch (e) {
+                console.error('Save file is not valid JSON.', e);
+                alert('Could not read the save file: it is not valid JSON.');
+                return;
+            }
+            loadFromJSON(json);
+            loadSettings();
+            selectedIngredients = [];
+            rebuildGrid();
+            initMealTab();
+            toggleSettings();
+        };
+        reader.onerror = () => console.error('Error reading the file. Please try again.');
+        reader.readAsText(file);
+    }
+
+    document.getElementById('file-input').addEventListener('change', handleFileSelection);
+
+    let isShiftPressed = false;
+    document.addEventListener('keydown', e => {
+        isShiftPressed = e.shiftKey;
+    });
+    document.addEventListener('keyup', e => {
+        isShiftPressed = e.shiftKey;
+    });
+
+    // ── Cards ──
     function cardById(id) {
-        return getCards().find(c => c.id === id);
+        return CARDS.find(c => c.id === id);
+    }
+
+    function getMaterialName(card) {
+        return card.state === 'raw' ? card.name : `${card.name}, ${card.state}`;
     }
 
     // ── Combo helpers ──
-    function comboKey(id0, id1, id0rot = 0, id1rot = 0) {
-        const a = id0 + ':'+id0rot, b = id1 + ':' + id1rot;
-        // return a <= b ? a + '|' + b : b + '|' + a;
-        return a + '|' + b
+    // A combo key is "<card id>:<rotation>|<card id>:<rotation>".
+    function comboKey(id0, id1, rot0 = 0, rot1 = 0) {
+        return `${id0}:${rot0}|${id1}:${rot1}`;
     }
 
     function parseKey(key) {
-        const [p0, p1] = key.split('|');
-        const p = s => {
-            const i = s?.lastIndexOf(':') || -1
-            if (i === -1) {
-                // console.log('key is missing :',key)
-                if (Integer.isNumber(key)) {
-                    throw new Exception('key is number')
-                }
-                return {}
-            }
-            return {id: s.slice(0, i), rot: parseInt(s.slice(i + 1))}
-        };
-        return [p(p0), p(p1)];
+        return key.split('|').map(part => {
+            const i = part.lastIndexOf(':');
+            if (i === -1) return {id: part};
+            return {id: part.slice(0, i), rot: parseInt(part.slice(i + 1))};
+        });
     }
 
     function loadUser() {
-        try {
-            return JSON.parse(localStorage.getItem('stonesaga_combos_v2') || '{}')
-        }
-
-    catch
-        {
-            return {}
-        }
+        return readStore('stonesaga_combos_v2');
     }
 
-    function saveUser(key, craft, desc) {
+    function saveUser(keys, craft, desc) {
         const d = loadUser();
-        d[key] = {craft: craft || null, desc};
-        localStorage.setItem('stonesaga_combos_v2', JSON.stringify(d));
+        keys.forEach(key => {
+            d[key] = {craft: craft || null, desc};
+        });
+        writeStore('stonesaga_combos_v2', d);
         renderWheel();
         renderCombosList();
     }
@@ -3116,29 +1954,47 @@ materials.forEach(x=>{
     function deleteUser(key) {
         const d = loadUser();
         delete d[key];
-        localStorage.setItem('stonesaga_combos_v2', JSON.stringify(d));
+        writeStore('stonesaga_combos_v2', d);
         renderWheel();
         renderCombosList();
     }
 
     function lookup(key) {
-        if (BUILTIN[key]) return {...BUILTIN[key], key, custom: false};
-        const u = loadUser();
-        if (u[key]) return {...u[key], key, custom: true};
-        return null;
+        return loadUser()[key] || null;
     }
 
     function allCombos() {
-        const all = [];
-        Object.entries(BUILTIN).forEach(([k, v]) => all.push({...v, key: k, custom: false}));
-        Object.entries(loadUser()).forEach(([k, v]) => all.push({...v, key: k, custom: true}));
-        let filteredAll = []
-        if (!settings.showAllItems) { // Only list crafted items checkbox in settings
-            filteredAll = all.filter(x=>x.craft.match(/^IT/)).sort(((x,y)=>x.craft>y.craft?1:-1))
-        } else {
-            filteredAll = all
-        }
-        return filteredAll;
+        const all = Object.entries(loadUser()).map(([key, v]) => ({...v, key}));
+        if (settings.showAllItems) return all;
+        // Only crafted items, sorted by item number
+        return all.filter(x => x.craft?.match(/^IT/)).sort((x, y) => x.craft > y.craft ? 1 : -1);
+    }
+
+    // The codes a combination can be looked up by in the crafting tables:
+    // colour + both values of the first card + both values of the second card,
+    // read from either end.
+    function getCodes(key) {
+        const [a, b] = parseKey(key);
+        const ca = cardById(a.id), cb = cardById(b.id);
+        // A rotated card is read across, from one side to the opposite one:
+        // the index of the side that is read first, and of the one read last.
+        const near = rot => (4 - rot / 90) % 4;
+        const far = rot => (near(rot) + 2) % 4;
+        const code6 = ca.cols[near(a.rot)] + ca.vals[near(a.rot)] + ca.vals[far(a.rot)]
+            + cb.vals[near(b.rot)] + cb.vals[far(b.rot)] + cb.cols[far(b.rot)];
+        const code5 = code6.substring(0, 5);
+        const code6r = code6.split('').reverse().join('');
+        const code5r = code6r.substring(0, 5);
+        return {
+            code5, code6, code6r, code5r,
+            valid: [code5, code5r].filter(x => ![0, 2].includes(x.indexOf('0')))
+        };
+    }
+
+    // The crafting table entry (item name, game text, flavor text) for a code.
+    function getStoryInfo(c5) {
+        const color = {R: 'red', B: 'blue', P: 'purple', Y: 'yellow'}[c5.substring(0, 1)];
+        return items?.[color]?.[c5.substring(1, 5)];
     }
 
     // ── Selected card ──
@@ -3151,123 +2007,60 @@ materials.forEach(x=>{
     }
 
     // ── Wheel ──
-    const CAT_ZONE = {animal: 'top', mineral: 'right', plant: 'bottom', rare: 'left', other: 'bottom'};
+    const CAT_LABELS = {animal: 'Animal', mineral: 'Mineral', plant: 'Plant', rare: 'Rare', other: 'Other'};
+    // The wheel zone for each side (west, north, east, south) of the selected card,
+    // and how far the selected card is rotated when combined on that side.
+    const ZONE_NAMES = ['left', 'top', 'right', 'bottom'];
+    const ZONE_ROTATION = {left: 0, top: 270, right: 180, bottom: 90};
 
-    function chipHTML(partnerCard,zoneName) {
-        const selectedRot1 = {'left':0, 'top':270, 'right':180, 'bottom':90}[zoneName] || 0
-        const selectedRot2 = (selectedRot1 + 180)%360
-        const cardRot1 = (partnerCard.rot + {'left':0, 'top':270, 'right':180, 'bottom':90}[zoneName] || 0)%360
-        const cardRot2 = partnerCard.rot + (cardRot1+180)%360
-        let key, key2
-
-            key = comboKey(partnerCard.id, selectedId, cardRot1, selectedRot1)
-            // key2 = comboKey(selectedId, partnerCard.id, selectedRot2, cardRot2)
-        // if (zoneName === 'left') {
-        //     key = comboKey(partnerCard.id, selectedId, cardRot1, selectedRot1)
-        //     key2 = comboKey(selectedId, partnerCard.id, selectedRot2, cardRot2)
-        // } else if (zoneName === 'top') {
-        //     key = comboKey(partnerCard.id, selectedId, cardRot1, selectedRot1)
-        //     key2 = comboKey(selectedId, partnerCard.id, selectedRot2, cardRot2)
-        // } else if (zoneName === 'right') {
-        //     key = comboKey(partnerCard.id, selectedId, cardRot1, selectedRot1)
-        //     key2 = comboKey(selectedId, partnerCard.id, selectedRot2, cardRot2)
-        // } else if (zoneName === 'bottom') {
-        //     key = comboKey(partnerCard.id, selectedId, cardRot1, selectedRot1)
-        //     key2 = comboKey(selectedId, partnerCard.id, selectedRot2, cardRot2)
-        // }
-
-            // const key = comboKey(selectedId, partnerCard.id, selectedRot1, cardRot1)
-            // const key2 = comboKey(selectedId, partnerCard.id, selectedRot2, cardRot2)
-        let combo = lookup(key)
-        const combo2 = lookup(key2)
-        combo = combo || combo2
+    function chipHTML(partnerCard, zoneName) {
+        const selectedRot = ZONE_ROTATION[zoneName];
+        const partnerRot = (partnerCard.rot + selectedRot) % 360;
+        const key = comboKey(partnerCard.id, selectedId, partnerRot, selectedRot);
+        const combo = lookup(key);
         const src = IMG[partnerCard.imgIdx];
         const imgTag = src
-            ? `<img class="chip-img" src="${src}" alt="${partnerCard.name}" style="transform:rotate(${partnerCard.rot}deg">`
-            : `<div class="chip-img" style="background:#aaa;transfo"></div>`;
+            ? `<img class="chip-img" src="${src}" alt="${partnerCard.name}" style="transform:rotate(${partnerCard.rot}deg)">`
+            : `<div class="chip-img" style="background:#aaa"></div>`;
         let resClass, resText;
         if (combo && combo.craft) {
+            resClass = combo.craft === 'Nothing' ? 'known nothing' : 'known';
             resText = combo.craft;
-            if (resText === 'Nothing') {
-                resClass = 'known nothing';
-            } else {
-                resClass = 'known';
-            }
         } else if (combo && combo.desc) {
             resClass = 'known';
             resText = '✓';
-        }
-        // else if (settings.showAll) {
-        //     resClass = 'unknown';
-        //     resText = 'Unknown';
-        // }
-        else {
+        } else {
             resClass = 'unknown';
             resText = '?';
         }
-        let k = key
-        if (zoneName === 'left') {
-            const k = key2
-        }
-        const sk = k.replace(/`/g, '\`');
-        // return `<div class="combo-chip" onclick="openModal(\`${sk}\`)" title="${partnerCard.name} (${partnerCard.state}) — click to edit">
-        return `<div class="combo-chip" onclick="showResult(\`${sk}\`)" onmouseenter="showHoverInfo(\`${sk}\`)" onmouseleave="hideHoverInfo()" title="${partnerCard.name} (${partnerCard.state}) — click to view">
+        return `<div class="combo-chip" onclick="showResult(\`${key}\`)" onmouseenter="showHoverInfo(\`${key}\`)" onmouseleave="hideHoverInfo()" title="${partnerCard.name} (${partnerCard.state}) — click to view">
     ${imgTag}
     <div class="chip-name">${partnerCard.name}</div>
     <div class="chip-result ${resClass}">${resText}</div>
   </div>`;
     }
 
-    function zoneChips(cards) {
-        if (!selectedId) return `<span style="color:var(--ink-light);font-style:italic;font-size:0.78rem;padding:6px 0">—</span>`;
-        return cards.map(c => chipHTML(c,null/*TBD zonename*/)).join('');
+    // Every card (in an open category) that can be attached to each side of the selected card.
+    function wheelZones(sel) {
+        const zones = {top: [], right: [], bottom: [], left: []};
+        const openCats = openCategories();
+        CARDS.filter(c => openCats.includes(c.cat)).forEach(c => {
+            sel.cols.forEach((selCol, i) => {
+                if (selCol === '' || selCol === '0') return;
+                const opposite = (i + 2) % 4;
+                if (sel.cols[opposite] === '0' && c.cols[opposite] === '0') return; // ex feather 0YY0
+                // TODO handle clay R6666R
+                c.cols.forEach((cardCol, j) => {
+                    if (cardCol !== selCol) return;
+                    zones[ZONE_NAMES[i]].push({...c, rot: [180, 270, 0, 90][(i - j + 4) % 4]});
+                });
+            });
+        });
+        return zones;
     }
 
     function renderWheel() {
-        const wheel = document.getElementById('wheel');
         const sel = selectedId ? cardById(selectedId) : null;
-        const cards = getCards();
-        const zones = {top: [], right: [], bottom: [], left: []};
-        const zonesIdx = [1,2,3,0]
-        const zonesIdx2Name = ['left', 'top', 'right', 'bottom']
-        const openCats = openCategories()
-        // console.log('sel',sel)
-        sel && cards.forEach(c => {
-            // console.log('sel.cols',sel.cols,c.id)
-            sel.cols.forEach((selCol,i)=> {
-                const selColStart = sel.cols[(i+2)%4]
-                c.cols.forEach((cardCol,j) => {
-                    const selStartEnd = sel.cols[(i+2)%4]
-                    const cardStartEnd = c.cols[(i+2)%4]
-                    // console.log('selStartEnd',selStartEnd,'cardStartEnd',cardStartEnd)
-                    if (selCol === cardCol && selCol !== '' && selCol !== '0'
-                         && !(selStartEnd === '0' && cardStartEnd === '0') // ex feather 0YY0
-                        && openCats.includes(c.cat)
-                        // TODO handle clay R6666R
-                    ) {
-                        // console.log('sel, card',i,j,c, selStartEnd, cardStartEnd)
-                        c.rot = [180,270,0,90][(i-j+4)%4]
-                        const clone = JSON.parse(JSON.stringify(c))
-                        zones[zonesIdx2Name[i]].push(Object.create(clone))
-                    }
-                    // console.log(x,i,(i+2)%4,c?.cols)
-                })
-            })
-            // if (c.id === selectedId) return; // skip self in zone but still show as chip
-            // const z = CAT_ZONE[c.cat] || 'top';
-            // zones[z].push(c);
-        });
-        // console.table(zones)
-        // Include same card again so same-material combos show
-        if (sel) cards.filter(c => c.id === selectedId).forEach(c => {
-            // Already included via all cards; just don't skip — actually re-add to correct zone
-        });
-        // Simpler: include all cards including selected for chips (some games allow self-combo)
-        let allForZones = {top: [], right: [], bottom: [], left: []};
-        cards.forEach(c => {
-            const z = CAT_ZONE[c.cat] || 'top';
-            allForZones[z].push(c);
-        });
 
         let centerHTML;
         if (sel) {
@@ -3277,35 +2070,35 @@ materials.forEach(x=>{
             centerHTML = `<div class="center-empty"><span style="font-size:2rem;opacity:0.25">◈</span>Select a card</div>`;
         }
 
-        const catLabels = {animal: 'Animal', mineral: 'Mineral', plant: 'Plant', rare: 'Rare', other: 'Other'};
-        const catClasses = {animal: 'animal', mineral: 'mineral', plant: 'plant', rare: 'rare', other: 'other'};
+        const zones = sel ? wheelZones(sel) : null;
 
-        // Group chips by category within each zone
-        function zoneCatChips(zoneName) {
-            if (!selectedId) return `<span style="color:var(--ink-light);font-style:italic;font-size:0.78rem;padding:6px">—</span>`;
-            const zCards = allForZones[zoneName];
-            if (!zCards.length) return '';
+        // Chips of one zone, grouped by category
+        function zoneChips(zoneName) {
+            if (!zones) return `<span style="color:var(--ink-light);font-style:italic;font-size:0.78rem;padding:6px">—</span>`;
             const byCat = {};
-            zCards.forEach(c => {
+            zones[zoneName].forEach(c => {
                 (byCat[c.cat] || (byCat[c.cat] = [])).push(c);
             });
             return Object.entries(byCat).map(([cat, cs]) =>
-                `<div class="section-label ${cat}">${catLabels[cat] || cat}</div>` + cs.map(c => chipHTML(c,zoneName)).join('')
+                `<div class="section-label ${cat}">${CAT_LABELS[cat] || cat}</div>` + cs.map(c => chipHTML(c, zoneName)).join('')
             ).join('');
         }
 
-        allForZones = zones
-
-        wheel.innerHTML = `
-    <div class="wheel-top">${zoneCatChips('top')}</div>
-    <div class="wheel-left">${zoneCatChips('left')}</div>
+        document.getElementById('wheel').innerHTML = `
+    <div class="wheel-top">${zoneChips('top')}</div>
+    <div class="wheel-left">${zoneChips('left')}</div>
     <div class="wheel-center">${centerHTML}</div>
-    <div class="wheel-right">${zoneCatChips('right')}</div>
-    <div class="wheel-bottom">${zoneCatChips('bottom')}</div>`;
+    <div class="wheel-right">${zoneChips('right')}</div>
+    <div class="wheel-bottom">${zoneChips('bottom')}</div>`;
     }
 
     // ── Result reveal (dimmed background, centered combo result) ──
     let lastResultKey = null;
+
+    function thumbHTML(card, rot, cssClass) {
+        if (!card || !IMG[card.imgIdx]) return '';
+        return `<img class="${cssClass}" src="${IMG[card.imgIdx]}" alt="${card.name}" style="transform:rotate(${rot}deg)">`;
+    }
 
     function showResult(key) {
         if (!selectedId) return;
@@ -3313,10 +2106,7 @@ materials.forEach(x=>{
         const [a, b] = parseKey(key);
         const ca = cardById(a.id), cb = cardById(b.id);
         const combo = lookup(key);
-        const [rot1,rot2] = key.split("|").map(x=>x.split(":")[1])
 
-        const srcA = ca && IMG[ca.imgIdx] ? `<img class="result-thumb" src="${IMG[ca.imgIdx]}" alt="${ca.name}" style="transform:rotate(${rot1}deg)">` : '';
-        const srcB = cb && IMG[cb.imgIdx] ? `<img class="result-thumb" src="${IMG[cb.imgIdx]}" alt="${cb.name}" style="transform:rotate(${rot2}deg)">` : '';
         const namesLine = `${ca?.name || a.id} (${ca?.state || ''}) + ${cb?.name || b.id} (${cb?.state || ''})`;
         let craftLine, descLine;
         if (combo && (combo.craft || combo.desc)) {
@@ -3326,10 +2116,9 @@ materials.forEach(x=>{
             craftLine = `<div class="result-craft is-unknown">Unknown Combination</div>`;
             descLine = `<div class="result-desc">No description has been recorded for this pairing yet.</div>`;
         }
-        //console.log('key',key)
 
         document.getElementById('resultBox').innerHTML = `
-    <div class="result-pair">${srcA}<span class="result-plus">+</span>${srcB}</div>
+    <div class="result-pair">${thumbHTML(ca, a.rot, 'result-thumb')}<span class="result-plus">+</span>${thumbHTML(cb, b.rot, 'result-thumb')}</div>
     <div class="result-names">${namesLine}</div>
     ${craftLine}
     ${descLine}
@@ -3339,15 +2128,6 @@ materials.forEach(x=>{
     </div>`;
         document.getElementById('resultOverlay').classList.add('open');
     }
-    let isShiftPressed = false
-    document.addEventListener('keydown', e=> {
-        isShiftPressed = e.shiftKey
-        console.log('isShiftPressed',isShiftPressed)
-    })
-    document.addEventListener('keyup', e=> {
-        isShiftPressed = false
-        console.log('isShiftPressed',isShiftPressed)
-    })
 
     function closeResult() {
         document.getElementById('resultOverlay').classList.remove('open');
@@ -3357,48 +2137,14 @@ materials.forEach(x=>{
         if (e.target === e.currentTarget) closeResult();
     }
 
-    function getStoryInfo(c5) {
-        const color = {'R':'red','B':'blue','P':'purple','Y':'yellow'}[c5.substring(0,1)]
-        const code = c5.substring(1,5)
-        return items?.[color]?.[code]
-    }
-
     function editFromResult() {
-        const wasKnown = !!(lookup(lastResultKey) && (lookup(lastResultKey).craft || lookup(lastResultKey).desc));
         closeResult();
-
-        const codes = getCodes(lastResultKey)
-        // console.log(lastResultKey)
-        const prevItem = !(loadUser()[lastResultKey])
-        // console.log('lastResultKey',lastResultKey,materials[lastResultKey])
-        let foundItem
-        let foundSomething = false
-
-        // TODO check if all found items are same
-        // console.log('editFromResult',codes)
-        codes.valid.forEach(x=>{
-            const item = getStoryInfo(x)
-            const itemName = item?.['Item Name']
-            const flavorText = item?.['Flavor Text']
-            const gameText = item?.['Flavor Text']
-            const itNumber = gameText?.replace(/.*(IT\d\d).*/,'$1')
-            if (itemName && itemName !== 'None') {
-                if (itemName !== 'None') {
-                    foundSomething = true
-                }
-                foundItem = item
-            }
-
-            Object.keys(items).forEach(col=> Object.keys(items[col]).forEach((num)=>{
-                if (items[col][num]["Item Name"] === itemName) console.log(col,num)
-            }))
-
-            // console.log(x,color,code,items[color][code])
-            // console.log('!!previtem',!!prevItem,prevItem)
-            // console.log('foundItem: Code: ',foundItem?.Code, itemName)
-            // console.log('foundSomething',foundSomething, 'prevItem', prevItem)
-        })
-        if (foundSomething && prevItem) celebrateKnownCombo();
+        const isNew = !loadUser()[lastResultKey];
+        const makesItem = getCodes(lastResultKey).valid.some(code => {
+            const itemName = getStoryInfo(code)?.['Item Name'];
+            return itemName && itemName !== 'None';
+        });
+        if (makesItem && isNew) celebrateKnownCombo();
         openModal(lastResultKey);
     }
 
@@ -3468,124 +2214,11 @@ materials.forEach(x=>{
         setTimeout(() => overlay.remove(), 750);
     }
 
-    function getCodes(key) {
-        const [a, b] = parseKey(key);
-        const ca = cardById(a.id), cb = cardById(b.id);
-        const [rot1,rot2] = key.split("|").map(x=>x.split(":")[1])
-        //const combo = lookup(key);
-
-        const infoA = materials.find(x=>x.note === a.id)
-        const infoB = materials.find(x=>x.note === b.id)
-        // console.log('infoA',infoA,a.id,'infoB',b.id,infoB)
-// console.log(rot1,rot2,infoA,infoB,infoA.cols,infoA.vals,infoB.cols,infoB.vals)
-        let l11,v11,v12,l12
-        if (rot1 == 0) {
-            l11 = infoA.cols[0]
-            v11 = infoA.vals[0]
-            v12 = infoA.vals[2]
-            l12 = infoA.cols[2]
-        } else if (rot1 == 90) {
-            l11 = infoA.cols[3]
-            v11 = infoA.vals[3]
-            v12 = infoA.vals[1]
-            l12 = infoA.cols[1]
-        } else if (rot1 == 180) {
-            l11 = infoA.cols[2]
-            v11 = infoA.vals[2]
-            v12 = infoA.vals[0]
-            l12 = infoA.cols[0]
-        } else if (rot1 == 270) {
-            l11 = infoA.cols[1]
-            v11 = infoA.vals[1]
-            v12 = infoA.vals[3]
-            l12 = infoA.cols[3]
-        }
-
-        let l21,v21,v22,l22
-        if (rot2 == 0) {
-            l21 = infoB.cols[0]
-            v21 = infoB.vals[0]
-            v22 = infoB.vals[2]
-            l22 = infoB.cols[2]
-        } else if (rot2 == 90) {
-            l21 = infoB.cols[3]
-            v21 = infoB.vals[3]
-            v22 = infoB.vals[1]
-            l22 = infoB.cols[1]
-        } else if (rot2 == 180) {
-            l21 = infoB.cols[2]
-            v21 = infoB.vals[2]
-            v22 = infoB.vals[0]
-            l22 = infoB.cols[0]
-        } else if (rot2 == 270) {
-            l21 = infoB.cols[1]
-            v21 = infoB.vals[1]
-            v22 = infoB.vals[3]
-            l22 = infoB.cols[3]
-        }
-        // console.log(l11,v11,v12,l12,l21,v21,v22,l22)
-
-        // const rotA = (a.rot + {'left':0, 'top':180, 'right':90, 'bottom':180}[zoneName] || 0)%360/90
-        // const rotB = (b.rot + {'left':0, 'top':180, 'right':270, 'bottom':90}[zoneName] || 0)%360/90
-
-        // const zoneAdj = {'left':0,'top':1,'right':2,'bottom':3}[zoneName]
-        // console.log('zoneName,zoneAdj',zoneName,zoneAdj)
-        // const rotA = a.rot/90
-        // const rotB = (zoneAdj + b.rot/90)%4
-        //
-        // console.log('rotA,rotB',rotA,rotB)
-        // console.log('rot1,rot2',rot1,rot2)
-        //
-        // const code5 = infoA.cols[rotA]
-        //     + infoA.vals[rotA]
-        //     + infoA.vals[(2 + rotA)%4]
-        //     + infoB.vals[rotB]
-        //     + infoB.vals[(2 + rotB)%4]
-        // const code6 = code5 + infoB.cols[(2 + rotB)%4]
-
-        // console.log(zoneName, a,b,infoA,infoB, code6)
-        const code6 = l11+v11+v12+v21+v22+l22
-        const code5 = code6.substring(0, 5)
-        let code6r = code6.split('').reverse().join('')
-        let code5r = code6r.substring(0, 5)
-        return {
-            code5, code6, code6r, code5r,
-            valid: [code5, code5r].filter(x => ![0,2].includes(x.indexOf('0')))
-        }
-    }
-
-    function sideSymbol(rot) {
-        return ''
-        return {
-            '0': '◨',
-            '90':'⬒',
-            '180':'◧',
-            '270':'⬓',
-        }[rot] || ''
-    }
-
     // ── Hover info panel beside settings cog ──
     function showHoverInfo(key) {
         const [a, b] = parseKey(key);
-        const ca = cardById(a.id), cb = cardById(b.id);
-        const [rot1,rot2] = key.split("|").map(x=>x.split(":")[1])
-        // console.log('parseKey','key',key,'a',a,'b',b,'ca',ca,'cb',cb,'rot1',rot1,'rot2',rot2,rot2,'ca?.rot',ca?.rot,'cb?.rot',cb?.rot)
-        // console.log('rot1,rot2',rot1,rot2)
-
-        const codes = getCodes(key)
-        // console.log(codes)
-        codes.valid.forEach(x=>{
-            const color = {'R':'red','B':'blue','P':'purple','Y':'yellow'}[x.substring(0,1)]||''
-            const code = x.substring(1,5)||''
-            // console.log(x,color,code,items[color][code])
-        })
-        // const foundItem = items.yellow["1111"]
-        // console.log(ca)
-
-        // console.log(codes)
-        document.getElementById('hoverInfoKey').textContent = `${getMaterialName(ca)+sideSymbol(rot1) || a.id} + ${getMaterialName(cb)+sideSymbol(rot2) || b.id}`;
-        document.getElementById('hoverInfoNames').textContent = `${codes.valid.join(' ')}
-${key}`;
+        document.getElementById('hoverInfoKey').textContent = `${getMaterialName(cardById(a.id))} + ${getMaterialName(cardById(b.id))}`;
+        document.getElementById('hoverInfoNames').textContent = `${getCodes(key).valid.join(' ')}\n${key}`;
         document.getElementById('hoverInfo').classList.add('show');
     }
 
@@ -3599,61 +2232,26 @@ ${key}`;
     function openModal(key) {
         if (!selectedId) return;
         modalKey = key;
-        // console.log(JSON.stringify(getCodes(key)))
         const [a, b] = parseKey(key);
         const ca = cardById(a.id), cb = cardById(b.id);
         const existing = lookup(key) || {};
-        const [rot1,rot2] = key.split("|").map(x=>x.split(":")[1])
-        const tA = ca && IMG[ca.imgIdx] ? `<img class="modal-thumb" src="${IMG[ca.imgIdx]}" alt="${ca.name}" style="transform:rotate(${rot1}deg)">` : '';
-        const tB = cb && IMG[cb.imgIdx] ? `<img class="modal-thumb" src="${IMG[cb.imgIdx]}" alt="${cb.name}" style="transform:rotate(${rot2}deg)">` : '';
-        //const combItem = getCode()
-        //console.log(ca,cb,rot1,rot2)
 
-        const codes = getCodes(key)
-        // console.log('codes',key,codes)
-        const prevItem = !(loadUser()[key])
-        let foundItem
-        let foundSomething = false
-        let itemName = 'None', itNumber = '', gameText = "That's an odd combination.", flavorText = 'Nothing came out of it.'
-
+        // Suggest name and description from the crafting tables
+        let itemName = 'None', itNumber = '', gameText = "That's an odd combination.",
+            flavorText = 'Nothing came out of it.';
         // TODO check if all found items are same
-        codes.valid.forEach(x=>{
-            const item = getStoryInfo(x)
-            itemName = item?.['Item Name'] || itemName
-            flavorText = item?.['Flavor Text'] || flavorText
-            gameText = item?.['Game Text'] || gameText
-            itNumber = !!gameText?.match(/IT\d\d/) && gameText?.replace(/.*(IT\d\d).*/,'$1') || itNumber
-            if (itemName && itemName !== 'None') {
-                if (itemName !== 'None') {
-                    foundSomething = true
-                }
-                foundItem = item
-            }
-            // console.log('!!previtem',!!prevItem,prevItem)
-            // console.log('foundItem: Code: ',foundItem?.Code, itemName)
-            // console.log('foundSomething',foundSomething, 'prevItem', prevItem)
-        })
+        getCodes(key).valid.forEach(code => {
+            const item = getStoryInfo(code);
+            itemName = item?.['Item Name'] || itemName;
+            flavorText = item?.['Flavor Text'] || flavorText;
+            gameText = item?.['Game Text'] || gameText;
+            if (gameText.match(/IT\d\d/)) itNumber = gameText.replace(/.*(IT\d\d).*/, '$1');
+        });
+        if (itemName === 'None') itemName = 'Nothing';
 
-        // if (settings.addEligibleCombos) {
-        //     console.log('CRAFT',existing.craft)
-        //     console.log('DESC',existing.desc)
-        // }
-        if (itemName === 'None') {
-            itemName = 'Nothing'
-        }
-        // console.log((!isShiftPressed && existing.craft))
-        // console.log((((itNumber + ' ')||'') + itemName))
-        // console.log((((itNumber + ' ')||'') + itemName))
-
-        document.getElementById('modalPair').innerHTML = `${tA}<div class="modal-names">${ca?.name || a.id}<br><span style="color:var(--ink-light)">+</span><br>${cb?.name || b.id}</div>${tB}`;
-        document.getElementById('modalCraft').value = (existing.craft) || (((itNumber || '') + (!!itNumber?' ':'')) + itemName)
-        document.getElementById('modalDesc').value = (existing.desc) || gameText + `
-
-${flavorText}`;
-        // console.log('itNumber', itNumber)
-        // console.log('itemName', itemName)
-        // console.log('gameText', gameText)
-        // console.log('flavorText', flavorText)
+        document.getElementById('modalPair').innerHTML = `${thumbHTML(ca, a.rot, 'modal-thumb')}<div class="modal-names">${ca?.name || a.id}<br><span style="color:var(--ink-light)">+</span><br>${cb?.name || b.id}</div>${thumbHTML(cb, b.rot, 'modal-thumb')}`;
+        document.getElementById('modalCraft').value = existing.craft || (itNumber ? itNumber + ' ' : '') + itemName;
+        document.getElementById('modalDesc').value = existing.desc || `${gameText}\n\n${flavorText}`;
         document.getElementById('addComboOverlay').classList.add('open');
         setTimeout(() => document.getElementById('modalCraft').focus(), 60);
     }
@@ -3663,102 +2261,30 @@ ${flavorText}`;
         modalKey = null;
     }
 
-    function genCodes(key) {
-        const [a,b] = parseKey(key)
-        const ca = cardById(a.id), cb = cardById(b.id);
-        const code6 = ca.cols[a.rot/90] + ca.vals[a.rot/90]       + ca.vals[(2+a.rot/90)%4]
-                    + cb.vals[b.rot/90] + cb.vals[(2+b.rot/90)%4] + cb.cols[(2+b.rot/90)%4]
-        return [code6.substring(0,5),code6.split('').reverse().join('').substring(0,5)]
-            .filter(x=>x[0]!=='0')
+    // Indexes (into _lsi) of the combinations a save of `key` should be recorded for.
+    function combosToSave(key) {
+        // The combination itself, or with "showAll" every combination with the same code (and reverse)
+        const sameRecipe = () => settings.showAll ? (_resa[key] || []) : [_lsi.indexOf(key)];
+        if (!settings.addEligibleCombos) return sameRecipe();
+
+        // Every combination that gives the same item according to the crafting tables.
+        // 'Nothing' only counts as an item when shift is held.
+        return getCodes(key).valid.flatMap(code => {
+            const itemName = getStoryInfo(code)?.['Item Name'];
+            const eligibleCodes = _itemCodes[itemName];
+            if (!eligibleCodes || (itemName === 'None' && !isShiftPressed)) return sameRecipe();
+            return eligibleCodes.flatMap(code5 => code5_itemIndex[code5]);
+        });
     }
 
     function saveFromModal() {
         const craft = document.getElementById('modalCraft').value.trim();
         const desc = document.getElementById('modalDesc').value.trim();
-        if (!desc && !craft) {
-            closeModal();
-            return;
+        if (desc || craft) {
+            const keys = new Set(combosToSave(modalKey).map(index => _lsi[index]).filter(Boolean));
+            keys.add(modalKey); // not every combination in the wheel is in the index
+            saveUser([...keys], craft, desc || craft);
         }
-        //const combos = allCombos(modalKey)
-
-        // TODO find all similar keys and update them as well (if they don't have a value)
-        //const codes = getCodes(modalKey)
-
-        //codes.valid.forEach(x=>{
-        // console.log('modalKey',modalKey, _lsi.indexOf(modalKey), _resa[_lsi.indexOf(modalKey)])
-        // console.log('_resa',_resa[modalKey])
-        // _resa[_lsi.indexOf(modalKey)]?.forEach(x=>{
-        const users = loadUser()
-        /*
-. 306 animal__Guts__1:180|plant__Wood__0:180 180 (4) ['Y', '0', 'B', 'R'] (4) ['1', '0', '1', '3'] 180 (4) ['B', 'R', 'Y', 'Y'] (4) ['2', '2', '2', '3'] (2) ['B1122', 'B2211']
- . 19 animal__Bone__0:0|animal__Guts__1:0 0 (4) ['B', 'Y', 'Y', 'R'] (4) ['2', '3', '2', '2'] 0 (4) ['Y', '0', 'B', 'R'] (4) ['1', '0', '1', '3'] (2) ['B2211', 'B1122']
-. 287 animal__Guts__1:180|animal__Bone__0:180 180 (4) ['Y', '0', 'B', 'R'] (4) ['1', '0', '1', '3'] 180 (4) ['B', 'Y', 'Y', 'R'] (4) ['2', '3', '2', '2'] (2) ['B1122', 'B2211']
-.  57 animal__Bone__0:0|plant__Fiber__1:0 0 (4) ['B', 'Y', 'Y', 'R'] (4) ['2', '3', '2', '2'] 0 (4) ['Y', 'Y', 'B', 'R'] (4) ['1', '5', '1', '5'] (2) ['B2211', 'B1122']
-.  71 animal__Bone__0:0|rare__Silk__0:180 0 (4) ['B', 'Y', 'Y', 'R'] (4) ['2', '3', '2', '2'] 180 (4) ['B', 'R', 'Y', '0'] (4) ['1', '3', '1', '0'] (2) ['B2211', 'B1122']
-. 741 plant__Fiber__1:180|animal__Bone__0:180 180 (4) ['Y', 'Y', 'B', 'R'] (4) ['1', '5', '1', '5'] 180 (4) ['B', 'Y', 'Y', 'R'] (4) ['2', '3', '2', '2'] (2) ['B1122', 'B2211']
-. 589 plant__Wood__0:0|animal__Guts__1:0 0 (4) ['B', 'R', 'Y', 'Y'] (4) ['2', '2', '2', '3'] 0 (4) ['Y', '0', 'B', 'R'] (4) ['1', '0', '1', '3'] (2) ['B2211', 'B1122']
-. 785 plant__Fiber__1:180|plant__Wood__0:180 180 (4) ['Y', 'Y', 'B', 'R'] (4) ['1', '5', '1', '5'] 180 (4) ['B', 'R', 'Y', 'Y'] (4) ['2', '2', '2', '3'] (2) ['B1122', 'B2211']
-. 627 plant__Wood__0:0|plant__Fiber__1:0 0 (4) ['B', 'R', 'Y', 'Y'] (4) ['2', '2', '2', '3'] 0 (4) ['Y', 'Y', 'B', 'R'] (4) ['1', '5', '1', '5'] (2) ['B2211', 'B1122']
-. 936 rare__Silk__0:0|animal__Bone__0:180 0 (4) ['B', 'R', 'Y', '0'] (4) ['1', '3', '1', '0'] 180 (4) ['B', 'Y', 'Y', 'R'] (4) ['2', '3', '2', '2'] (2) ['B1122', 'B2211']
-. 641 plant__Wood__0:0|rare__Silk__0:180 0 (4) ['B', 'R', 'Y', 'Y'] (4) ['2', '2', '2', '3'] 180 (4) ['B', 'R', 'Y', '0'] (4) ['1', '3', '1', '0'] (2) ['B2211', 'B1122']
-. 955 rare__Silk__0:0|plant__Wood__0:180 0 (4) ['B', 'R', 'Y', '0'] (4) ['1', '3', '1', '0'] 180 (4) ['B', 'R', 'Y', 'Y'] (4) ['2', '2', '2', '3'] (2) ['B1122', 'B2211']
-
-*/
-
-        let listOfValidCombos = []
-        if (settings.addEligibleCombos) {
-            // console.log('settings.addEligibleCombos',settings.addEligibleCombos)
-            // console.log('settings.showAll',settings.showAll)
-            const codes = getCodes(lastResultKey)
-            // console.log('CODES',codes)
-            codes.valid.forEach(x=> {
-                const item = getStoryInfo(x)
-                const itemName = item?.['Item Name']
-                // console.log('ITEMNAME',itemName)
-                if (!isShiftPressed && itemName === 'None') {
-                    if (settings.showAll) {
-                        listOfValidCombos.push(..._resa[modalKey]) || console.log('MODALKEY',modalKey)
-                    } else {
-                        const modalKeyIndex = _lsi.indexOf(modalKey)
-                        listOfValidCombos.push(modalKeyIndex)
-                    }
-                    return
-                }
-                const eligibleCodes = _itemCodes[itemName]
-                eligibleCodes.forEach(code5 => listOfValidCombos.push(...code5_itemIndex[code5]))
-                // console.log('ADDELIGIBLECOMBOS',x, itemName, eligibleCodes)
-                // console.log('ADDELIGIBLECOMBOS',code5_itemIndex[eligibleCodes[0]])
-            })
-        } else if (settings.showAll) {
-            listOfValidCombos.push(..._resa[modalKey]) || console.log('MODALKEY',modalKey)
-        } else {
-            const modalKeyIndex = _lsi.indexOf(modalKey)
-            listOfValidCombos.push(modalKeyIndex)
-            // console.log('modalKeyIndex')
-            // const [a, b] = parseKey(modalKey)
-            // const ca = cardById(a.id), cb = cardById(b.id);
-            // console.log('save.', modalKey, ca.cols.join(''), ca.vals.join(''), cb.cols.join(''), cb.vals.join(''), genCodes(modalKey))
-            // saveUser(modalKey, craft, desc || craft);
-
-        }
-        const onlyUnique = (value, index, array) => array.indexOf(value) === index
-        listOfValidCombos = listOfValidCombos.filter(onlyUnique)
-        // console.log('listOfValidCombos',listOfValidCombos)
-        listOfValidCombos?.forEach(x => {
-            const key = _lsi[x]
-            // console.log('settings.addEligibleCombos',settings.addEligibleCombos)
-            // if (!users?.[key]) {
-                const [a, b] = parseKey(key)
-                const ca = cardById(a.id), cb = cardById(b.id);
-                console.log('save.', x, key, ca.cols.join(''), ca.vals.join(''), cb.cols.join(''), cb.vals.join(''), genCodes(key))
-                saveUser(key, craft, desc || craft)
-            // }
-        })
-
-        // const [a, b] = parseKey(modalKey)
-        // const ca = cardById(a.id), cb = cardById(b.id);
-        // console.log('save.', modalKey, ca.cols.join(''), ca.vals.join(''), cb.cols.join(''), cb.vals.join(''), genCodes(modalKey))
-        // saveUser(modalKey, craft, desc || craft);
         closeModal();
     }
 
@@ -3775,15 +2301,7 @@ ${flavorText}`;
 
     // ── Grinding ──
     function loadGrind() {
-        try {
-            return JSON.parse(localStorage.getItem('stonesaga_grind') || '{}')
-        } catch {
-            return {}
-        }
-    }
-
-    function saveGrind(d) {
-        localStorage.setItem('stonesaga_grind', JSON.stringify(d));
+        return readStore('stonesaga_grind');
     }
 
     function toggleGrindingUI() {
@@ -3796,38 +2314,35 @@ ${flavorText}`;
         const d = loadGrind();
         d[cardId] = d[cardId] || {};
         d[cardId].checked = checked;
-        saveGrind(d);
+        writeStore('stonesaga_grind', d);
         const wrap = document.querySelector(`.grind-wrap[data-id="${cardId}"]`);
-        if (wrap) {
-            const txt = wrap.querySelector('.grind-text');
-            txt.classList.toggle('visible', checked);
-        }
+        if (wrap) wrap.querySelector('.grind-text').classList.toggle('visible', checked);
     }
 
     function onGrindText(cardId, value) {
         const d = loadGrind();
         d[cardId] = d[cardId] || {};
         d[cardId].text = value;
-        saveGrind(d);
+        writeStore('stonesaga_grind', d);
     }
 
     // ── Grid build ──
+    const NBSP = '\u00a0'; // keeps the (empty) raw-state label column from collapsing
     function buildGrid() {
         const container = document.getElementById('gridSections');
         container.innerHTML = '';
         const catOrder = ['animal', 'mineral', 'plant', 'rare'];
         if (settings.pigment) catOrder.push('other');
-        const catLabels = {animal: 'Animal', mineral: 'Mineral', plant: 'Plant', rare: 'Rare', other: 'Other'};
-        const cards = getCards();
         const grindData = loadGrind();
 
         catOrder.forEach(cat => {
-            const catCards = cards.filter(c => c.cat === cat);
+            const catCards = CARDS.filter(c => c.cat === cat);
             const names = [...new Set(catCards.map(c => c.name))];
 
             const groupsHTML = names.map(name => {
                 const pair = catCards.filter(c => c.name === name);
                 const stateLabel = pair.length > 1 ? pair[1].state : pair[0].state;
+                const states = stateLabel.split('/');
                 const cardsHTML = pair.map(c => {
                     const src = IMG[c.imgIdx];
                     const art = src ? `<img class="card-art" src="${src}" alt="${c.name}" draggable="false">` : '';
@@ -3851,7 +2366,7 @@ ${flavorText}`;
 
                 return `<div class="material-group">
         <div class="material-name">${name}</div>
-        <div class="material-state"><div>${stateLabel.split('/').length>1 ? stateLabel.split('/')[0] : '     '}</div><div>${stateLabel.split('/').slice(-1)[0]}</div></div>
+        <div class="material-state"><div>${states.length > 1 ? states[0] : NBSP.repeat(5)}</div><div>${states[states.length - 1]}</div></div>
         <div class="cards-pair">${cardsHTML}</div>
       </div>`;
             }).join('');
@@ -3861,7 +2376,7 @@ ${flavorText}`;
             section.dataset.cat = cat;
             section.innerHTML = `
       <div class="category-header" onclick="toggleCategory(this)">
-        <span class="category-label ${cat}">${catLabels[cat]}</span>
+        <span class="category-label ${cat}">${CAT_LABELS[cat]}</span>
         <div class="category-rule"></div>
         <span class="cat-toggle-icon">▲</span>
       </div>
@@ -3895,48 +2410,38 @@ ${flavorText}`;
     function expandEl(el) {
         el.classList.remove('is-collapsed');
         el.style.height = el.scrollHeight + 'px';
-        el.addEventListener('transitionend', function h() {
+        el.addEventListener('transitionend', () => {
             el.style.height = 'auto';
-            el.removeEventListener('transitionend', h);
         }, {once: true});
     }
 
     function collapseEl(el) {
         el.style.height = el.scrollHeight + 'px';
-        el.offsetHeight;
+        el.offsetHeight; // force a reflow so the height transition starts from here
         el.classList.add('is-collapsed');
         el.style.height = '0px';
     }
 
-    function toggleCategory(headerEl) {
-        const g = headerEl.nextElementSibling, icon = headerEl.querySelector('.cat-toggle-icon');
-        if (g.classList.contains('is-collapsed')) {
-            expandEl(g);
+    function toggleCollapsed(el, icon) {
+        if (el.classList.contains('is-collapsed')) {
+            expandEl(el);
             icon.style.transform = 'rotate(0deg)';
         } else {
-            collapseEl(g);
+            collapseEl(el);
             icon.style.transform = 'rotate(180deg)';
         }
     }
 
-    function openCategories() {
-        return [...document.querySelectorAll('.section:not(:has(.is-collapsed))')].map(x=>x.getAttribute('data-cat'))
+    function toggleCategory(headerEl) {
+        toggleCollapsed(headerEl.nextElementSibling, headerEl.querySelector('.cat-toggle-icon'));
     }
 
     function toggleCombos() {
-        const l = document.getElementById('combosList'), icon = document.querySelector('.combos-toggle');
-        if (l.classList.contains('is-collapsed')) {
-            expandEl(l);
-            icon.style.transform = 'rotate(0deg)';
-        } else {
-            collapseEl(l);
-            icon.style.transform = 'rotate(180deg)';
-        }
+        toggleCollapsed(document.getElementById('combosList'), document.querySelector('.combos-toggle'));
     }
 
-    function getMaterialName(card) {
-        const state = card.state === 'raw' ? '': `, ${card.state}`
-        return card.name + state
+    function openCategories() {
+        return [...document.querySelectorAll('.section:not(:has(.is-collapsed))')].map(x => x.getAttribute('data-cat'));
     }
 
     // ── Combos list ──
@@ -3948,112 +2453,46 @@ ${flavorText}`;
             return;
         }
 
-        let lastDesc
-        let duplicateDesc = false
+        const thumb = (card, id) => {
+            if (!card) return id;
+            const name = getMaterialName(card);
+            return IMG[card.imgIdx] ? `<img class="combo-thumb" src="${IMG[card.imgIdx]}" alt="${name}">` : name;
+        };
+        let lastDesc;
         container.innerHTML = all.map(entry => {
             const [a, b] = parseKey(entry.key);
-            const ca = cardById(a.id) || {}, cb = cardById(b.id) || {};
-            const srcA = IMG[ca.imgIdx], srcB = IMG[cb.imgIdx];
-            const tA = srcA ? `<img class="combo-thumb" src="${srcA}" alt="${getMaterialName(ca) || ''}">` : getMaterialName(ca) || a.id;
-            const tB = srcB ? `<img class="combo-thumb" src="${srcB}" alt="${getMaterialName(cb) || ''}">` : getMaterialName(cb) || b.id;
+            const ca = cardById(a.id), cb = cardById(b.id);
             const craft = entry.craft ? `<div class="craft-tag">${entry.craft}</div>` : '';
-            const del = entry.custom ? `<button class="combo-del-btn" onclick="deleteUser('${entry.key.replace(/'/g, "\'")}')" title="Delete">✕</button>` : `<span class="combo-builtin-badge">built-in</span>`;
-            duplicateDesc = lastDesc === entry.desc
-            lastDesc = entry.desc
+            // The description is only shown once for consecutive entries that share it
+            const duplicateDesc = lastDesc === entry.desc;
+            lastDesc = entry.desc;
             return `<div class="combo-entry">
-      <div class="combo-entry-cards">${tA}<span style="color:var(--ink-light);padding:0 2px;font-size:0.9rem">+</span>${tB}</div>
-      <div>${craft}<div style="font-size:0.7rem;color:var(--ink-light);margin-top:2px">${getMaterialName(ca) || ''} + ${getMaterialName(cb) || ''}</div></div>
-      <div class="combo-entry-desc">${duplicateDesc ? '': (entry.desc || '')}</div>
-      <div class="combo-entry-actions">${del}</div>
+      <div class="combo-entry-cards">${thumb(ca, a.id)}<span style="color:var(--ink-light);padding:0 2px;font-size:0.9rem">+</span>${thumb(cb, b.id)}</div>
+      <div>${craft}<div style="font-size:0.7rem;color:var(--ink-light);margin-top:2px">${ca ? getMaterialName(ca) : a.id} + ${cb ? getMaterialName(cb) : b.id}</div></div>
+      <div class="combo-entry-desc">${duplicateDesc ? '' : (entry.desc || '')}</div>
+      <div class="combo-entry-actions"><button class="combo-del-btn" onclick="deleteUser('${entry.key}')" title="Delete">✕</button></div>
     </div>`;
         }).join('');
     }
 
-    // ── Meal list ──
-    function loadMeals() {
-        try {
-            return JSON.parse(localStorage.getItem('stonesaga_meals') || '[]')
-        } catch {
-            return []
-        }
-    }
-
-    function saveMeals(m) {
-        localStorage.setItem('stonesaga_meals', JSON.stringify(m));
-    }
-
-    function renderMeals() {
-        const meals = loadMeals();
-        document.getElementById('mealListItems').innerHTML = meals.length
-            ? meals.map((m, i) => `<div style="display:flex;align-items:center;gap:8px;padding:6px 8px;background:rgba(255,255,255,0.4);border-radius:5px;border:1px solid var(--parchment-deep)">
-        <span style="flex:1;font-size:0.95rem">${m}</span>
-        <button onclick="deleteMeal(${i})" style="background:none;border:none;cursor:pointer;color:var(--ink-light);font-size:0.8rem" title="Remove">✕</button>
-      </div>`).join('')
-            : '<div style="color:var(--ink-light);font-style:italic;font-size:0.9rem">No meals added yet.</div>';
-    }
-
-    function addMeal() {
-        const inp = document.getElementById('mealInput');
-        const val = inp.value.trim();
-        if (!val) return;
-        const m = loadMeals();
-        m.push(val);
-        saveMeals(m);
-        inp.value = '';
-        renderMeals();
-    }
-
-    function deleteMeal(i) {
-        const m = loadMeals();
-        m.splice(i, 1);
-        saveMeals(m);
-        renderMeals();
-    }
-
-
-    // ── Meal system ──
-    const FOOD_IMGS = {
-        "egg": "public/images/egg.png",
-        "fish": "public/images/fish.png",
-        "grain": "public/images/grain.png",
-        "honey": "public/images/honey.png",
-        "meat": "public/images/meat.png",
-        "mushroom": "public/images/mushroom.png",
-        "nut": "public/images/nut.png",
-        "root": "public/images/root.png",
-        "water": "public/images/water.png"
-    };
+    // ── Meals ──
     const FOOD_LIST = ['egg', 'fish', 'grain', 'honey', 'meat', 'mushroom', 'nut', 'root', 'water'];
-    const FOOD_LABELS = {
-        egg: 'Egg',
-        fish: 'Fish',
-        grain: 'Grain',
-        honey: 'Honey',
-        meat: 'Meat',
-        mushroom: 'Mushroom',
-        nut: 'Nut',
-        root: 'Root',
-        water: 'Water'
-    };
+    const foodImg = food => `public/images/${food}.png`;
+    const foodLabel = food => food.charAt(0).toUpperCase() + food.slice(1);
 
     let selectedIngredients = [];
 
     function loadMeals() {
-        try {
-            return JSON.parse(localStorage.getItem('stonesaga_meals_v2') || '[]')
-        } catch {
-            return []
-        }
+        return readStore('stonesaga_meals_v2');
     }
 
     function saveMeals(m) {
-        localStorage.setItem('stonesaga_meals_v2', JSON.stringify(m));
+        writeStore('stonesaga_meals_v2', m);
     }
 
     function ingredientClick(name) {
         const idx = selectedIngredients.indexOf(name);
-        const pot = document.getElementById('settingCookingPot') && document.getElementById('settingCookingPot').checked;
-        const max = pot ? 3 : 2;
+        const max = settings.cookingPot ? 3 : 2;
         if (idx >= 0) {
             selectedIngredients.splice(idx, 1);
         } else {
@@ -4066,39 +2505,33 @@ ${flavorText}`;
     }
 
     function renderIngredientBar() {
-        const bar = document.getElementById('ingredientBar');
-        if (!bar) return;
-        bar.innerHTML = FOOD_LIST.map(f => `
-    <button class="ingredient-btn${selectedIngredients.includes(f) ? ' selected' : ''}" onclick="ingredientClick('${f}')" title="${FOOD_LABELS[f]}">
-      <img src="${FOOD_IMGS[f]}" alt="${FOOD_LABELS[f]}">
-      <span class="ing-label">${FOOD_LABELS[f]}</span>
+        document.getElementById('ingredientBar').innerHTML = FOOD_LIST.map(f => `
+    <button class="ingredient-btn${selectedIngredients.includes(f) ? ' selected' : ''}" onclick="ingredientClick('${f}')" title="${foodLabel(f)}">
+      <img src="${foodImg(f)}" alt="${foodLabel(f)}">
+      <span class="ing-label">${foodLabel(f)}</span>
     </button>`).join('');
     }
 
     function renderSelectedRow() {
         const row = document.getElementById('selectedIngredientRow');
-        if (!row) return;
         if (!selectedIngredients.length) {
             row.innerHTML = '<span class="selected-row-label">Select 1–2 ingredients (or up to 3 with Cooking Pot)</span>';
             return;
         }
         row.innerHTML = selectedIngredients.map((f, i) =>
             (i > 0 ? '<span class="sel-plus">+</span>' : '') +
-            `<span class="sel-ingredient-chip"><img src="${FOOD_IMGS[f]}" alt="${f}">${FOOD_LABELS[f]}</span>`
+            `<span class="sel-ingredient-chip"><img src="${foodImg(f)}" alt="${f}">${foodLabel(f)}</span>`
         ).join('');
     }
 
     function renderMealCompose() {
         const box = document.getElementById('mealCompose');
-        if (!box) return;
-        const pot = document.getElementById('settingCookingPot') && document.getElementById('settingCookingPot').checked;
-        const max = pot ? 3 : 2;
         const count = selectedIngredients.length;
         if (count === 0) {
             box.innerHTML = `<div class="meal-compose-title">Compose</div><div style="color:var(--ink-light);font-style:italic;font-size:0.9rem">Select ingredients above to compose a meal.</div>`;
             return;
         }
-        if (count === 3 && !pot) {
+        if (count === 3 && !settings.cookingPot) {
             box.innerHTML = `<div class="meal-compose-title">Compose</div><div class="pot-required">⚑ Three-ingredient meals require the Cooking Pot setting to be enabled.</div>`;
             return;
         }
@@ -4115,20 +2548,15 @@ ${flavorText}`;
     function addMealEntry() {
         const input = document.getElementById('mealNameInput');
         if (!input) return;
-        const name = input.value.trim();
-        const pot = selectedIngredients.length === 3;
         const meals = loadMeals();
         meals.push({
-            name: name || selectedIngredients.map(f => FOOD_LABELS[f]).join(' + '),
+            name: input.value.trim() || selectedIngredients.map(foodLabel).join(' + '),
             ingredients: [...selectedIngredients],
-            pot
+            pot: selectedIngredients.length === 3
         });
         saveMeals(meals);
         selectedIngredients = [];
-        renderIngredientBar();
-        renderSelectedRow();
-        renderMealCompose();
-        renderMealsList();
+        initMealTab();
     }
 
     function deleteMealEntry(i) {
@@ -4140,14 +2568,13 @@ ${flavorText}`;
 
     function renderMealsList() {
         const container = document.getElementById('mealEntriesList');
-        if (!container) return;
         const meals = loadMeals();
         if (!meals.length) {
             container.innerHTML = '<div class="meals-empty">No meals recorded yet. Select ingredients above and name your creation.</div>';
             return;
         }
         container.innerHTML = meals.map((m, i) => {
-            const icons = m.ingredients.map(f => `<img src="${FOOD_IMGS[f]}" alt="${FOOD_LABELS[f] || f}" title="${FOOD_LABELS[f] || f}">`).join('<span class="meal-ing-sep">+</span>');
+            const icons = m.ingredients.map(f => `<img src="${foodImg(f)}" alt="${foodLabel(f)}" title="${foodLabel(f)}">`).join('<span class="meal-ing-sep">+</span>');
             const potBadge = m.pot ? `<span class="meal-pot-badge">🪵 Pot</span>` : '';
             return `<div class="meal-entry">
       <div class="meal-ing-icons">${icons}</div>
@@ -4165,20 +2592,18 @@ ${flavorText}`;
         renderMealsList();
     }
 
-
+    // ── Tabs ──
     function switchTab(name) {
         document.querySelectorAll('.tab-panel').forEach(p => p.classList.toggle('active', p.id === 'tab-' + name));
-        document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.onclick.toString().includes("'" + name + "'")));
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === name));
         if (name === 'meals') initMealTab();
     }
 
     // ── Init ──
-    document.getElementById('mealSection').style.display = settings.mealList ? '' : 'none';
+    loadSettings();
     buildGrid();
     renderWheel();
     renderCombosList();
-    renderMeals();
-
 </script>
 </body>
 </html>
